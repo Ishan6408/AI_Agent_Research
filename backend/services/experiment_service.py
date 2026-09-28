@@ -88,7 +88,7 @@ def get_experiment_by_id(experiment_id: str):
     return data
 
 
-def run_experiment(pressure: str):
+def run_experiment(pressure: str, base_seed: int | None = None):
     try:
         pressure_enum = PressureLevel(pressure)
     except ValueError:
@@ -98,7 +98,7 @@ def run_experiment(pressure: str):
                    f"Valid values: {[p.value for p in PressureLevel]}",
         )
     runner = ExperimentRunner(runs_per_pressure=1)
-    results = runner.run_pressure(pressure_enum)
+    results = runner.run_pressure(pressure_enum, base_seed=base_seed)
 
     return {
         "success": True,
@@ -108,7 +108,7 @@ def run_experiment(pressure: str):
     }
 
 
-def run_pressure_experiments(pressure: str, runs: int = 10):
+def run_pressure_experiments(pressure: str, runs: int = 10, base_seed: int | None = None):
     try:
         pressure_enum = PressureLevel(pressure)
     except ValueError:
@@ -118,7 +118,7 @@ def run_pressure_experiments(pressure: str, runs: int = 10):
                    f"Valid values: {[p.value for p in PressureLevel]}",
         )
     runner = ExperimentRunner(runs_per_pressure=runs)
-    results = runner.run_pressure(pressure_enum)
+    results = runner.run_pressure(pressure_enum, base_seed=base_seed)
     return {
         "success": True,
         "count": len(results),
@@ -126,9 +126,9 @@ def run_pressure_experiments(pressure: str, runs: int = 10):
     }
 
 
-def run_all_experiments(runs: int = 10):
+def run_all_experiments(runs: int = 10, base_seed: int | None = None):
     runner = ExperimentRunner(runs_per_pressure=runs)
-    results = runner.run_all()
+    results = runner.run_all(base_seed=base_seed)
     return {
         "success": True,
         "count": len(results),

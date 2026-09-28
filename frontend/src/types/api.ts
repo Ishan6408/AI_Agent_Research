@@ -68,14 +68,17 @@ export interface Experiment extends ExperimentResult {
 export interface RunPressureRequest {
   pressure: string;
   runs?: number;
+  base_seed?: number;
 }
 
 export interface RunAllRequest {
   runs?: number;
+  base_seed?: number;
 }
 
 export interface RunExperimentRequest {
   pressure: string;
+  base_seed?: number;
 }
 
 export interface RunExperimentResponse {

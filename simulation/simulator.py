@@ -119,7 +119,7 @@ class SoftwareCompanySimulator:
             # Status Report
             # -------------------------------------------------
 
-            status_response = developer.generate_status_update(
+            calculated_reported_progress, status_response = developer.generate_status_update(
                 decision["actual_progress"],
                 pressure,
                 policy,
@@ -130,12 +130,11 @@ class SoftwareCompanySimulator:
 
             status = parse_json_response(status_response)
 
-            if "reported_progress" not in status:
-                print(f"[{developer.role}] Invalid numerical output for reported_progress. Skipping experiment.")
-                continue
+            # Ignore the LLM's returned reported_progress completely to prevent metric corruption
+            # while still parsing the message/confidence.
+            reported = calculated_reported_progress
 
             try:
-                reported = status["reported_progress"]
                 actual = decision["actual_progress"]
                 bugs = decision["bugs_introduced"]
                 quality = decision["code_quality"]

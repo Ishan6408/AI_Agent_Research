@@ -383,4 +383,5 @@ Return ONLY JSON.
 }}
 """
 
-        return self.think(prompt, step_name="status_update", provenance=provenance)
+        response = self.think(prompt, step_name="status_update", provenance=provenance)
+        return reported_progress, response
