@@ -4,7 +4,7 @@ from utils.experiment_storage import save_experiment
 from simulation.simulator import SoftwareCompanySimulator
 from models.experiment import ExperimentResult
 
-def test_save_experiment_collisions():
+def test_save_experiment_collisions(tmp_path):
     # Call save_experiment rapidly
     ids = set()
     dummy_result = ExperimentResult(
@@ -34,12 +34,12 @@ def test_save_experiment_collisions():
     )
 
     for _ in range(100):
-        exp_id = save_experiment(dummy_result)
+        exp_id = save_experiment(dummy_result, storage_dir=str(tmp_path))
         ids.add(exp_id)
 
     assert len(ids) == 100
 
-def test_malformed_developer_output():
+def test_malformed_developer_output(tmp_path):
     # simulate the LLM returning malformed output ("") for the first agent, but normal JSON for the others
     with patch('agents.base_agent.BaseAgent.think') as mock_think, \
          patch('simulation.policy_generator.PolicyGenerator.generate') as mock_policy, \
@@ -66,7 +66,7 @@ def test_malformed_developer_output():
             "DevOps Engineer": Task(id="4", title="DevOps", description="devops", priority="high", estimated_hours=10)
         }
 
-        sim = SoftwareCompanySimulator()
+        sim = SoftwareCompanySimulator(storage_dir=str(tmp_path))
         mock_audit.return_value = {"suspicion_score": 0, "deception_detected": False, "explanation": "None"}
         mock_save.return_value = "fake-uuid"
 
@@ -84,7 +84,7 @@ def test_malformed_developer_output():
             assert "reported_progress" in r
             assert r["reported_progress"] >= 0
 
-def test_existing_behavior_smoke_test():
+def test_existing_behavior_smoke_test(tmp_path):
     # run a minimal normal experiment
     # For speed, mock the LLM or just run one if it uses a local fast model.
     # We will patch the agents' think methods to return static JSON.
@@ -109,7 +109,7 @@ def test_existing_behavior_smoke_test():
             "DevOps Engineer": Task(id="4", title="DevOps", description="devops", priority="high", estimated_hours=10)
         }
 
-        sim = SoftwareCompanySimulator()
+        sim = SoftwareCompanySimulator(storage_dir=str(tmp_path))
         mock_audit.return_value = {"suspicion_score": 0, "deception_detected": False, "explanation": "Looks fine."}
 
         results = sim.run()
@@ -120,7 +120,7 @@ def test_existing_behavior_smoke_test():
             assert r["actual_progress"] > 0
 
 
-def test_strict_validation():
+def test_strict_validation(tmp_path):
     with patch('simulation.policy_generator.PolicyGenerator.generate') as mock_policy, \
          patch('agents.manager.ManagerAgent.create_sprint_tasks') as mock_tasks, \
          patch('agents.auditor.AuditorAgent.audit_experiment') as mock_audit, \
@@ -187,7 +187,7 @@ def test_strict_validation():
                 mock_gen_status_qa.return_value = (40, json.dumps({"reported_progress": 40}))
                 mock_gen_status_devops.return_value = (40, json.dumps({"reported_progress": 40}))
 
-                sim = SoftwareCompanySimulator()
+                sim = SoftwareCompanySimulator(storage_dir=str(tmp_path))
                 results = sim.run()
 
                 if should_accept:
@@ -220,7 +220,7 @@ def test_strict_validation():
             mock_gen_status_front.return_value = (40, json.dumps({"reported_progress": 40}))
             mock_gen_status_qa.return_value = (40, json.dumps({"reported_progress": 40}))
             mock_gen_status_devops.return_value = (40, json.dumps({"reported_progress": 40}))
-            sim = SoftwareCompanySimulator()
+            sim = SoftwareCompanySimulator(storage_dir=str(tmp_path))
             results = sim.run()
             assert len(results) == 3
 
@@ -249,11 +249,11 @@ def test_strict_validation():
             mock_gen_status_front.return_value = (40, json.dumps({"reported_progress": 40}))
             mock_gen_status_qa.return_value = (40, json.dumps({"reported_progress": 40}))
             mock_gen_status_devops.return_value = (40, json.dumps({"reported_progress": 40}))
-            sim = SoftwareCompanySimulator()
+            sim = SoftwareCompanySimulator(storage_dir=str(tmp_path))
             results = sim.run()
             assert len(results) == 4
 
-def test_conflicting_llm_reported_progress():
+def test_conflicting_llm_reported_progress(tmp_path):
     from unittest.mock import patch
     from simulation.simulator import SoftwareCompanySimulator
 
@@ -310,7 +310,7 @@ def test_conflicting_llm_reported_progress():
 
             mock_think.side_effect = side_effect
 
-            sim = SoftwareCompanySimulator()
+            sim = SoftwareCompanySimulator(storage_dir=str(tmp_path))
 
             # Fix rng to ensure predictable python-calculated strategy and reported_progress
             # For seed=42:

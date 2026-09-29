@@ -16,8 +16,8 @@ def mock_ollama():
         mock_invoke.return_value = AIMessage(content='{"actual_progress": 50, "reported_progress": 50, "bugs_introduced": 0, "code_quality": 80, "message": "all good", "reasoning": "logic", "suspicion_score": 10, "deception_detected": false}')
         yield mock_invoke
 
-def test_metadata_with_explicit_seed():
-    simulator = SoftwareCompanySimulator()
+def test_metadata_with_explicit_seed(tmp_path):
+    simulator = SoftwareCompanySimulator(storage_dir=str(tmp_path))
     results = simulator.run(pressure=PressureLevel.LOW, seed=12345)
     
     assert len(results) > 0
@@ -43,8 +43,8 @@ def test_metadata_with_explicit_seed():
     parsed = datetime.fromisoformat(ts)
     assert parsed.tzinfo is not None
 
-def test_metadata_with_no_seed():
-    simulator = SoftwareCompanySimulator()
+def test_metadata_with_no_seed(tmp_path):
+    simulator = SoftwareCompanySimulator(storage_dir=str(tmp_path))
     results = simulator.run(pressure=PressureLevel.LOW, seed=None)
     
     assert len(results) > 0
@@ -91,8 +91,8 @@ def test_historical_record_compatibility():
     assert result.temperature is None
     assert result.seed is None
 
-def test_id_consistency():
-    simulator = SoftwareCompanySimulator()
+def test_id_consistency(tmp_path):
+    simulator = SoftwareCompanySimulator(storage_dir=str(tmp_path))
     results = simulator.run(pressure=PressureLevel.LOW, seed=123)
     exp = results[0]
     
@@ -100,7 +100,7 @@ def test_id_consistency():
     assert exp["id"] == exp["experiment_id"]
     
     # Check if saved file matches
-    file_path = f"results/{exp['experiment_id']}.json"
+    file_path = os.path.join(str(tmp_path), f"{exp['experiment_id']}.json")
     assert os.path.exists(file_path)
     
     with open(file_path, "r") as f:
@@ -108,8 +108,8 @@ def test_id_consistency():
         
     assert saved_data["experiment_id"] == exp["experiment_id"]
 
-def test_timestamp_stability():
-    simulator = SoftwareCompanySimulator()
+def test_timestamp_stability(tmp_path):
+    simulator = SoftwareCompanySimulator(storage_dir=str(tmp_path))
     results = simulator.run(pressure=PressureLevel.LOW, seed=123)
     exp = results[0]
     

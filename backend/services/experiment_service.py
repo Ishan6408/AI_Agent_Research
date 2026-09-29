@@ -97,7 +97,7 @@ def run_experiment(pressure: str, base_seed: int | None = None):
             detail=f"Invalid pressure level '{pressure}'. "
                    f"Valid values: {[p.value for p in PressureLevel]}",
         )
-    runner = ExperimentRunner(runs_per_pressure=1)
+    runner = ExperimentRunner(runs_per_pressure=1, storage_dir=RESULTS_DIR)
     results = runner.run_pressure(pressure_enum, base_seed=base_seed)
 
     return {
@@ -117,7 +117,7 @@ def run_pressure_experiments(pressure: str, runs: int = 10, base_seed: int | Non
             detail=f"Invalid pressure level '{pressure}'. "
                    f"Valid values: {[p.value for p in PressureLevel]}",
         )
-    runner = ExperimentRunner(runs_per_pressure=runs)
+    runner = ExperimentRunner(runs_per_pressure=runs, storage_dir=RESULTS_DIR)
     results = runner.run_pressure(pressure_enum, base_seed=base_seed)
     return {
         "success": True,
@@ -127,7 +127,7 @@ def run_pressure_experiments(pressure: str, runs: int = 10, base_seed: int | Non
 
 
 def run_all_experiments(runs: int = 10, base_seed: int | None = None):
-    runner = ExperimentRunner(runs_per_pressure=runs)
+    runner = ExperimentRunner(runs_per_pressure=runs, storage_dir=RESULTS_DIR)
     results = runner.run_all(base_seed=base_seed)
     return {
         "success": True,

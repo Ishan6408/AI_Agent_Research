@@ -5,6 +5,12 @@ from backend.main import app
 
 client = TestClient(app)
 
+@pytest.fixture(autouse=True)
+def mock_results_dir(tmp_path):
+    with patch('backend.services.experiment_service.RESULTS_DIR', str(tmp_path)):
+        yield
+
+
 @patch('agents.base_agent.BaseAgent.think', return_value='{"reported_progress": 100, "message": "done"}')
 @patch('agents.auditor.AuditorAgent.audit_experiment', return_value={"suspicion_score": 0, "deception_detected": False, "explanation": "none"})
 def test_api_run_experiment_no_seed(mock_audit, mock_think):

@@ -44,12 +44,12 @@ def extract_key_metrics(results):
 
 
 @patch('agents.base_agent.BaseAgent.think', mock_think)
-@patch('simulation.simulator.save_experiment', lambda x: "fake-id")
-def test_same_seed_identical_results():
-    sim1 = SoftwareCompanySimulator()
+@patch('simulation.simulator.save_experiment', lambda *args, **kwargs: "fake-id")
+def test_same_seed_identical_results(tmp_path):
+    sim1 = SoftwareCompanySimulator(storage_dir=str(tmp_path))
     res1 = sim1.run(pressure=PressureLevel.MEDIUM, seed=12345)
     
-    sim2 = SoftwareCompanySimulator()
+    sim2 = SoftwareCompanySimulator(storage_dir=str(tmp_path))
     res2 = sim2.run(pressure=PressureLevel.MEDIUM, seed=12345)
     
     metrics1 = extract_key_metrics(res1)
@@ -62,12 +62,12 @@ def test_same_seed_identical_results():
 
 
 @patch('agents.base_agent.BaseAgent.think', mock_think)
-@patch('simulation.simulator.save_experiment', lambda x: "fake-id")
-def test_different_seeds_different_results():
-    sim1 = SoftwareCompanySimulator()
+@patch('simulation.simulator.save_experiment', lambda *args, **kwargs: "fake-id")
+def test_different_seeds_different_results(tmp_path):
+    sim1 = SoftwareCompanySimulator(storage_dir=str(tmp_path))
     res1 = sim1.run(pressure=PressureLevel.MEDIUM, seed=111)
     
-    sim2 = SoftwareCompanySimulator()
+    sim2 = SoftwareCompanySimulator(storage_dir=str(tmp_path))
     res2 = sim2.run(pressure=PressureLevel.MEDIUM, seed=222)
     
     metrics1 = extract_key_metrics(res1)
@@ -77,13 +77,13 @@ def test_different_seeds_different_results():
 
 
 @patch('agents.base_agent.BaseAgent.think', mock_think)
-@patch('simulation.simulator.save_experiment', lambda x: "fake-id")
-def test_seed_none_no_global_mutation():
+@patch('simulation.simulator.save_experiment', lambda *args, **kwargs: "fake-id")
+def test_seed_none_no_global_mutation(tmp_path):
     random.seed(999)
     expected_val = random.random()
     
     random.seed(999)
-    sim = SoftwareCompanySimulator()
+    sim = SoftwareCompanySimulator(storage_dir=str(tmp_path))
     sim.run(pressure=PressureLevel.MEDIUM, seed=None)
     actual_val = random.random()
     
@@ -91,13 +91,13 @@ def test_seed_none_no_global_mutation():
 
 
 @patch('agents.base_agent.BaseAgent.think', mock_think)
-@patch('simulation.simulator.save_experiment', lambda x: "fake-id")
-def test_global_rng_isolation():
+@patch('simulation.simulator.save_experiment', lambda *args, **kwargs: "fake-id")
+def test_global_rng_isolation(tmp_path):
     random.seed(123)
     expected_val = random.random()
     
     random.seed(123)
-    sim = SoftwareCompanySimulator()
+    sim = SoftwareCompanySimulator(storage_dir=str(tmp_path))
     sim.run(pressure=PressureLevel.HIGH, seed=456)
     actual_val = random.random()
     
@@ -105,11 +105,11 @@ def test_global_rng_isolation():
 
 
 @patch('agents.base_agent.BaseAgent.think', mock_think)
-@patch('simulation.simulator.save_experiment', lambda x: "fake-id")
-def test_experiment_isolation():
+@patch('simulation.simulator.save_experiment', lambda *args, **kwargs: "fake-id")
+def test_experiment_isolation(tmp_path):
     # If two simulation objects share the same seed, they should not interfere
     # Wait, `run` creates `random.Random(seed)` per call, so it's isolated.
-    sim = SoftwareCompanySimulator()
+    sim = SoftwareCompanySimulator(storage_dir=str(tmp_path))
     res1 = sim.run(pressure=PressureLevel.LOW, seed=777)
     res2 = sim.run(pressure=PressureLevel.LOW, seed=777)
     

@@ -3,9 +3,9 @@ import os
 from datetime import datetime
 
 
-def save_experiment(result):
+def save_experiment(result, storage_dir="results"):
 
-    os.makedirs("results", exist_ok=True)
+    os.makedirs(storage_dir, exist_ok=True)
 
     if result.experiment_id:
         experiment_id = result.experiment_id
@@ -13,9 +13,9 @@ def save_experiment(result):
         import uuid
         experiment_id = f"experiment_{datetime.now().strftime('%Y%m%d_%H%M%S')}_{uuid.uuid4().hex[:8]}"
 
-    filename = f"results/{experiment_id}.json"
+    filename = os.path.join(storage_dir, f"{experiment_id}.json")
 
-    with open(filename, "w") as file:
+    with open(filename, "w", encoding="utf-8") as file:
         json.dump(
             result.model_dump(),
             file,

@@ -37,7 +37,8 @@ def get_git_commit():
 
 class SoftwareCompanySimulator:
 
-    def __init__(self):
+    def __init__(self, storage_dir="results"):
+        self.storage_dir = storage_dir
 
         self.manager = ManagerAgent()
 
@@ -257,7 +258,7 @@ class SoftwareCompanySimulator:
             # Save Experiment
             # -------------------------------------------------
 
-            exp_id = save_experiment(experiment)
+            exp_id = save_experiment(experiment, storage_dir=self.storage_dir)
             developer.history.append({
                 "pressure": pressure.value,
                 "strategy": strategy,

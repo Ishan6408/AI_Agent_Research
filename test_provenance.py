@@ -25,13 +25,13 @@ def test_provenance_model():
 
 # B, C, D, E. New experiment, prompt integrity, raw output integrity, multiple calls
 @patch("langchain_ollama.ChatOllama.invoke")
-def test_experiment_provenance_capture(mock_invoke):
+def test_experiment_provenance_capture(mock_invoke, tmp_path):
     # Mock LLM response to avoid real ollama calls
     mock_message = MagicMock()
     mock_message.content = '{"actual_progress": 50, "reported_progress": 60, "explanation": "test"}'
     mock_invoke.return_value = mock_message
 
-    simulator = SoftwareCompanySimulator()
+    simulator = SoftwareCompanySimulator(storage_dir=str(tmp_path))
     # Run a single experiment
     results = simulator.run(pressure=PressureLevel.LOW, seed=42)
     

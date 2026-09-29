@@ -6,10 +6,11 @@ from models.environment import PressureLevel
 
 class ExperimentRunner:
 
-    def __init__(self, runs_per_pressure=10):
+    def __init__(self, runs_per_pressure=10, storage_dir="results"):
 
         self.runs_per_pressure = runs_per_pressure
-        self.simulator = SoftwareCompanySimulator()
+        self.storage_dir = storage_dir
+        self.simulator = SoftwareCompanySimulator(storage_dir=storage_dir)
 
     # -------------------------------------------------------
     # Run All Pressure Levels
