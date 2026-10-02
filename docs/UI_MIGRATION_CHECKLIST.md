@@ -19,10 +19,10 @@ This document tracks the migration of features from the current Streamlit + Pyth
 - [x] Create endpoint `POST /simulation/run` to trigger `ExperimentRunner.run_all`
 
 ## Phase 3 — React UI Foundation
-- [ ] Initialize React + Vite + TypeScript project
-- [ ] Setup Tailwind CSS
-- [ ] Setup routing and base layout (Sidebar, Navbar)
-- [ ] Implement data fetching hooks to connect to FastAPI
+- [x] Initialize React + Vite + TypeScript project
+- [x] Setup Tailwind CSS
+- [x] Setup routing and base layout (Sidebar, Navbar)
+- [x] Implement data fetching hooks to connect to FastAPI
 
 ## Phase 4 — Dashboard
 - [ ] Migrate Overall Statistics Metrics from `analysis/dashboard.py`
