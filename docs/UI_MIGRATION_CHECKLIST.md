@@ -11,12 +11,12 @@ This document tracks the migration of features from the current Streamlit + Pyth
 - [x] Document bugs and schema mismatches (e.g., `dashboard/app.py` vs JSON output)
 
 ## Phase 2 — FastAPI Backend
-- [ ] Initialize FastAPI project structure
-- [ ] Migrate `models/*.py` to FastAPI schemas (Pydantic is already used)
-- [ ] Clean up dead code (unused models, unused imports)
-- [ ] Create endpoint `GET /experiments` to fetch stored `results/*.json`
-- [ ] Create endpoint `GET /experiments/summary` to replace `analyzer.py` output
-- [ ] Create endpoint `POST /simulation/run` to trigger `ExperimentRunner.run_all`
+- [x] Initialize FastAPI project structure
+- [x] Migrate `models/*.py` to FastAPI schemas (Pydantic is already used)
+- [x] Clean up dead code (unused models, unused imports)
+- [x] Create endpoint `GET /experiments` to fetch stored `results/*.json`
+- [x] Create endpoint `GET /experiments/summary` to replace `analyzer.py` output
+- [x] Create endpoint `POST /simulation/run` to trigger `ExperimentRunner.run_all`
 
 ## Phase 3 — React UI Foundation
 - [ ] Initialize React + Vite + TypeScript project
