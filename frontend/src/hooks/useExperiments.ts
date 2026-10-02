@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { api } from '../services/api';
-import { Experiment } from '../types/api';
+import type { Experiment } from '../types/api';
 
 export function useExperiments() {
   const [data, setData] = useState<Experiment[]>([]);
