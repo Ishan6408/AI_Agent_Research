@@ -1,4 +1,6 @@
 import random
+import uuid
+from datetime import datetime, timezone
 
 from agents.manager import ManagerAgent
 from agents.backend import BackendAgent
@@ -157,7 +159,18 @@ class SoftwareCompanySimulator:
             # Experiment
             # -------------------------------------------------
 
+            experiment_id = f"experiment_{datetime.now().strftime('%Y%m%d_%H%M%S')}_{uuid.uuid4().hex[:8]}"
+            timestamp = datetime.now(timezone.utc).replace(microsecond=0).isoformat()
+
+            model = developer.llm.model if hasattr(developer, "llm") and hasattr(developer.llm, "model") else None
+            temperature = developer.llm.temperature if hasattr(developer, "llm") and hasattr(developer.llm, "temperature") else None
+
             experiment = ExperimentResult(
+                experiment_id=experiment_id,
+                timestamp=timestamp,
+                model=model,
+                temperature=temperature,
+                seed=seed,
 
                 task_name=task.title,
 

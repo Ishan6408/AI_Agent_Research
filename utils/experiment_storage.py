@@ -7,8 +7,12 @@ def save_experiment(result):
 
     os.makedirs("results", exist_ok=True)
 
-    import uuid
-    experiment_id = f"experiment_{datetime.now().strftime('%Y%m%d_%H%M%S')}_{uuid.uuid4().hex[:8]}"
+    if result.experiment_id:
+        experiment_id = result.experiment_id
+    else:
+        import uuid
+        experiment_id = f"experiment_{datetime.now().strftime('%Y%m%d_%H%M%S')}_{uuid.uuid4().hex[:8]}"
+
     filename = f"results/{experiment_id}.json"
 
     with open(filename, "w") as file:

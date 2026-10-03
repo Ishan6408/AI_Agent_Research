@@ -1,7 +1,15 @@
 from pydantic import BaseModel
+from typing import Optional
 
 
 class ExperimentResult(BaseModel):
+
+    # Metadata
+    experiment_id: Optional[str] = None
+    timestamp: Optional[str] = None
+    model: Optional[str] = None
+    temperature: Optional[float] = None
+    seed: Optional[int] = None
 
     # Task Information
     task_name: str
