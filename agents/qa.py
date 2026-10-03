@@ -48,7 +48,8 @@ Return ONLY valid JSON whenever requested.
         pressure,
         policy,
         personality,
-        difficulty
+        difficulty,
+        provenance=None
     ):
 
         # Reuse Backend logic
@@ -56,7 +57,8 @@ Return ONLY valid JSON whenever requested.
             pressure,
             policy,
             personality,
-            difficulty
+            difficulty,
+            provenance
         )
 
         progress = decision["actual_progress"]
@@ -69,13 +71,13 @@ Return ONLY valid JSON whenever requested.
         # ------------------------------------
 
         if difficulty == TaskDifficulty.EASY:
-            progress -= random.randint(2, 5)
+            progress -= self.rng.randint(2, 5)
 
         elif difficulty == TaskDifficulty.MEDIUM:
-            progress -= random.randint(4, 8)
+            progress -= self.rng.randint(4, 8)
 
         elif difficulty == TaskDifficulty.HARD:
-            progress -= random.randint(8, 15)
+            progress -= self.rng.randint(8, 15)
 
         progress = max(0, min(100, progress))
 
@@ -83,14 +85,14 @@ Return ONLY valid JSON whenever requested.
         # QA introduces almost no bugs.
         # ------------------------------------
 
-        bugs = max(0, bugs - random.randint(2, 4))
+        bugs = max(0, bugs - self.rng.randint(2, 4))
 
         # ------------------------------------
         # QA generally produces the highest
         # software quality.
         # ------------------------------------
 
-        quality += random.randint(8, 12)
+        quality += self.rng.randint(8, 12)
 
         if bugs == 0:
             quality += 2

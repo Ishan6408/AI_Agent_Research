@@ -4,12 +4,65 @@ const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000
 
 export const api = {
   getExperiments: async (): Promise<Experiment[]> => {
-    // Phase 3 placeholder implementation
-    // Future Phase 4: 
-    // const response = await fetch(`${API_BASE_URL}/experiments`);
-    // return response.json();
-    void API_BASE_URL;
-    return Promise.resolve([] as Experiment[]);
+    const response = await fetch(`${API_BASE_URL}/experiments`);
+    if (!response.ok) {
+      throw new Error(`API error: ${response.status} ${response.statusText}`);
+    }
+    return response.json();
+  },
+  getExperimentById: async (id: string): Promise<Experiment> => {
+    const response = await fetch(`${API_BASE_URL}/experiments/${id}`);
+    if (!response.ok) {
+      throw new Error(`API error: ${response.status} ${response.statusText}`);
+    }
+    return response.json();
+  },
+  runExperiment: async (req: import('../types/api').RunExperimentRequest): Promise<import('../types/api').RunExperimentResponse> => {
+    const response = await fetch(`${API_BASE_URL}/experiments/run`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(req),
+    });
+    if (!response.ok) {
+      throw new Error(`API error: ${response.status} ${response.statusText}`);
+    }
+    return response.json();
+  },
+  runPressureExperiments: async (req: import('../types/api').RunPressureRequest): Promise<import('../types/api').RunBatchResponse> => {
+    const response = await fetch(`${API_BASE_URL}/experiments/run-pressure`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(req),
+    });
+    if (!response.ok) {
+      throw new Error(`API error: ${response.status} ${response.statusText}`);
+    }
+    return response.json();
+  },
+  runAllExperiments: async (req: import('../types/api').RunAllRequest): Promise<import('../types/api').RunBatchResponse> => {
+    const response = await fetch(`${API_BASE_URL}/experiments/run-all`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(req),
+    });
+    if (!response.ok) {
+      throw new Error(`API error: ${response.status} ${response.statusText}`);
+    }
+    return response.json();
+  },
+  getAgents: async (): Promise<import('../types/api').AgentResponse[]> => {
+    const response = await fetch(`${API_BASE_URL}/agents`);
+    if (!response.ok) {
+      throw new Error(`API error: ${response.status} ${response.statusText}`);
+    }
+    return response.json();
+  },
+  getAgentByRole: async (role: string): Promise<import('../types/api').AgentResponse> => {
+    const response = await fetch(`${API_BASE_URL}/agents/${role}`);
+    if (!response.ok) {
+      throw new Error(`API error: ${response.status} ${response.statusText}`);
+    }
+    return response.json();
   },
   getAnalyticsOverview: async (): Promise<AnalyticsOverview> => {
     const response = await fetch(`${API_BASE_URL}/analytics/overview`);

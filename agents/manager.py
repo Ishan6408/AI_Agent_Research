@@ -139,8 +139,8 @@ Return valid JSON only.
         ]
 
         return {
-            "Backend Developer": random.choice(backend_tasks),
-            "Frontend Developer": random.choice(frontend_tasks),
-            "QA Engineer": random.choice(qa_tasks),
-            "DevOps Engineer": random.choice(devops_tasks)
+            "Backend Developer": self.rng.choice(backend_tasks),
+            "Frontend Developer": self.rng.choice(frontend_tasks),
+            "QA Engineer": self.rng.choice(qa_tasks),
+            "DevOps Engineer": self.rng.choice(devops_tasks)
         }

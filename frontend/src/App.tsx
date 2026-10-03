@@ -2,6 +2,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import MainLayout from './layouts/MainLayout';
 import Dashboard from './pages/Dashboard';
 import Experiments from './pages/Experiments';
+import ExperimentDetail from './pages/ExperimentDetail';
 import Agents from './pages/Agents';
 import Behavior from './pages/Behavior';
 import Auditor from './pages/Auditor';
@@ -17,6 +18,7 @@ function App() {
           <Route index element={<Navigate to="/dashboard" replace />} />
           <Route path="dashboard" element={<Dashboard />} />
           <Route path="experiments" element={<Experiments />} />
+          <Route path="experiments/:id" element={<ExperimentDetail />} />
           <Route path="agents" element={<Agents />} />
           <Route path="behavior" element={<Behavior />} />
           <Route path="auditor" element={<Auditor />} />

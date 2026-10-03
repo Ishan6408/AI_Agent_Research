@@ -16,6 +16,14 @@ class OllamaClient:
             temperature=temperature,
         )
 
+    @property
+    def model(self) -> str:
+        return self.llm.model
+
+    @property
+    def temperature(self) -> float:
+        return self.llm.temperature
+
     def invoke(self, messages):
         """
         Sends messages to the LLM and returns the response.

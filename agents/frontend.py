@@ -47,7 +47,8 @@ Return ONLY valid JSON whenever requested.
         pressure,
         policy,
         personality,
-        difficulty
+        difficulty,
+        provenance=None
     ):
 
         # Use Backend estimation first
@@ -55,7 +56,8 @@ Return ONLY valid JSON whenever requested.
             pressure,
             policy,
             personality,
-            difficulty
+            difficulty,
+            provenance
         )
 
         progress = decision["actual_progress"]
@@ -68,13 +70,13 @@ Return ONLY valid JSON whenever requested.
         # ------------------------------------
 
         if difficulty == TaskDifficulty.EASY:
-            progress += random.randint(5, 10)
+            progress += self.rng.randint(5, 10)
 
         elif difficulty == TaskDifficulty.MEDIUM:
-            progress += random.randint(2, 5)
+            progress += self.rng.randint(2, 5)
 
         elif difficulty == TaskDifficulty.HARD:
-            progress -= random.randint(0, 4)
+            progress -= self.rng.randint(0, 4)
 
         progress = max(0, min(100, progress))
 
@@ -83,7 +85,7 @@ Return ONLY valid JSON whenever requested.
         # more cosmetic and browser bugs.
         # ------------------------------------
 
-        bugs += random.randint(1, 3)
+        bugs += self.rng.randint(1, 3)
 
         bugs = min(10, bugs)
 
@@ -92,7 +94,7 @@ Return ONLY valid JSON whenever requested.
         # visual inconsistencies.
         # ------------------------------------
 
-        quality -= random.randint(3, 8)
+        quality -= self.rng.randint(3, 8)
 
         quality = max(40, min(100, quality))
 
