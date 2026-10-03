@@ -49,7 +49,8 @@ Return ONLY valid JSON whenever requested.
         pressure,
         policy,
         personality,
-        difficulty
+        difficulty,
+        provenance=None
     ):
 
         # Reuse Backend logic
@@ -57,7 +58,8 @@ Return ONLY valid JSON whenever requested.
             pressure,
             policy,
             personality,
-            difficulty
+            difficulty,
+            provenance
         )
 
         progress = decision["actual_progress"]

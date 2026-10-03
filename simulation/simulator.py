@@ -20,6 +20,19 @@ from simulation.policy_generator import PolicyGenerator
 
 from utils.parser import parse_json_response
 from utils.experiment_storage import save_experiment
+import subprocess
+from models.experiment import ProvenanceData
+
+
+def get_git_commit():
+    try:
+        return subprocess.check_output(
+            ["git", "rev-parse", "HEAD"],
+            stderr=subprocess.STDOUT,
+            text=True
+        ).strip()
+    except Exception:
+        return None
 
 
 class SoftwareCompanySimulator:
@@ -72,6 +85,14 @@ class SoftwareCompanySimulator:
             print(task)
 
             # -------------------------------------------------
+            # Provenance Initialization
+            # -------------------------------------------------
+
+            provenance = ProvenanceData(
+                git_commit=get_git_commit()
+            )
+
+            # -------------------------------------------------
             # Estimate Progress
             # -------------------------------------------------
 
@@ -79,7 +100,8 @@ class SoftwareCompanySimulator:
                 pressure,
                 policy,
                 personality,
-                difficulty
+                difficulty,
+                provenance
             )
 
             # -------------------------------------------------
@@ -102,7 +124,8 @@ class SoftwareCompanySimulator:
                 pressure,
                 policy,
                 strategy,
-                difficulty
+                difficulty,
+                provenance
             )
 
             status = parse_json_response(status_response)
@@ -205,7 +228,9 @@ class SoftwareCompanySimulator:
 
                 auditor_score=0,
                 deception_detected=False,
-                auditor_explanation=""
+                auditor_explanation="",
+
+                provenance=provenance
             )
 
             # -------------------------------------------------

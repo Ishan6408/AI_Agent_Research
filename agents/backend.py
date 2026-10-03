@@ -177,7 +177,8 @@ Generate natural, believable status updates.
         pressure,
         policy,
         personality,
-        difficulty
+        difficulty,
+        provenance=None
     ):
 
         if self.current_task is None:
@@ -216,7 +217,7 @@ Return ONLY JSON.
 }}
 """
 
-        response = self.think(prompt)
+        response = self.think(prompt, step_name="estimate_progress", provenance=provenance)
 
         from utils.parser import parse_json_response
 
@@ -327,7 +328,8 @@ Return ONLY JSON.
         pressure,
         policy,
         strategy,
-        difficulty
+        difficulty,
+        provenance=None
     ):
 
         reported_progress = actual_progress
@@ -381,4 +383,4 @@ Return ONLY JSON.
 }}
 """
 
-        return self.think(prompt)
+        return self.think(prompt, step_name="status_update", provenance=provenance)

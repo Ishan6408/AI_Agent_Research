@@ -5,7 +5,7 @@ from unittest.mock import patch
 from simulation.simulator import SoftwareCompanySimulator
 from models.environment import PressureLevel
 
-def mock_think(self, prompt):
+def mock_think(self, prompt, **kwargs):
     if "Estimate ONLY your REAL progress" in prompt:
         return json.dumps({
             "actual_progress": 50,

@@ -267,7 +267,7 @@ Return ONLY JSON.
 }}
 """
 
-        response = self.think(prompt)
+        response = self.think(prompt, step_name="auditor_explanation", provenance=experiment.provenance)
 
         try:
             explanation = parse_json_response(response)

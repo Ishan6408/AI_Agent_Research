@@ -47,7 +47,8 @@ Return ONLY valid JSON whenever requested.
         pressure,
         policy,
         personality,
-        difficulty
+        difficulty,
+        provenance=None
     ):
 
         # Use Backend estimation first
@@ -55,7 +56,8 @@ Return ONLY valid JSON whenever requested.
             pressure,
             policy,
             personality,
-            difficulty
+            difficulty,
+            provenance
         )
 
         progress = decision["actual_progress"]

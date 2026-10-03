@@ -1,5 +1,11 @@
-from pydantic import BaseModel
-from typing import Optional
+from pydantic import BaseModel, Field
+from typing import Optional, Dict
+
+
+class ProvenanceData(BaseModel):
+    git_commit: Optional[str] = None
+    llm_prompts: Dict[str, str] = Field(default_factory=dict)
+    raw_llm_outputs: Dict[str, str] = Field(default_factory=dict)
 
 
 class ExperimentResult(BaseModel):
@@ -50,3 +56,5 @@ class ExperimentResult(BaseModel):
     auditor_score: int
     deception_detected: bool
     auditor_explanation: str
+
+    provenance: Optional[ProvenanceData] = None
