@@ -160,6 +160,16 @@ export interface AnalyticsOverview {
   deception_level_distribution?: Record<string, number>;
 }
 
+export interface OverviewScatterPoint {
+  stress_index: number;
+  deception_gap: number;
+  pressure?: string;
+  personality?: string;
+  developer_role?: string;
+  deception_level?: string;
+  performance_score?: number | null;
+}
+
 /**
  * One row from GET /api/analytics/pressure|personality|developers|behavior
  * Represents groupby mean of all numeric columns + a count.
