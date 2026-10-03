@@ -9,6 +9,11 @@ def get_overview():
     return analytics_service.get_overview()
 
 
+@router.get("/overview/scatter")
+def get_overview_scatter():
+    return analytics_service.get_overview_scatter()
+
+
 @router.get("/pressure")
 def get_pressure():
     return analytics_service.get_group_analysis("pressure")

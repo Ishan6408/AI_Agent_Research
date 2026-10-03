@@ -309,3 +309,31 @@ def get_research_findings():
     result["average_metrics"] = _replace_nan(avg_metrics)
 
     return result
+
+
+# -----------------------------------------------------------------------
+# Overview Scatter  →  GET /api/analytics/overview/scatter
+# -----------------------------------------------------------------------
+
+def get_overview_scatter():
+    try:
+        df = _get_df()
+    except HTTPException as e:
+        if e.status_code == 404:
+            return []
+        raise
+
+    required = {"stress_index", "deception_gap"}
+    if not required.issubset(df.columns):
+        return []
+
+    scatter_cols = ["stress_index", "deception_gap"]
+    optional_cols = ["pressure", "personality", "developer_role", "deception_level", "performance_score"]
+    
+    for col in optional_cols:
+        if col in df.columns:
+            scatter_cols.append(col)
+
+    scatter_df = df.dropna(subset=["stress_index", "deception_gap"])[scatter_cols]
+    
+    return _replace_nan(scatter_df.to_dict(orient="records"))
