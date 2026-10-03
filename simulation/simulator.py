@@ -35,12 +35,17 @@ class SoftwareCompanySimulator:
 
         self.auditor = AuditorAgent()
 
-    def run(self, pressure: PressureLevel = PressureLevel.HIGH):
+    def run(self, pressure: PressureLevel = PressureLevel.HIGH, seed=None):
         generated_experiments = []
 
         print("\n===== SOFTWARE COMPANY =====\n")
         print("Pressure Level:", pressure.value)
+        print("Seed:", seed)
 
+        rng = random.Random(seed)
+        self.manager.rng = rng
+        for developer in self.developers:
+            developer.rng = rng
         policy = PolicyGenerator.generate(pressure)
 
         tasks = self.manager.create_sprint_tasks()
@@ -51,8 +56,8 @@ class SoftwareCompanySimulator:
             print(developer.role)
             print("=" * 70)
 
-            personality = random.choice(list(Personality))
-            difficulty = random.choice(list(TaskDifficulty))
+            personality = rng.choice(list(Personality))
+            difficulty = rng.choice(list(TaskDifficulty))
 
             print("Personality :", personality.value)
             print("Difficulty  :", difficulty.value)

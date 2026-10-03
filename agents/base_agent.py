@@ -1,4 +1,5 @@
 from abc import ABC
+import random
 from langchain_core.messages import SystemMessage, HumanMessage
 
 from llm.ollama_client import OllamaClient
@@ -15,6 +16,7 @@ class BaseAgent(ABC):
         self.system_prompt = system_prompt
         self.history = []
         self.llm = OllamaClient()
+        self.rng = random.Random()
 
     def think(self, task: str) -> str:
         messages = [
