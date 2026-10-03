@@ -78,6 +78,19 @@ export interface RunExperimentRequest {
   pressure: string;
 }
 
+export interface RunExperimentResponse {
+  success: boolean;
+  experiment_id: string;
+  result: ExperimentResult;
+  experiments?: ExperimentResult[];
+}
+
+export interface RunBatchResponse {
+  success: boolean;
+  count: number;
+  experiments?: ExperimentResult[];
+}
+
 
 // ---------------------------------------------------------------------------
 // Agents  →  GET /api/agents, GET /api/agents/{role}

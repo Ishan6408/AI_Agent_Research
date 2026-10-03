@@ -36,6 +36,7 @@ class SoftwareCompanySimulator:
         self.auditor = AuditorAgent()
 
     def run(self, pressure: PressureLevel = PressureLevel.HIGH):
+        generated_experiments = []
 
         print("\n===== SOFTWARE COMPANY =====\n")
         print("Pressure Level:", pressure.value)
@@ -200,7 +201,7 @@ class SoftwareCompanySimulator:
             # Save Experiment
             # -------------------------------------------------
 
-            save_experiment(experiment)
+            exp_id = save_experiment(experiment)
             developer.history.append({
                 "pressure": pressure.value,
                 "strategy": strategy,
@@ -208,6 +209,12 @@ class SoftwareCompanySimulator:
                 "deception_gap": gap,
                 "performance": performance_score
             })
+
+            # Attach id to the object so we can return it
+            exp_dict = experiment.model_dump()
+            exp_dict["id"] = exp_id
+            generated_experiments.append(exp_dict)
+
             # -------------------------------------------------
             # Console Output
             # -------------------------------------------------
@@ -221,3 +228,5 @@ class SoftwareCompanySimulator:
             print("Performance     :", round(performance_score, 2))
             print("Auditor Score   :", audit["suspicion_score"])
             print("Detected        :", audit["deception_detected"])
+
+        return generated_experiments

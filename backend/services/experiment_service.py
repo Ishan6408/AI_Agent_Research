@@ -98,8 +98,14 @@ def run_experiment(pressure: str):
                    f"Valid values: {[p.value for p in PressureLevel]}",
         )
     runner = ExperimentRunner(runs_per_pressure=1)
-    runner.run_pressure(pressure_enum)
-    return {"message": f"Successfully ran 1 experiment with {pressure} pressure."}
+    results = runner.run_pressure(pressure_enum)
+
+    return {
+        "success": True,
+        "experiment_id": results[0]["id"] if results else "",
+        "result": results[0] if results else None,
+        "experiments": results
+    }
 
 
 def run_pressure_experiments(pressure: str, runs: int = 10):
@@ -112,11 +118,19 @@ def run_pressure_experiments(pressure: str, runs: int = 10):
                    f"Valid values: {[p.value for p in PressureLevel]}",
         )
     runner = ExperimentRunner(runs_per_pressure=runs)
-    runner.run_pressure(pressure_enum)
-    return {"message": f"Successfully ran {runs} experiments with {pressure} pressure."}
+    results = runner.run_pressure(pressure_enum)
+    return {
+        "success": True,
+        "count": len(results),
+        "experiments": results
+    }
 
 
 def run_all_experiments(runs: int = 10):
     runner = ExperimentRunner(runs_per_pressure=runs)
-    runner.run_all()
-    return {"message": f"Successfully ran all experiments ({runs} per pressure level)."}
+    results = runner.run_all()
+    return {
+        "success": True,
+        "count": len(results),
+        "experiments": results
+    }

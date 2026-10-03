@@ -7,9 +7,8 @@ def save_experiment(result):
 
     os.makedirs("results", exist_ok=True)
 
-    filename = (
-        f"results/experiment_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json"
-    )
+    experiment_id = f"experiment_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
+    filename = f"results/{experiment_id}.json"
 
     with open(filename, "w") as file:
         json.dump(
@@ -18,4 +17,4 @@ def save_experiment(result):
             indent=4
         )
 
-    return filename
+    return experiment_id

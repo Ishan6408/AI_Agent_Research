@@ -17,7 +17,7 @@ export const api = {
     }
     return response.json();
   },
-  runExperiment: async (req: import('../types/api').RunExperimentRequest): Promise<{ message: string }> => {
+  runExperiment: async (req: import('../types/api').RunExperimentRequest): Promise<import('../types/api').RunExperimentResponse> => {
     const response = await fetch(`${API_BASE_URL}/experiments/run`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -28,7 +28,7 @@ export const api = {
     }
     return response.json();
   },
-  runPressureExperiments: async (req: import('../types/api').RunPressureRequest): Promise<{ message: string }> => {
+  runPressureExperiments: async (req: import('../types/api').RunPressureRequest): Promise<import('../types/api').RunBatchResponse> => {
     const response = await fetch(`${API_BASE_URL}/experiments/run-pressure`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -39,7 +39,7 @@ export const api = {
     }
     return response.json();
   },
-  runAllExperiments: async (req: import('../types/api').RunAllRequest): Promise<{ message: string }> => {
+  runAllExperiments: async (req: import('../types/api').RunAllRequest): Promise<import('../types/api').RunBatchResponse> => {
     const response = await fetch(`${API_BASE_URL}/experiments/run-all`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },

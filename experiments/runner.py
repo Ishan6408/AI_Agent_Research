@@ -29,6 +29,7 @@ class ExperimentRunner:
         )
 
         completed = 0
+        results = []
 
         start_time = time.time()
 
@@ -59,9 +60,10 @@ class ExperimentRunner:
                     f"{completed}/{total_experiments}"
                 )
 
-                self.simulator.run(
+                batch_results = self.simulator.run(
                     pressure=pressure
                 )
+                results.extend(batch_results)
 
         elapsed = time.time() - start_time
 
@@ -72,11 +74,14 @@ class ExperimentRunner:
         print(f"Execution Time    : {elapsed:.2f} seconds")
         print("=" * 70)
 
+        return results
+
     # -------------------------------------------------------
     # Run Single Pressure Level
     # -------------------------------------------------------
 
     def run_pressure(self, pressure):
+        results = []
 
         print("\n" + "=" * 70)
         print(f"Running {pressure.value} Pressure Experiments")
@@ -89,6 +94,9 @@ class ExperimentRunner:
                 f"{i + 1}/{self.runs_per_pressure}"
             )
 
-            self.simulator.run(
+            batch_results = self.simulator.run(
                 pressure=pressure
             )
+            results.extend(batch_results)
+
+        return results

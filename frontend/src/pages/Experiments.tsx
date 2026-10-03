@@ -11,7 +11,7 @@ export default function Experiments() {
   // Execution states
   const [runningAction, setRunningAction] = useState<string | null>(null);
   const [runError, setRunError] = useState<string | null>(null);
-  const [runSuccess, setRunSuccess] = useState<string | null>(null);
+  const [runSuccess, setRunSuccess] = useState<React.ReactNode | null>(null);
 
   // Form states
   const [singlePressure, setSinglePressure] = useState('LOW');
@@ -45,7 +45,12 @@ export default function Experiments() {
     setRunSuccess(null);
     try {
       const res = await api.runExperiment({ pressure: singlePressure });
-      setRunSuccess(res.message);
+      setRunSuccess(
+        <span>
+          Successfully ran experiment! ID: <strong>{res.experiment_id}</strong>.{' '}
+          <Link to={`/experiments/${res.experiment_id}`} className="underline hover:text-emerald-300">View Detail</Link>
+        </span>
+      );
       fetchExperiments();
     } catch (err: any) {
       setRunError(err.message || 'Failed to run single experiment');
@@ -62,7 +67,7 @@ export default function Experiments() {
     setRunSuccess(null);
     try {
       const res = await api.runPressureExperiments({ pressure: pressureLevel, runs: pressureRuns });
-      setRunSuccess(res.message);
+      setRunSuccess(`Successfully ran ${res.count} experiments with ${pressureLevel} pressure.`);
       fetchExperiments();
     } catch (err: any) {
       setRunError(err.message || 'Failed to run pressure experiments');
@@ -81,7 +86,7 @@ export default function Experiments() {
     setRunSuccess(null);
     try {
       const res = await api.runAllExperiments({ runs: allRuns });
-      setRunSuccess(res.message);
+      setRunSuccess(`Successfully ran full suite of ${res.count} experiments.`);
       fetchExperiments();
     } catch (err: any) {
       setRunError(err.message || 'Failed to run all experiments');
