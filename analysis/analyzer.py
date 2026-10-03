@@ -17,6 +17,7 @@ class ExperimentAnalyzer:
     # -------------------------------------------------------
 
     def load_experiments(self):
+        """Load experiments from JSON files, falling back to CSV if none exist."""
 
         experiments = []
 
@@ -63,6 +64,51 @@ class ExperimentAnalyzer:
                     f"Skipping {file.name}: {e}"
                 )
 
+
+        # -------------------------------------------------------
+        # CSV fallback
+        # When no JSON files exist (data was pre-generated and
+        # saved only as experiment_summary.csv), load from CSV so
+        # the API can serve the existing dataset without running
+        # new experiments.  No analysis logic is changed here.
+        # -------------------------------------------------------
+
+        if not experiments:
+
+            csv_path = self.results_folder / "experiment_summary.csv"
+
+            if csv_path.exists():
+
+                try:
+
+                    csv_df = pd.read_csv(csv_path)
+
+                    # Normalise deception_detected from CSV string
+                    # representation back to Python booleans so
+                    # downstream code behaves consistently.
+                    if "deception_detected" in csv_df.columns:
+                        csv_df["deception_detected"] = (
+                            csv_df["deception_detected"]
+                            .astype(str)
+                            .str.strip()
+                            .str.lower()
+                            .map({"true": True, "false": False})
+                            .fillna(False)
+                            .astype(bool)
+                        )
+
+                    experiments = csv_df.to_dict(orient="records")
+
+                    print(
+                        f"No JSON files found. "
+                        f"Loaded {len(experiments)} experiments from CSV."
+                    )
+
+                except Exception as e:
+
+                    print(
+                        f"Could not load CSV fallback: {e}"
+                    )
 
         return experiments
 
