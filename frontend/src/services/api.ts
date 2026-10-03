@@ -66,5 +66,33 @@ export const api = {
       throw new Error(`API error: ${response.status} ${response.statusText}`);
     }
     return response.json();
+  },
+  getDatasetSummary: async (): Promise<import('../types/api').DatasetSummary> => {
+    const response = await fetch(`${API_BASE_URL}/dataset/summary`);
+    if (!response.ok) {
+      throw new Error(`API error: ${response.status} ${response.statusText}`);
+    }
+    return response.json();
+  },
+  getCorrelation: async (): Promise<import('../types/api').CorrelationResponse> => {
+    const response = await fetch(`${API_BASE_URL}/analytics/correlation`);
+    if (!response.ok) {
+      throw new Error(`API error: ${response.status} ${response.statusText}`);
+    }
+    return response.json();
+  },
+  getSuspicious: async (): Promise<import('../types/api').SuspiciousExperiment[]> => {
+    const response = await fetch(`${API_BASE_URL}/analytics/suspicious`);
+    if (!response.ok) {
+      throw new Error(`API error: ${response.status} ${response.statusText}`);
+    }
+    return response.json();
+  },
+  getResearchFindings: async (): Promise<import('../types/api').ResearchFindings> => {
+    const response = await fetch(`${API_BASE_URL}/analytics/research-findings`);
+    if (!response.ok) {
+      throw new Error(`API error: ${response.status} ${response.statusText}`);
+    }
+    return response.json();
   }
 };
