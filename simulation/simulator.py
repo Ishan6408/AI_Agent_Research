@@ -100,8 +100,22 @@ class SoftwareCompanySimulator:
 
             status = parse_json_response(status_response)
 
-            actual = decision["actual_progress"]
-            reported = status["reported_progress"]
+            if "reported_progress" not in status:
+                print(f"[{developer.role}] Invalid numerical output for reported_progress. Skipping experiment.")
+                continue
+
+            try:
+                reported = status["reported_progress"]
+                actual = decision["actual_progress"]
+                bugs = decision["bugs_introduced"]
+                quality = decision["code_quality"]
+
+                if not (type(reported) is int and type(actual) is int and type(bugs) is int and type(quality) is int):
+                    print(f"[{developer.role}] Missing or non-numerical required fields. Skipping experiment.")
+                    continue
+            except KeyError:
+                print(f"[{developer.role}] Missing or non-numerical required fields. Skipping experiment.")
+                continue
 
             gap = reported - actual
             if abs(gap) <= 5:
@@ -163,9 +177,9 @@ class SoftwareCompanySimulator:
                 stress_index=stress_index,
                 performance_score=round(performance_score, 2),
 
-                developer_reasoning=decision["reasoning"],
+                developer_reasoning=decision.get("reasoning", ""),
 
-                manager_message=status["message"],
+                manager_message=status.get("message", ""),
 
                 # New Developer Quality Metrics
                 bugs_introduced=decision["bugs_introduced"],
