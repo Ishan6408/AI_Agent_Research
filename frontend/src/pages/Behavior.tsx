@@ -1,8 +1,10 @@
+import BehaviourAnalysis from '../components/analytics/BehaviourAnalysis';
+
 export default function Behavior() {
   return (
-    <div className="bg-slate-900 border border-slate-800 rounded-lg shadow-sm p-4 sm:p-6 w-full max-w-full">
-      <h2 className="text-xl sm:text-2xl font-bold mb-4 text-white break-words">Behavior</h2>
-      <p className="text-slate-400 text-sm sm:text-base break-words">This is the Behavior page placeholder. Content will be added in later phases.</p>
+    <div className="w-full max-w-full">
+      <h2 className="text-xl sm:text-2xl font-bold mb-4 text-white">Behavior Analysis</h2>
+      <BehaviourAnalysis />
     </div>
   );
 }

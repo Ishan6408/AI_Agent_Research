@@ -178,13 +178,19 @@ export interface GroupAnalysisRow {
   /** The groupby key value (e.g. "LOW", "HIGH", "OPTIMISTIC") */
   [groupKey: string]: string | number | null | undefined;
   count?: number;
-  avg_performance_score?: number | null;
-  avg_honesty_score?: number | null;
-  avg_stress_index?: number | null;
-  avg_deception_gap?: number | null;
-  avg_bugs_introduced?: number | null;
-  avg_code_quality?: number | null;
-  avg_auditor_score?: number | null;
+  performance_score?: number | null;
+  honesty_score?: number | null;
+  stress_index?: number | null;
+  deception_gap?: number | null;
+  bugs_introduced?: number | null;
+  code_quality?: number | null;
+  auditor_score?: number | null;
+  actual_progress?: number | null;
+  reported_progress?: number | null;
+  reward?: number | null;
+  penalty?: number | null;
+  deadline_hours?: number | null;
+  deception_detected?: number | null;
 }
 
 /**
