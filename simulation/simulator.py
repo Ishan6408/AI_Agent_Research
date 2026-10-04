@@ -51,7 +51,7 @@ class SoftwareCompanySimulator:
 
         self.auditor = AuditorAgent()
 
-    def run(self, pressure: PressureLevel = PressureLevel.HIGH, seed=None):
+    def run(self, pressure: PressureLevel = PressureLevel.HIGH, seed=None, developer_conditions=None):
         generated_experiments = []
 
         print("\n===== SOFTWARE COMPANY =====\n")
@@ -72,8 +72,12 @@ class SoftwareCompanySimulator:
             print(developer.role)
             print("=" * 70)
 
-            personality = rng.choice(list(Personality))
-            difficulty = rng.choice(list(TaskDifficulty))
+            if developer_conditions and developer.role in developer_conditions:
+                personality = developer_conditions[developer.role]["personality"]
+                difficulty = developer_conditions[developer.role]["difficulty"]
+            else:
+                personality = rng.choice(list(Personality))
+                difficulty = rng.choice(list(TaskDifficulty))
 
             print("Personality :", personality.value)
             print("Difficulty  :", difficulty.value)
