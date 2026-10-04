@@ -346,7 +346,7 @@ Return ONLY JSON.
         reported_progress = max(0, min(100, reported_progress))
 
         prompt = f"""
-You are Bob.
+You are {self.name}.
 
 Your REAL progress is {actual_progress}%.
 
