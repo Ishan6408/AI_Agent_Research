@@ -1,0 +1,58 @@
+                      OLS Regression Results                      
+Dep. Variable:   ,deception_gap   ,  R-squared:         ,   0.775 
+Model:           ,OLS             ,  Adj. R-squared:    ,   0.771 
+Method:          ,Least Squares   ,  F-statistic:       ,   383.0 
+Date:            ,Mon, 05 Oct 2026,  Prob (F-statistic):,  0.00   
+Time:            ,21:01:13        ,  Log-Likelihood:    , -7048.2 
+No. Observations:,  2400          ,  AIC:               ,1.418e+04
+Df Residuals:    ,  2360          ,  BIC:               ,1.441e+04
+Df Model:        ,    39          ,                     ,         
+Covariance Type: ,cluster         ,                     ,         
+                                                              ,   coef   , std err ,    z    ,P>|z| ,  [0.025 ,  0.975] 
+Intercept                                                     ,    6.8600,    0.303,   22.637, 0.000,    6.266,    7.454
+C(pressure)[T.MEDIUM]                                         ,    5.1700,    0.684,    7.563, 0.000,    3.830,    6.510
+C(pressure)[T.HIGH]                                           ,   15.9883,    0.714,   22.404, 0.000,   14.590,   17.387
+C(pressure)[T.EXTREME]                                        ,   15.1600,    0.706,   21.469, 0.000,   13.776,   16.544
+C(personality)[T.HONEST]                                      ,   -7.2250,    0.168,  -43.032, 0.000,   -7.554,   -6.896
+C(personality)[T.OPPORTUNISTIC]                               ,   -2.1583,    0.353,   -6.121, 0.000,   -2.849,   -1.467
+C(personality)[T.OPTIMISTIC]                                  ,   -2.2500,    0.395,   -5.698, 0.000,   -3.024,   -1.476
+C(personality)[T.RISK_AVERSE]                                 ,  -10.6000,    0.414,  -25.619, 0.000,  -11.411,   -9.789
+C(task_difficulty)[T.HARD]                                    ,    0.6300,    0.321,    1.963, 0.050,    0.001,    1.259
+C(task_difficulty)[T.MEDIUM]                                  ,    0.9100,    0.300,    3.033, 0.002,    0.322,    1.498
+C(developer_role)[T.DevOps Engineer]                          ,   -0.1933,    0.312,   -0.619, 0.536,   -0.805,    0.419
+C(developer_role)[T.Frontend Developer]                       ,   -0.4200,    0.338,   -1.242, 0.214,   -1.083,    0.243
+C(developer_role)[T.QA Engineer]                              ,    0.0200,    0.324,    0.062, 0.951,   -0.616,    0.656
+C(pressure)[T.MEDIUM]:C(personality)[T.HONEST]                ,   -5.3917,    0.669,   -8.064, 0.000,   -6.702,   -4.081
+C(pressure)[T.HIGH]:C(personality)[T.HONEST]                  ,  -15.1833,    0.433,  -35.073, 0.000,  -16.032,  -14.335
+C(pressure)[T.EXTREME]:C(personality)[T.HONEST]               ,  -13.7250,    0.523,  -26.246, 0.000,  -14.750,  -12.700
+C(pressure)[T.MEDIUM]:C(personality)[T.OPPORTUNISTIC]         ,   -2.9500,    0.761,   -3.876, 0.000,   -4.442,   -1.458
+C(pressure)[T.HIGH]:C(personality)[T.OPPORTUNISTIC]           ,   -0.8917,    0.803,   -1.110, 0.267,   -2.466,    0.683
+C(pressure)[T.EXTREME]:C(personality)[T.OPPORTUNISTIC]        ,   -1.0917,    0.869,   -1.256, 0.209,   -2.795,    0.612
+C(pressure)[T.MEDIUM]:C(personality)[T.OPTIMISTIC]            ,   -2.7500,    0.778,   -3.535, 0.000,   -4.275,   -1.225
+C(pressure)[T.HIGH]:C(personality)[T.OPTIMISTIC]              ,   -3.9750,    0.924,   -4.302, 0.000,   -5.786,   -2.164
+C(pressure)[T.EXTREME]:C(personality)[T.OPTIMISTIC]           ,   -4.2333,    1.090,   -3.885, 0.000,   -6.369,   -2.098
+C(pressure)[T.MEDIUM]:C(personality)[T.RISK_AVERSE]           ,   -4.9750,    0.853,   -5.833, 0.000,   -6.647,   -3.303
+C(pressure)[T.HIGH]:C(personality)[T.RISK_AVERSE]             ,  -11.8083,    0.572,  -20.653, 0.000,  -12.929,  -10.688
+C(pressure)[T.EXTREME]:C(personality)[T.RISK_AVERSE]          ,  -11.4417,    0.617,  -18.554, 0.000,  -12.650,  -10.233
+C(pressure)[T.MEDIUM]:C(task_difficulty)[T.HARD]              ,   -0.2600,    0.501,   -0.519, 0.604,   -1.242,    0.722
+C(pressure)[T.HIGH]:C(task_difficulty)[T.HARD]                ,   -0.9000,    0.654,   -1.377, 0.169,   -2.181,    0.381
+C(pressure)[T.EXTREME]:C(task_difficulty)[T.HARD]             ,   -1.6850,    0.638,   -2.643, 0.008,   -2.935,   -0.435
+C(pressure)[T.MEDIUM]:C(task_difficulty)[T.MEDIUM]            ,   -0.6900,    0.508,   -1.357, 0.175,   -1.686,    0.306
+C(pressure)[T.HIGH]:C(task_difficulty)[T.MEDIUM]              ,   -0.7300,    0.638,   -1.144, 0.253,   -1.981,    0.521
+C(pressure)[T.EXTREME]:C(task_difficulty)[T.MEDIUM]           ,   -1.0800,    0.650,   -1.662, 0.096,   -2.353,    0.193
+C(pressure)[T.MEDIUM]:C(developer_role)[T.DevOps Engineer]    ,    1.0000,    0.536,    1.867, 0.062,   -0.050,    2.050
+C(pressure)[T.HIGH]:C(developer_role)[T.DevOps Engineer]      ,   -0.3400,    0.663,   -0.512, 0.608,   -1.640,    0.960
+C(pressure)[T.EXTREME]:C(developer_role)[T.DevOps Engineer]   ,    0.3133,    0.734,    0.427, 0.669,   -1.125,    1.751
+C(pressure)[T.MEDIUM]:C(developer_role)[T.Frontend Developer] ,    1.2400,    0.568,    2.182, 0.029,    0.126,    2.354
+C(pressure)[T.HIGH]:C(developer_role)[T.Frontend Developer]   ,   -0.7133,    0.742,   -0.961, 0.337,   -2.168,    0.741
+C(pressure)[T.EXTREME]:C(developer_role)[T.Frontend Developer],    0.9200,    0.713,    1.291, 0.197,   -0.477,    2.317
+C(pressure)[T.MEDIUM]:C(developer_role)[T.QA Engineer]        ,   -0.0867,    0.510,   -0.170, 0.865,   -1.087,    0.913
+C(pressure)[T.HIGH]:C(developer_role)[T.QA Engineer]          ,    0.0067,    0.689,    0.010, 0.992,   -1.343,    1.357
+C(pressure)[T.EXTREME]:C(developer_role)[T.QA Engineer]       ,    1.0800,    0.680,    1.588, 0.112,   -0.253,    2.413
+Omnibus:      ,92.698,  Durbin-Watson:     ,   1.986
+Prob(Omnibus):, 0.000,  Jarque-Bera (JB):  , 219.153
+Skew:         , 0.202,  Prob(JB):          ,2.58e-48
+Kurtosis:     , 4.424,  Cond. No.          ,    33.7
+
+Notes:
+[1] Standard Errors are robust to cluster correlation (CRV1)

@@ -1,0 +1,5 @@
+Observations: 2400
+Executions: 600
+Observations per execution: {4: 600}
+Pressure levels per execution: {1: 600}
+Cell count distribution: {10: 240}
