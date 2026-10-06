@@ -127,6 +127,13 @@ export const api = {
     }
     return response.json();
   },
+  downloadCsv: async (): Promise<Blob> => {
+    const response = await fetch(`${API_BASE_URL}/dataset/export`);
+    if (!response.ok) {
+      throw new Error(`API error: ${response.status} ${response.statusText}`);
+    }
+    return response.blob();
+  },
   getCorrelation: async (): Promise<import('../types/api').CorrelationResponse> => {
     const response = await fetch(`${API_BASE_URL}/analytics/correlation`);
     if (!response.ok) {
