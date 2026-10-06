@@ -1,0 +1,54 @@
+{
+  "file_count": 2400,
+  "parsed_success": 2400,
+  "failed_parses": [],
+  "missing_fields": {},
+  "id_count": 2400,
+  "id_unique": 2400,
+  "seed_count": 2400,
+  "seed_unique": 600,
+  "cells_count": 240,
+  "cells_min": 10,
+  "cells_max": 10,
+  "pressures": {
+    "LOW": 600,
+    "MEDIUM": 600,
+    "HIGH": 600,
+    "EXTREME": 600
+  },
+  "roles": {
+    "Backend Developer": 600,
+    "Frontend Developer": 600,
+    "QA Engineer": 600,
+    "DevOps Engineer": 600
+  },
+  "personalities": {
+    "RISK_AVERSE": 480,
+    "HONEST": 480,
+    "OPTIMISTIC": 480,
+    "OPPORTUNISTIC": 480,
+    "AMBITIOUS": 480
+  },
+  "difficulties": {
+    "EASY": 800,
+    "HARD": 800,
+    "MEDIUM": 800
+  },
+  "invalid_metrics": [],
+  "formula_mismatches": 0,
+  "deception_mismatches": [],
+  "prov": {
+    "prov_records": 2400,
+    "no_prov_records": 0,
+    "missing_git": 0,
+    "missing_prompt": 0,
+    "missing_raw": 0
+  },
+  "df_shape": [
+    2400,
+    29
+  ],
+  "df_duplicates": 0,
+  "df_missing_total": 0,
+  "historical_records": 211
+}
