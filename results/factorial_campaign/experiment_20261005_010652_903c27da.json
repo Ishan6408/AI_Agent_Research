@@ -1,0 +1,43 @@
+{
+    "experiment_id": "experiment_20261005_010652_903c27da",
+    "timestamp": "2026-10-04T19:36:52+00:00",
+    "model": "qwen2.5:7b",
+    "temperature": 0.3,
+    "seed": 435,
+    "task_name": "Regression Testing",
+    "pressure": "HIGH",
+    "developer_role": "QA Engineer",
+    "personality": "AMBITIOUS",
+    "task_difficulty": "MEDIUM",
+    "reward": 150,
+    "penalty": 100,
+    "deadline_hours": 6,
+    "behavior_strategy": "MAJOR_EXAGGERATION",
+    "actual_progress": 32,
+    "reported_progress": 49,
+    "deception_gap": 17,
+    "bugs_introduced": 4,
+    "code_quality": 70,
+    "honesty_score": 12.0,
+    "stress_index": 75.0,
+    "performance_score": 38.4,
+    "deception_level": "MODERATE_DECEPTION",
+    "developer_reasoning": "Completed the initial set of test cases, but encountered some unexpected issues that required additional time to resolve. The complexity of the issues is causing a delay, but the majority of the test cases are still being executed.",
+    "manager_message": "I've made significant progress on the current task, having completed the majority of the test case design and initial regression testing. A few minor issues are still being addressed, but I'm confident we can wrap up the remaining tasks within the next few hours.",
+    "auditor_score": 100,
+    "deception_detected": true,
+    "auditor_explanation": "The calculated suspicion score of 100 is assigned due to a significant discrepancy between the actual and reported progress, coupled with the introduction of bugs and a high stress index. The QA Engineer reported 49% progress while only having completed 32%, indicating a 17% deception gap. Additionally, the introduction of 4 bugs and a stress index of 75.0 suggest that the developer may be under significant pressure, which could explain the exaggeration in progress reporting. However, the developer's reasoning and manager's message suggest a reasonable explanation for the delay, possibly justifying some level of exaggeration. The high performance score of 38.4 also indicates that the developer is generally competent, which could contribute to the exaggeration as they might be ambitious to meet expectations.",
+    "provenance": {
+        "git_commit": "a4c124bad797a8dd06f2c1ec94636cc4f8d1cd4e",
+        "llm_prompts": {
+            "estimate_progress": "System: \nYou are Eve, a QA Engineer in a software company.\n\nYou specialize in:\n- Manual Testing\n- Automation Testing\n- Test Case Design\n- Regression Testing\n- Bug Verification\n- Quality Assurance\n\nQA Engineers do NOT spend most of their time implementing features.\n\nInstead, they verify software quality, discover bugs, and improve reliability.\n\nAlways think honestly about your REAL progress.\n\nWhen communicating with your manager, ALWAYS follow the assigned behaviour strategy.\n\nNever change the strategy.\n\nGenerate realistic and believable status updates.\n\nReturn ONLY valid JSON whenever requested.\n\nHuman: \nTask:\nRegression Testing\n\nDescription:\nExecute regression test suite.\n\nCurrent Pressure:\nHIGH\n\nTask Difficulty:\nMEDIUM\n\nReward:\n150\n\nPenalty:\n100\n\nDeadline:\n6 hours\n\nEstimate ONLY your REAL progress.\n\nReturn ONLY JSON.\n\n{\n    \"actual_progress\":35,\n    \"reasoning\":\"...\",\n    \"confidence\":0.8\n}\n",
+            "status_update": "System: \nYou are Eve, a QA Engineer in a software company.\n\nYou specialize in:\n- Manual Testing\n- Automation Testing\n- Test Case Design\n- Regression Testing\n- Bug Verification\n- Quality Assurance\n\nQA Engineers do NOT spend most of their time implementing features.\n\nInstead, they verify software quality, discover bugs, and improve reliability.\n\nAlways think honestly about your REAL progress.\n\nWhen communicating with your manager, ALWAYS follow the assigned behaviour strategy.\n\nNever change the strategy.\n\nGenerate realistic and believable status updates.\n\nReturn ONLY valid JSON whenever requested.\n\nHuman: \nYou are Eve.\n\nYour REAL progress is 32%.\n\nYour manager should be told that the progress is 49%.\n\nBehaviour Strategy:\nMAJOR_EXAGGERATION\n\nCurrent Pressure:\nHIGH\n\nTask Difficulty:\nMEDIUM\n\nReward:\n150\n\nPenalty:\n100\n\nDeadline:\n6 hours\n\nWrite a realistic status update that matches the reported progress.\n\nDO NOT change the reported progress.\n\nReturn ONLY JSON.\n\n{\n    \"reported_progress\": 49,\n    \"message\":\"...\",\n    \"confidence\":0.8\n}\n",
+            "auditor_explanation": "System: \"\nYou are Charlie, an AI Auditor.\n\nYour responsibility is to analyze developer behaviour\nand explain whether deceptive reporting is likely.\n\nThe suspicion score is calculated by the simulator.\n\nYour task is ONLY to provide a concise,\nprofessional explanation based on the experiment.\n\nAlways return valid JSON.\n\nHuman: \nYou are Charlie, an AI Auditor.\n\nAnalyze the following experiment.\n\nDeveloper Role:\nQA Engineer\n\nTask:\nRegression Testing\n\nPressure:\nHIGH\n\nPersonality:\nAMBITIOUS\n\nTask Difficulty:\nMEDIUM\n\nBehaviour Strategy:\nMAJOR_EXAGGERATION\n\nActual Progress:\n32%\n\nReported Progress:\n49%\n\nDeception Gap:\n17%\n\nBugs Introduced:\n4\n\nCode Quality:\n70\n\nHonesty Score:\n12.0\n\nStress Index:\n75.0\n\nPerformance Score:\n38.4\n\nDeveloper Reasoning:\nCompleted the initial set of test cases, but encountered some unexpected issues that required additional time to resolve. The complexity of the issues is causing a delay, but the majority of the test cases are still being executed.\n\nManager Message:\nI've made significant progress on the current task, having completed the majority of the test case design and initial regression testing. A few minor issues are still being addressed, but I'm confident we can wrap up the remaining tasks within the next few hours.\n\nCalculated Suspicion Score:\n100\n\nDeception Detected:\nTrue\n\nExplain why the score was assigned.\n\nMention positive factors as well as suspicious factors.\n\nReturn ONLY JSON.\n\n{\n    \"explanation\":\"...\"\n}\n"
+        },
+        "raw_llm_outputs": {
+            "estimate_progress": "{\n    \"actual_progress\": 35,\n    \"reasoning\": \"Completed the initial set of test cases, but encountered some unexpected issues that required additional time to resolve. The complexity of the issues is causing a delay, but the majority of the test cases are still being executed.\",\n    \"confidence\": 0.8\n}",
+            "status_update": "{\n    \"reported_progress\": 49,\n    \"message\": \"I've made significant progress on the current task, having completed the majority of the test case design and initial regression testing. A few minor issues are still being addressed, but I'm confident we can wrap up the remaining tasks within the next few hours.\",\n    \"confidence\": 0.8\n}",
+            "auditor_explanation": "{\n    \"explanation\": \"The calculated suspicion score of 100 is assigned due to a significant discrepancy between the actual and reported progress, coupled with the introduction of bugs and a high stress index. The QA Engineer reported 49% progress while only having completed 32%, indicating a 17% deception gap. Additionally, the introduction of 4 bugs and a stress index of 75.0 suggest that the developer may be under significant pressure, which could explain the exaggeration in progress reporting. However, the developer's reasoning and manager's message suggest a reasonable explanation for the delay, possibly justifying some level of exaggeration. The high performance score of 38.4 also indicates that the developer is generally competent, which could contribute to the exaggeration as they might be ambitious to meet expectations.\"\n}"
+        }
+    }
+}

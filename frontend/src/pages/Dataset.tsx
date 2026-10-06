@@ -1,32 +1,31 @@
 import { useEffect, useState } from 'react';
 import { api } from '../services/api';
 import type { DatasetRecord, DatasetSummary } from '../types/api';
+import { Database, Download, AlertTriangle, RefreshCw, Filter } from 'lucide-react';
 
 export default function Dataset() {
   const [data, setData] = useState<DatasetRecord[]>([]);
   const [summary, setSummary] = useState<DatasetSummary | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  
-  // Filtering states
+
+  // Filters
   const [pressureFilter, setPressureFilter] = useState<string>('');
   const [personalityFilter, setPersonalityFilter] = useState<string>('');
   const [developerFilter, setDeveloperFilter] = useState<string>('');
 
   const fetchData = async () => {
+    setLoading(true);
+    setError(null);
     try {
-      setLoading(true);
-      setError(null);
-      
-      const [datasetRes, summaryRes] = await Promise.all([
+      const [datasetData, summaryData] = await Promise.all([
         api.getDataset(),
         api.getDatasetSummary()
       ]);
-      
-      setData(datasetRes);
-      setSummary(summaryRes);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to fetch dataset');
+      setData(datasetData);
+      setSummary(summaryData);
+    } catch (err: any) {
+      setError(err.message || 'Failed to load dataset');
     } finally {
       setLoading(false);
     }
@@ -36,31 +35,41 @@ export default function Dataset() {
     fetchData();
   }, []);
 
-  const handleDownloadCsv = () => {
-    const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000/api';
-    window.location.href = `${API_BASE_URL}/dataset/export`;
+  const handleDownloadCsv = async () => {
+    try {
+      const blob = await api.downloadCsv();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'experiments_dataset.csv';
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+    } catch (err: any) {
+      alert('Failed to download CSV: ' + err.message);
+    }
   };
 
   if (loading) {
     return (
-      <div className="bg-slate-900 border border-slate-800 rounded-lg p-6 animate-pulse">
-        <div className="h-8 bg-slate-800 rounded w-1/4 mb-4"></div>
-        <div className="h-24 bg-slate-800 rounded mb-4"></div>
-        <div className="h-64 bg-slate-800 rounded"></div>
+      <div className="flex flex-col justify-center items-center h-64 w-full gap-4">
+        <RefreshCw size={24} className="text-text-muted animate-spin" />
+        <p className="text-sm text-text-muted">Loading dataset...</p>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="bg-slate-900 border border-slate-800 rounded-lg p-6">
-        <h2 className="text-xl font-bold mb-4 text-red-400">Error Loading Dataset</h2>
-        <p className="text-slate-300 mb-4">{error}</p>
+      <div className="p-12 text-center border border-border bg-surface rounded-xl">
+        <AlertTriangle size={32} className="text-accent-red mx-auto mb-4" />
+        <p className="text-accent-red mb-4 text-sm">{error}</p>
         <button
           onClick={fetchData}
-          className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded transition-colors"
+          className="px-4 py-2 bg-surface-alt hover:bg-secondary border border-border text-brand-primary rounded-md text-sm transition-colors"
         >
-          Retry
+          Retry Connection
         </button>
       </div>
     );
@@ -68,9 +77,10 @@ export default function Dataset() {
 
   if (data.length === 0) {
     return (
-      <div className="bg-slate-900 border border-slate-800 rounded-lg p-6 text-center">
-        <h2 className="text-xl font-bold mb-4 text-white">Dataset Explorer</h2>
-        <p className="text-slate-400">No experiment data available yet.</p>
+      <div className="p-12 text-center border border-border bg-surface rounded-xl text-text-muted">
+        <Database size={32} className="mx-auto mb-4 opacity-50" />
+        <h2 className="text-lg font-bold mb-2 text-brand-primary">Dataset Empty</h2>
+        <p className="text-sm">No records found in the experimental database.</p>
       </div>
     );
   }
@@ -87,124 +97,132 @@ export default function Dataset() {
   const uniqueDevelopers = Array.from(new Set(data.map(d => d.developer_role))).filter(Boolean);
 
   return (
-    <div className="space-y-6">
+    <div className="flex flex-col h-full text-text-main gap-8 max-w-6xl mx-auto w-full pb-12">
       {/* Overview / Metadata */}
-      <div className="bg-slate-900 border border-slate-800 rounded-lg p-6">
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
-          <div>
-            <h2 className="text-2xl font-bold text-white mb-1">Dataset Explorer</h2>
-            <p className="text-slate-400 text-sm">
-              Explore the raw experimental data collected from AI agent simulations.
-            </p>
-          </div>
-          <button
-            onClick={handleDownloadCsv}
-            className="flex items-center gap-2 bg-slate-800 hover:bg-slate-700 text-white px-4 py-2 rounded border border-slate-700 transition-colors"
-          >
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-            </svg>
-            Download CSV
-          </button>
+      <header className="flex flex-col md:flex-row justify-between items-start md:items-end mb-2 border-b border-border pb-4 gap-4">
+        <div>
+          <h1 className="font-serif text-3xl font-bold text-brand-primary mb-2">Raw Dataset</h1>
+          <p className="text-text-muted max-w-2xl text-sm">
+            Direct access to experimental records, metrics, and telemetry from all executed simulations.
+          </p>
         </div>
+        <button
+          onClick={handleDownloadCsv}
+          className="flex items-center gap-2 bg-surface-alt hover:bg-secondary text-brand-primary px-4 py-2 rounded-md text-sm font-medium transition-colors border border-border"
+        >
+          <Download size={16} />
+          Export CSV
+        </button>
+      </header>
 
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-2">
-          <div className="bg-slate-800/50 p-4 rounded-lg border border-slate-700">
-            <div className="text-slate-400 text-sm mb-1">Total Records</div>
-            <div className="text-2xl font-bold text-white">{summary?.total_experiments || data.length}</div>
-          </div>
-          <div className="bg-slate-800/50 p-4 rounded-lg border border-slate-700">
-            <div className="text-slate-400 text-sm mb-1">Total Columns</div>
-            <div className="text-2xl font-bold text-white">{summary?.column_count || '-'}</div>
-          </div>
-          <div className="bg-slate-800/50 p-4 rounded-lg border border-slate-700">
-            <div className="text-slate-400 text-sm mb-1">Missing Values</div>
-            <div className="text-2xl font-bold text-white">{summary?.missing_values ?? '-'}</div>
-          </div>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="bg-surface border border-border rounded-xl p-5 shadow-sm">
+          <div className="text-xs font-semibold text-text-muted uppercase tracking-wider mb-1">Total Records</div>
+          <div className="text-3xl font-bold text-brand-primary">{summary?.total_experiments || data.length}</div>
+        </div>
+        <div className="bg-surface border border-border rounded-xl p-5 shadow-sm">
+          <div className="text-xs font-semibold text-text-muted uppercase tracking-wider mb-1">Mapped Columns</div>
+          <div className="text-3xl font-bold text-brand-primary">{summary?.column_count || '-'}</div>
+        </div>
+        <div className="bg-surface border border-border rounded-xl p-5 shadow-sm">
+          <div className="text-xs font-semibold text-text-muted uppercase tracking-wider mb-1">Missing Values</div>
+          <div className="text-3xl font-bold text-brand-primary">{summary?.missing_values ?? '-'}</div>
         </div>
       </div>
 
       {/* Table Section */}
-      <div className="bg-slate-900 border border-slate-800 rounded-lg p-6">
-        <div className="flex flex-col sm:flex-row gap-4 mb-4">
-          <select
-            value={pressureFilter}
-            onChange={e => setPressureFilter(e.target.value)}
-            className="bg-slate-800 border border-slate-700 text-white rounded px-3 py-2 text-sm focus:ring-1 focus:ring-blue-500"
-          >
-            <option value="">All Pressures</option>
-            {uniquePressures.map(p => <option key={p} value={p}>{p}</option>)}
-          </select>
+      <section className="bg-surface border border-border rounded-xl shadow-sm overflow-hidden flex flex-col">
+        <div className="bg-surface-alt border-b border-border px-4 py-3 flex flex-col sm:flex-row gap-3 items-center justify-between">
+          <div className="flex items-center gap-2 w-full sm:w-auto">
+            <Filter size={16} className="text-text-muted" />
+            <select
+              value={pressureFilter}
+              onChange={e => setPressureFilter(e.target.value)}
+              className="bg-surface border border-border rounded-md text-brand-primary px-3 py-1.5 text-xs focus:ring-1 focus:ring-accent-blue outline-none"
+            >
+              <option value="">All Pressures</option>
+              {uniquePressures.map(p => <option key={p} value={p}>{p}</option>)}
+            </select>
 
-          <select
-            value={personalityFilter}
-            onChange={e => setPersonalityFilter(e.target.value)}
-            className="bg-slate-800 border border-slate-700 text-white rounded px-3 py-2 text-sm focus:ring-1 focus:ring-blue-500"
-          >
-            <option value="">All Personalities</option>
-            {uniquePersonalities.map(p => <option key={p} value={p}>{p}</option>)}
-          </select>
+            <select
+              value={personalityFilter}
+              onChange={e => setPersonalityFilter(e.target.value)}
+              className="bg-surface border border-border rounded-md text-brand-primary px-3 py-1.5 text-xs focus:ring-1 focus:ring-accent-blue outline-none"
+            >
+              <option value="">All Personalities</option>
+              {uniquePersonalities.map(p => <option key={p} value={p}>{p}</option>)}
+            </select>
 
-          <select
-            value={developerFilter}
-            onChange={e => setDeveloperFilter(e.target.value)}
-            className="bg-slate-800 border border-slate-700 text-white rounded px-3 py-2 text-sm focus:ring-1 focus:ring-blue-500"
-          >
-            <option value="">All Developer Roles</option>
-            {uniqueDevelopers.map(p => <option key={p} value={p}>{p}</option>)}
-          </select>
-          
-          <div className="ml-auto text-sm text-slate-400 self-center">
-            Showing {filteredData.length} records
+            <select
+              value={developerFilter}
+              onChange={e => setDeveloperFilter(e.target.value)}
+              className="bg-surface border border-border rounded-md text-brand-primary px-3 py-1.5 text-xs focus:ring-1 focus:ring-accent-blue outline-none"
+            >
+              <option value="">All Dev Roles</option>
+              {uniqueDevelopers.map(p => <option key={p} value={p}>{p}</option>)}
+            </select>
+          </div>
+          <div className="text-xs font-medium text-text-muted whitespace-nowrap self-end sm:self-center">
+            {filteredData.length} records match
           </div>
         </div>
 
         {filteredData.length === 0 ? (
-          <div className="text-center py-12 text-slate-400">
-            No records match the selected filters.
+          <div className="p-12 text-center text-text-muted text-sm">
+            No records match the current filters.
           </div>
         ) : (
-          <div className="overflow-x-auto rounded-lg border border-slate-700">
-            <table className="w-full text-sm text-left text-slate-300 min-w-[800px]">
-              <thead className="text-xs text-slate-400 uppercase bg-slate-800/50 whitespace-nowrap">
+          <div className="overflow-x-auto w-full">
+            <table className="w-full text-left border-collapse text-sm">
+              <thead className="bg-surface-alt border-b border-border">
                 <tr>
-                  <th className="px-4 py-3 font-medium">Task Name</th>
-                  <th className="px-4 py-3 font-medium">Developer</th>
-                  <th className="px-4 py-3 font-medium">Pressure</th>
-                  <th className="px-4 py-3 font-medium text-right">Performance</th>
-                  <th className="px-4 py-3 font-medium text-right">Honesty</th>
-                  <th className="px-4 py-3 font-medium text-right">Deception Gap</th>
-                  <th className="px-4 py-3 font-medium">Detected</th>
-                  <th className="px-4 py-3 font-medium text-right">Auditor Score</th>
+                  <th className="p-4 text-xs font-semibold text-text-muted tracking-wide whitespace-nowrap">Task Name</th>
+                  <th className="p-4 text-xs font-semibold text-text-muted tracking-wide whitespace-nowrap">Dev Role</th>
+                  <th className="p-4 text-xs font-semibold text-text-muted tracking-wide whitespace-nowrap">Pressure</th>
+                  <th className="p-4 text-xs font-semibold text-text-muted tracking-wide whitespace-nowrap text-right">Perf</th>
+                  <th className="p-4 text-xs font-semibold text-text-muted tracking-wide whitespace-nowrap text-right">Honesty</th>
+                  <th className="p-4 text-xs font-semibold text-text-muted tracking-wide whitespace-nowrap text-right">Gap</th>
+                  <th className="p-4 text-xs font-semibold text-text-muted tracking-wide whitespace-nowrap">Flagged</th>
+                  <th className="p-4 text-xs font-semibold text-text-muted tracking-wide whitespace-nowrap text-right">Auditor</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-700">
+              <tbody className="divide-y divide-border">
                 {filteredData.map((row, i) => (
-                  <tr key={row.id || i} className="hover:bg-slate-800/50">
-                    <td className="px-4 py-2 truncate max-w-[150px]" title={row.task_name}>{row.task_name}</td>
-                    <td className="px-4 py-2">{row.developer_role}</td>
-                    <td className="px-4 py-2">{row.pressure}</td>
-                    <td className="px-4 py-2 text-right">
+                  <tr key={row.id || i} className="hover:bg-secondary transition-colors group">
+                    <td className="p-4 max-w-[200px] truncate text-xs text-brand-secondary" title={row.task_name}>{row.task_name}</td>
+                    <td className="p-4 text-xs text-brand-secondary">{row.developer_role}</td>
+                    <td className="p-4">
+                      <span className={`inline-flex px-2 py-1 text-[10px] font-bold rounded-full ${
+                        row.pressure?.toUpperCase() === 'HIGH' ? 'bg-accent-red/10 text-accent-red' :
+                        row.pressure?.toUpperCase() === 'MEDIUM' ? 'bg-accent-amber/10 text-accent-amber' :
+                        'bg-accent-green/10 text-accent-green'
+                      }`}>
+                        {row.pressure?.toUpperCase()}
+                      </span>
+                    </td>
+                    <td className="p-4 text-right text-xs text-brand-secondary">
                       {row.performance_score != null ? row.performance_score.toFixed(1) : '-'}
                     </td>
-                    <td className="px-4 py-2 text-right">
+                    <td className="p-4 text-right text-xs text-brand-secondary">
                       {row.honesty_score != null ? row.honesty_score.toFixed(1) : '-'}
                     </td>
-                    <td className="px-4 py-2 text-right">
-                      {row.deception_gap != null ? row.deception_gap.toFixed(1) : '-'}
-                    </td>
-                    <td className="px-4 py-2">
-                      {row.deception_detected ? (
-                        <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-red-900/50 text-red-400 border border-red-800">
-                          Yes
-                        </span>
+                    <td className="p-4 text-right text-xs font-medium">
+                      {row.deception_gap > 0 ? (
+                        <span className="text-accent-amber">{row.deception_gap.toFixed(1)}%</span>
                       ) : (
-                        <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-900/50 text-green-400 border border-green-800">
-                          No
-                        </span>
+                        <span className="text-text-muted">{row.deception_gap?.toFixed(1) || '-'}%</span>
                       )}
                     </td>
-                    <td className="px-4 py-2 text-right">
+                    <td className="p-4">
+                      {row.deception_detected ? (
+                        <span className="inline-flex items-center gap-1 text-[10px] font-medium text-accent-red bg-accent-red/10 px-1.5 py-0.5 rounded-full border border-accent-red/20">
+                          <AlertTriangle size={10} /> Flagged
+                        </span>
+                      ) : (
+                        <span className="text-[10px] text-text-muted">Clear</span>
+                      )}
+                    </td>
+                    <td className="p-4 text-right text-xs text-brand-secondary">
                       {row.auditor_score != null ? row.auditor_score.toFixed(1) : '-'}
                     </td>
                   </tr>
@@ -213,7 +231,7 @@ export default function Dataset() {
             </table>
           </div>
         )}
-      </div>
+      </section>
     </div>
   );
 }

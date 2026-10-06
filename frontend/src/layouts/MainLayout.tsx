@@ -1,84 +1,127 @@
-import { useState } from 'react';
-import { Outlet, NavLink } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { Outlet, NavLink, useLocation } from 'react-router-dom';
+import { LayoutDashboard, FileText, Database, Activity, Search, Users, ShieldAlert, BarChart, Menu, X } from 'lucide-react';
+
+const navGroups = [
+  {
+    title: 'Overview',
+    items: [
+      { name: 'Dashboard', path: '/dashboard', icon: LayoutDashboard }
+    ]
+  },
+  {
+    title: 'Experiment Analysis',
+    items: [
+      { name: 'Experiments', path: '/experiments', icon: Activity },
+      { name: 'Behavioral Logs', path: '/behavior', icon: Search },
+      { name: 'Analytics', path: '/analytics', icon: BarChart },
+      { name: 'Agent Directory', path: '/agents', icon: Users },
+      { name: 'Auditor Matrix', path: '/auditor', icon: ShieldAlert }
+    ]
+  },
+  {
+    title: 'Data & Resources',
+    items: [
+      { name: 'Raw Dataset', path: '/dataset', icon: Database },
+      { name: 'Research Reports', path: '/reports', icon: FileText }
+    ]
+  }
+];
 
 const MainLayout = () => {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const location = useLocation();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  const navItems = [
-    { name: 'Dashboard', path: '/dashboard' },
-    { name: 'Experiments', path: '/experiments' },
-    { name: 'Agents', path: '/agents' },
-    { name: 'Behavior', path: '/behavior' },
-    { name: 'Auditor', path: '/auditor' },
-    { name: 'Analytics', path: '/analytics' },
-    { name: 'Dataset', path: '/dataset' },
-    { name: 'Reports', path: '/reports' },
-  ];
+  useEffect(() => {
+    document.documentElement.classList.remove('dark');
+  }, []);
+
+  useEffect(() => {
+    setMobileMenuOpen(false);
+  }, [location.pathname]);
 
   return (
-    <div className="flex h-screen bg-slate-950 text-slate-200 overflow-hidden font-sans">
-      {/* Mobile sidebar overlay */}
-      {isSidebarOpen && (
-        <div
-          className="fixed inset-0 z-40 bg-black/50 lg:hidden"
-          onClick={() => setIsSidebarOpen(false)}
-        />
-      )}
+    <div className="h-screen w-screen flex flex-col md:flex-row bg-surface-alt font-sans text-text-main antialiased overflow-hidden">
+      
+      {/* Mobile Header */}
+      <div className="md:hidden flex items-center justify-between bg-surface border-b border-border p-4 z-20">
+        <div className="font-serif font-bold text-lg text-brand-primary leading-tight truncate pr-4">
+          Do AI Agents Cheat?
+        </div>
+        <button 
+          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          className="p-2 text-brand-secondary hover:bg-secondary rounded-md"
+        >
+          {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+        </button>
+      </div>
 
       {/* Sidebar */}
-      <aside
-        className={`fixed inset-y-0 left-0 z-50 w-64 bg-slate-900 border-r border-slate-800 flex flex-col transition-transform duration-300 ease-in-out lg:static lg:translate-x-0 ${
-          isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
-        }`}
-      >
-        <div className="flex items-center justify-between p-4 border-b border-slate-800">
-          <div className="text-xl font-bold text-white">AI Agent Research</div>
-          <button
-            onClick={() => setIsSidebarOpen(false)}
-            className="lg:hidden text-slate-400 hover:text-white"
-          >
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
-          </button>
+      <aside className={`
+        ${mobileMenuOpen ? 'flex' : 'hidden'} 
+        md:flex flex-col w-full md:w-[280px] h-full flex-shrink-0 border-r border-border bg-surface shadow-sm z-10 absolute md:static top-[65px] bottom-0
+      `}>
+        {/* Brand */}
+        <div className="hidden md:block p-6 border-b border-border">
+          <div className="font-serif font-bold text-xl text-brand-primary leading-tight mb-1">
+            Do AI Agents Cheat Under Pressure?
+          </div>
+          <div className="text-text-muted text-xs uppercase tracking-wider font-semibold">
+            Emergent Deception Telemetry
+          </div>
         </div>
-        <nav className="flex-1 overflow-y-auto py-4">
-          <ul className="space-y-1">
-            {navItems.map((item) => (
-              <li key={item.path}>
-                <NavLink
-                  to={item.path}
-                  onClick={() => setIsSidebarOpen(false)}
-                  className={({ isActive }) =>
-                    `block px-4 py-2 hover:bg-slate-800 transition-colors ${
-                      isActive ? 'bg-slate-800 border-l-4 border-blue-500 text-white' : 'border-l-4 border-transparent text-slate-300'
-                    }`
-                  }
-                >
-                  {item.name}
-                </NavLink>
-              </li>
-            ))}
-          </ul>
-        </nav>
+
+        {/* Navigation */}
+        <div className="flex-1 overflow-y-auto py-6 px-4 space-y-8 pb-24 md:pb-6">
+          {navGroups.map((group) => (
+            <div key={group.title}>
+              <h3 className="px-3 mb-3 text-xs font-semibold uppercase tracking-wider text-text-muted">
+                {group.title}
+              </h3>
+              <nav className="space-y-1">
+                {group.items.map((link) => {
+                  const isActive = location.pathname === link.path;
+                  const Icon = link.icon;
+                  return (
+                    <NavLink
+                      key={link.path}
+                      to={link.path}
+                      className={() =>
+                        `flex items-center gap-3 px-3 py-2.5 rounded-md text-sm font-medium transition-colors ${
+                          isActive
+                            ? 'bg-accent-blue/10 text-accent-blue'
+                            : 'text-brand-secondary hover:bg-secondary hover:text-brand-primary'
+                        }`
+                      }
+                    >
+                      <Icon size={18} className={isActive ? 'text-accent-blue' : 'text-text-muted'} />
+                      <span>{link.name}</span>
+                    </NavLink>
+                  );
+                })}
+              </nav>
+            </div>
+          ))}
+        </div>
+
+        {/* Footer Info */}
+        <div className="hidden md:block p-4 border-t border-border bg-surface text-xs text-text-muted">
+          <div className="flex justify-between items-center">
+            <span>Research Portal v2.4</span>
+            <span className="flex items-center gap-1.5">
+              <span className="w-2 h-2 rounded-full bg-accent-green"></span>
+              Live Data
+            </span>
+          </div>
+        </div>
       </aside>
 
       {/* Main Content */}
-      <div className="flex-1 flex flex-col min-w-0">
-        {/* Navbar */}
-        <header className="h-16 bg-slate-900 border-b border-slate-800 flex items-center px-4 sm:px-6 shadow-sm shrink-0">
-          <button
-            onClick={() => setIsSidebarOpen(true)}
-            className="lg:hidden mr-4 text-slate-400 hover:text-white focus:outline-none"
-          >
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" /></svg>
-          </button>
-          <h1 className="text-lg font-semibold text-white truncate">Dashboard</h1>
-        </header>
-
-        {/* Page Content */}
-        <main className="flex-1 overflow-x-hidden overflow-y-auto bg-slate-950 p-4 sm:p-6">
+      <main className="flex-1 flex flex-col h-full overflow-hidden bg-surface-alt relative z-0">
+        <div className="flex-1 overflow-y-auto overflow-x-hidden flex flex-col p-4 md:p-10 max-w-7xl mx-auto w-full">
           <Outlet />
-        </main>
-      </div>
+        </div>
+      </main>
     </div>
   );
 };

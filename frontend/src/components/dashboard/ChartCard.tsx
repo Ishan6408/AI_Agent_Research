@@ -7,8 +7,12 @@ interface ChartCardProps {
 
 export function ChartCard({ title, children }: ChartCardProps) {
   return (
-    <div className="bg-slate-900 border border-slate-800 rounded-lg p-4 shadow-sm flex flex-col h-[350px]">
-      <h3 className="text-slate-200 text-base font-semibold mb-4">{title}</h3>
+    <div className="flex flex-col h-[400px]">
+      <div className="flex items-center gap-4 mb-8">
+        <div className="h-px bg-border flex-1" />
+        <h3 className="text-xs font-mono uppercase tracking-[0.2em] text-foreground">{title}</h3>
+        <div className="h-px bg-border flex-1" />
+      </div>
       <div className="flex-1 w-full min-h-0">
         {children}
       </div>

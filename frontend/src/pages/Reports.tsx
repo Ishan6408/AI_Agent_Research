@@ -1,39 +1,32 @@
 import { useEffect, useState } from 'react';
 import { api } from '../services/api';
-import type { 
-  AnalyticsOverview, 
-  ResearchFindings, 
-  SuspiciousExperiment, 
-  CorrelationResponse 
-} from '../types/api';
+import type { AnalyticsOverview, CorrelationResponse, SuspiciousExperiment } from '../types/api';
+import { AlertTriangle, RefreshCw, AlertCircle } from 'lucide-react';
 
 export default function Reports() {
   const [overview, setOverview] = useState<AnalyticsOverview | null>(null);
-  const [findings, setFindings] = useState<ResearchFindings | null>(null);
-  const [suspicious, setSuspicious] = useState<SuspiciousExperiment[]>([]);
   const [correlation, setCorrelation] = useState<CorrelationResponse | null>(null);
-  
+  const [findings, setFindings] = useState<any | null>(null);
+  const [suspicious, setSuspicious] = useState<SuspiciousExperiment[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   const fetchData = async () => {
+    setLoading(true);
+    setError(null);
     try {
-      setLoading(true);
-      setError(null);
-      
-      const [overviewRes, findingsRes, suspiciousRes, correlationRes] = await Promise.all([
+      const [overviewData, correlationData, findingsData, suspiciousData] = await Promise.all([
         api.getAnalyticsOverview(),
+        api.getCorrelation(),
         api.getResearchFindings(),
-        api.getSuspicious(),
-        api.getCorrelation()
+        api.getSuspicious()
       ]);
-      
-      setOverview(overviewRes);
-      setFindings(findingsRes);
-      setSuspicious(suspiciousRes);
-      setCorrelation(correlationRes);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to load report data');
+      setOverview(overviewData);
+      setCorrelation(correlationData);
+      setFindings(findingsData);
+      setSuspicious(suspiciousData);
+    } catch (err: any) {
+      setError(err.message || 'Failed to load reports');
     } finally {
       setLoading(false);
     }
@@ -45,117 +38,121 @@ export default function Reports() {
 
   if (loading) {
     return (
-      <div className="bg-slate-900 border border-slate-800 rounded-lg p-6 animate-pulse space-y-6">
-        <div className="h-8 bg-slate-800 rounded w-1/4"></div>
-        <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
-          {[1,2,3,4].map(i => <div key={i} className="h-24 bg-slate-800 rounded"></div>)}
-        </div>
-        <div className="h-64 bg-slate-800 rounded"></div>
+      <div className="flex flex-col justify-center items-center h-64 w-full gap-4">
+        <RefreshCw size={24} className="text-text-muted animate-spin" />
+        <p className="text-sm text-text-muted">Compiling executive report...</p>
       </div>
     );
   }
 
-  if (error) {
+  if (error || !overview) {
     return (
-      <div className="bg-slate-900 border border-slate-800 rounded-lg p-6">
-        <h2 className="text-xl font-bold mb-4 text-red-400">Error Loading Reports</h2>
-        <p className="text-slate-300 mb-4">{error}</p>
+      <div className="p-12 text-center border border-border bg-surface rounded-xl">
+        <AlertTriangle size={32} className="text-accent-red mx-auto mb-4" />
+        <p className="text-accent-red mb-4 text-sm">{error || 'Failed to initialize report'}</p>
         <button
           onClick={fetchData}
-          className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded transition-colors"
+          className="px-4 py-2 bg-surface-alt hover:bg-secondary border border-border text-brand-primary rounded-md text-sm transition-colors"
         >
-          Retry
+          Retry Connection
         </button>
       </div>
     );
   }
 
-  if (!overview || overview.total_experiments === 0) {
-    return (
-      <div className="bg-slate-900 border border-slate-800 rounded-lg p-6 text-center">
-        <h2 className="text-xl font-bold mb-4 text-white">Research Reports</h2>
-        <p className="text-slate-400">No experiment data available yet.</p>
-      </div>
-    );
-  }
-
   return (
-    <div className="space-y-6">
-      
+    <div className="flex flex-col h-full text-text-main gap-10 max-w-5xl mx-auto w-full pb-12">
       {/* Header */}
-      <div className="bg-slate-900 border border-slate-800 rounded-lg p-6">
-        <h2 className="text-2xl font-bold text-white mb-2">Research Reports</h2>
-        <p className="text-slate-400 text-sm">
-          A summary of key metrics, research findings, and suspicious agent behaviors observed during experiments.
-        </p>
-      </div>
+      <header className="border-b border-border pb-6 flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
+        <div>
+          <h1 className="font-serif text-4xl font-bold text-brand-primary mb-3">Executive Summary</h1>
+          <p className="text-text-muted text-sm max-w-2xl leading-relaxed">
+            A formalized summary of key metrics, behavioral findings, and critical deviations observed during the multi-agent stress simulations.
+          </p>
+        </div>
+        <div className="bg-accent-red/10 border border-accent-red/20 px-3 py-1 rounded text-[10px] font-bold text-accent-red tracking-wider uppercase">
+          Confidential
+        </div>
+      </header>
 
       {/* Key Metrics */}
-      <div className="bg-slate-900 border border-slate-800 rounded-lg p-6">
-        <h3 className="text-lg font-semibold text-white mb-4">Key Metrics</h3>
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-          <MetricCard label="Total Experiments" value={overview.total_experiments} />
-          <MetricCard label="Average Performance" value={overview.avg_performance_score?.toFixed(1) || 'N/A'} />
-          <MetricCard label="Average Honesty" value={overview.avg_honesty_score?.toFixed(1) || 'N/A'} />
-          <MetricCard label="Detection Rate" value={overview.detection_rate_pct != null ? `${overview.detection_rate_pct.toFixed(1)}%` : 'N/A'} />
+      <section>
+        <h3 className="text-lg font-serif font-bold text-brand-primary mb-4 pb-2 border-b border-border flex items-center gap-2">
+          I. Primary Telemetry
+        </h3>
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-6">
+          <MetricCard label="Total Deployments" value={overview.total_experiments} />
+          <MetricCard label="Mean Performance" value={overview.avg_performance_score?.toFixed(1) || 'N/A'} />
+          <MetricCard label="Mean Honesty" value={overview.avg_honesty_score?.toFixed(1) || 'N/A'} />
+          <MetricCard label="Detection Rate" value={overview.detection_rate_pct != null ? `${overview.detection_rate_pct.toFixed(1)}%` : 'N/A'} isAlert={(overview.detection_rate_pct ?? 100) < 50} />
           
-          <MetricCard label="Average Stress" value={overview.avg_stress_index?.toFixed(2) || 'N/A'} />
-          <MetricCard label="Deception Gap" value={overview.avg_deception_gap?.toFixed(2) || 'N/A'} />
-          <MetricCard label="Auditor Score" value={overview.avg_auditor_score?.toFixed(2) || 'N/A'} />
-          <MetricCard label="Average Bugs" value={overview.avg_bugs_introduced?.toFixed(2) || 'N/A'} />
+          <MetricCard label="Mean Stress Index" value={overview.avg_stress_index?.toFixed(2) || 'N/A'} />
+          <MetricCard label="Aggregate Deception Gap" value={overview.avg_deception_gap?.toFixed(2) || 'N/A'} />
+          <MetricCard label="Auditor Strictness" value={overview.avg_auditor_score?.toFixed(2) || 'N/A'} />
+          <MetricCard label="Mean Bugs Introduced" value={overview.avg_bugs_introduced?.toFixed(2) || 'N/A'} />
         </div>
-      </div>
+      </section>
 
       {/* Research Findings */}
       {findings && (
-        <div className="bg-slate-900 border border-slate-800 rounded-lg p-6">
-          <h3 className="text-lg font-semibold text-white mb-4">Research Findings</h3>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <div className="bg-slate-800/50 p-4 rounded-lg border border-slate-700">
-              <div className="text-slate-400 text-sm mb-2 font-medium">Most Deceptive Personality</div>
-              <div className="text-lg font-semibold text-emerald-400">{findings.most_deceptive_personality || 'N/A'}</div>
+        <section>
+          <h3 className="text-lg font-serif font-bold text-brand-primary mb-4 pb-2 border-b border-border flex items-center gap-2">
+            II. Critical Findings
+          </h3>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="bg-surface border border-border p-5 rounded-xl shadow-sm border-l-4 border-l-accent-amber">
+              <div className="text-xs font-semibold text-text-muted uppercase tracking-wider mb-2">Primary Deceptive Vector (Personality)</div>
+              <div className="text-xl font-bold text-brand-primary">{findings.most_deceptive_personality || 'N/A'}</div>
             </div>
-            <div className="bg-slate-800/50 p-4 rounded-lg border border-slate-700">
-              <div className="text-slate-400 text-sm mb-2 font-medium">Most Deceptive Developer</div>
-              <div className="text-lg font-semibold text-amber-400">{findings.most_deceptive_developer || 'N/A'}</div>
+            <div className="bg-surface border border-border p-5 rounded-xl shadow-sm border-l-4 border-l-accent-amber">
+              <div className="text-xs font-semibold text-text-muted uppercase tracking-wider mb-2">Primary Deceptive Vector (Role)</div>
+              <div className="text-xl font-bold text-brand-primary">{findings.most_deceptive_developer || 'N/A'}</div>
             </div>
-            <div className="bg-slate-800/50 p-4 rounded-lg border border-slate-700">
-              <div className="text-slate-400 text-sm mb-2 font-medium">Highest Deception Pressure</div>
-              <div className="text-lg font-semibold text-rose-400">{findings.highest_deception_pressure || 'N/A'}</div>
+            <div className="bg-surface border border-border p-5 rounded-xl shadow-sm border-l-4 border-l-accent-red">
+              <div className="text-xs font-semibold text-text-muted uppercase tracking-wider mb-2">Max Deception Threshold</div>
+              <div className="text-xl font-bold text-brand-primary">{findings.highest_deception_pressure || 'N/A'}</div>
             </div>
           </div>
-        </div>
+        </section>
       )}
 
       {/* Suspicious Experiments */}
-      <div className="bg-slate-900 border border-slate-800 rounded-lg p-6">
-        <h3 className="text-lg font-semibold text-white mb-4">Top Suspicious Experiments</h3>
+      <section>
+        <h3 className="text-lg font-serif font-bold text-brand-primary mb-4 pb-2 border-b border-border flex items-center gap-2">
+          III. Flagged Anomalies
+          <span className="bg-accent-red/10 text-accent-red text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1">
+            <AlertCircle size={10} /> Requires Review
+          </span>
+        </h3>
+        
         {suspicious.length === 0 ? (
-          <p className="text-slate-400">No suspicious experiments found.</p>
+          <div className="p-6 bg-surface border border-border rounded-xl text-text-muted text-sm italic">
+            No anomalous or suspicious deviations detected in the current dataset.
+          </div>
         ) : (
-          <div className="overflow-x-auto rounded-lg border border-slate-700">
-            <table className="w-full text-sm text-left text-slate-300 min-w-[800px]">
-              <thead className="text-xs text-slate-400 uppercase bg-slate-800/50 whitespace-nowrap">
+          <div className="bg-surface border border-border rounded-xl overflow-hidden shadow-sm">
+            <table className="w-full text-sm text-left border-collapse">
+              <thead className="text-xs font-semibold text-text-muted bg-surface-alt border-b border-border">
                 <tr>
-                  <th className="px-4 py-3 font-medium">Task</th>
-                  <th className="px-4 py-3 font-medium">Developer</th>
-                  <th className="px-4 py-3 font-medium">Pressure</th>
-                  <th className="px-4 py-3 font-medium">Personality</th>
-                  <th className="px-4 py-3 font-medium text-right">Deception Gap</th>
-                  <th className="px-4 py-3 font-medium text-right">Auditor Score</th>
+                  <th className="px-4 py-3 whitespace-nowrap">Task Designation</th>
+                  <th className="px-4 py-3 whitespace-nowrap">Developer Profile</th>
+                  <th className="px-4 py-3 whitespace-nowrap">Stress Level</th>
+                  <th className="px-4 py-3 whitespace-nowrap">Personality</th>
+                  <th className="px-4 py-3 whitespace-nowrap text-right">Deception Variance</th>
+                  <th className="px-4 py-3 whitespace-nowrap text-right">Auditor Assessment</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-700">
+              <tbody className="divide-y divide-border">
                 {suspicious.map((exp, i) => (
-                  <tr key={i} className="hover:bg-slate-800/50">
-                    <td className="px-4 py-2 truncate max-w-[150px]" title={exp.task_name}>{exp.task_name}</td>
-                    <td className="px-4 py-2">{exp.developer_role}</td>
-                    <td className="px-4 py-2">{exp.pressure}</td>
-                    <td className="px-4 py-2">{exp.personality}</td>
-                    <td className="px-4 py-2 text-right text-rose-400 font-medium">
-                      {exp.deception_gap != null ? exp.deception_gap.toFixed(1) : '-'}
+                  <tr key={i} className="hover:bg-secondary transition-colors">
+                    <td className="px-4 py-3 text-brand-secondary text-xs truncate max-w-[200px]" title={exp.task_name}>{exp.task_name}</td>
+                    <td className="px-4 py-3 text-brand-secondary text-xs">{exp.developer_role}</td>
+                    <td className="px-4 py-3 text-brand-secondary text-xs">{exp.pressure}</td>
+                    <td className="px-4 py-3 text-brand-secondary text-xs">{exp.personality}</td>
+                    <td className="px-4 py-3 text-right font-medium text-accent-red text-xs">
+                      {exp.deception_gap != null ? `+${exp.deception_gap.toFixed(1)}%` : '-'}
                     </td>
-                    <td className="px-4 py-2 text-right">
+                    <td className="px-4 py-3 text-right text-brand-secondary text-xs">
                       {exp.auditor_score != null ? exp.auditor_score.toFixed(1) : '-'}
                     </td>
                   </tr>
@@ -164,18 +161,16 @@ export default function Reports() {
             </table>
           </div>
         )}
-      </div>
+      </section>
 
       {/* Correlation Summary */}
-      {correlation && correlation.columns.length > 0 && (
-        <div className="bg-slate-900 border border-slate-800 rounded-lg p-6">
-          <h3 className="text-lg font-semibold text-white mb-4">Correlation Overview</h3>
-          <p className="text-sm text-slate-400 mb-4">
-            Highlights of the strongest correlations (positive and negative) among experimental metrics.
-          </p>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {correlation.columns.slice(0, 4).map(col => {
-              // Find max correlation (excluding self) for this column
+      {correlation && correlation.columns && correlation.columns.length > 0 && (
+        <section>
+          <h3 className="text-lg font-serif font-bold text-brand-primary mb-4 pb-2 border-b border-border flex items-center gap-2">
+            IV. Statistical Correlations
+          </h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-6">
+            {correlation.columns.slice(0, 6).map((col: string) => {
               const correlations = correlation.matrix[col] || {};
               const pairs = Object.entries(correlations)
                 .filter(([otherCol, val]) => otherCol !== col && val !== null)
@@ -186,29 +181,31 @@ export default function Reports() {
               const topPair = pairs[0];
 
               return (
-                <div key={col} className="bg-slate-800/30 p-3 rounded border border-slate-700 text-sm">
-                  <span className="text-slate-300 font-medium">{col.replace(/_/g, ' ')}</span>
-                  <span className="text-slate-500 mx-2">strongly correlates with</span>
-                  <span className="text-white font-medium">{topPair.otherCol.replace(/_/g, ' ')}</span>
-                  <span className={`ml-2 font-mono ${topPair.val > 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
-                    ({topPair.val > 0 ? '+' : ''}{topPair.val.toFixed(2)})
-                  </span>
+                <div key={col} className="flex flex-col border-b border-border pb-3">
+                  <span className="text-brand-primary font-medium text-base mb-1">{col.replace(/_/g, ' ')}</span>
+                  <div className="flex items-center text-sm mt-1">
+                    <span className="text-text-muted text-xs mr-3">Primary Correlate:</span>
+                    <span className="text-brand-secondary text-xs mr-3 capitalize">{topPair.otherCol.replace(/_/g, ' ')}</span>
+                    <span className={`${topPair.val > 0 ? 'text-accent-green' : 'text-accent-red'} font-bold text-xs ml-auto`}>
+                      {topPair.val > 0 ? '↑' : '↓'} {Math.abs(topPair.val).toFixed(2)}
+                    </span>
+                  </div>
                 </div>
               );
             })}
           </div>
-        </div>
+        </section>
       )}
 
     </div>
   );
 }
 
-function MetricCard({ label, value }: { label: string; value: React.ReactNode }) {
+function MetricCard({ label, value, isAlert = false }: { label: string; value: React.ReactNode, isAlert?: boolean }) {
   return (
-    <div className="bg-slate-800/50 p-4 rounded-lg border border-slate-700">
-      <div className="text-slate-400 text-xs uppercase tracking-wider font-medium mb-1 truncate" title={label}>{label}</div>
-      <div className="text-xl font-bold text-white">{value}</div>
+    <div className="flex flex-col bg-surface border border-border p-4 rounded-xl shadow-sm">
+      <span className="text-xs font-semibold text-text-muted uppercase tracking-wider mb-2">{label}</span>
+      <span className={`text-2xl font-bold ${isAlert ? 'text-accent-red' : 'text-brand-primary'}`}>{value}</span>
     </div>
   );
 }

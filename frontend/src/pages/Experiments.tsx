@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { api } from '../services/api';
 import type { Experiment } from '../types/api';
+import { Play, Settings, Beaker, CheckCircle, AlertTriangle, RefreshCw, FileText } from 'lucide-react';
 
 export default function Experiments() {
   const [experiments, setExperiments] = useState<Experiment[]>([]);
@@ -24,7 +25,6 @@ export default function Experiments() {
     setListError(null);
     try {
       const data = await api.getExperiments();
-      // Sort by some criteria if available, otherwise just use reverse to show latest first
       setExperiments(data.reverse());
     } catch (err: any) {
       setListError(err.message || 'Failed to load experiments');
@@ -46,9 +46,9 @@ export default function Experiments() {
     try {
       const res = await api.runExperiment({ pressure: singlePressure });
       setRunSuccess(
-        <span>
-          Successfully ran experiment! ID: <strong>{res.experiment_id}</strong>.{' '}
-          <Link to={`/experiments/${res.experiment_id}`} className="underline hover:text-emerald-300">View Detail</Link>
+        <span className="flex items-center gap-2">
+          Protocol initialized. ID: <strong>{res.experiment_id}</strong>.{' '}
+          <Link to={`/experiments/${res.experiment_id}`} className="underline text-brand-primary font-medium hover:text-accent-blue">View Logs</Link>
         </span>
       );
       fetchExperiments();
@@ -67,7 +67,7 @@ export default function Experiments() {
     setRunSuccess(null);
     try {
       const res = await api.runPressureExperiments({ pressure: pressureLevel, runs: pressureRuns });
-      setRunSuccess(`Successfully ran ${res.count} experiments with ${pressureLevel} pressure.`);
+      setRunSuccess(`Batch complete. Executed ${res.count} permutations at ${pressureLevel} threshold.`);
       fetchExperiments();
     } catch (err: any) {
       setRunError(err.message || 'Failed to run pressure experiments');
@@ -79,14 +79,14 @@ export default function Experiments() {
   const handleRunAll = async (e: React.FormEvent) => {
     e.preventDefault();
     if (runningAction) return;
-    if (!window.confirm('Are you sure you want to run all experiments? This may take a long time.')) return;
+    if (!window.confirm('WARNING: Initiating full suite execution. Continue?')) return;
     
     setRunningAction('all');
     setRunError(null);
     setRunSuccess(null);
     try {
       const res = await api.runAllExperiments({ runs: allRuns });
-      setRunSuccess(`Successfully ran full suite of ${res.count} experiments.`);
+      setRunSuccess(`Suite complete. Executed full matrix of ${res.count} experiments.`);
       fetchExperiments();
     } catch (err: any) {
       setRunError(err.message || 'Failed to run all experiments');
@@ -96,213 +96,253 @@ export default function Experiments() {
   };
 
   return (
-    <div className="space-y-6">
-      {/* Controls Section */}
-      <div className="bg-slate-900 border border-slate-800 rounded-lg shadow-sm p-6 w-full max-w-full">
-        <h2 className="text-xl sm:text-2xl font-bold mb-4 text-white">Execute Experiments</h2>
-        
-        {runError && (
-          <div className="mb-6 p-4 bg-red-900/30 border border-red-800 rounded-md">
-            <p className="text-red-400 text-sm">{runError}</p>
-          </div>
-        )}
-        
-        {runSuccess && (
-          <div className="mb-6 p-4 bg-emerald-900/30 border border-emerald-800 rounded-md">
-            <p className="text-emerald-400 text-sm">{runSuccess}</p>
-          </div>
-        )}
+    <div className="flex flex-col h-full text-text-main gap-8 max-w-6xl mx-auto w-full pb-12">
+      <header className="mb-2">
+        <h1 className="font-serif text-3xl font-bold text-brand-primary mb-2">Experiment Control & Logs</h1>
+        <p className="text-text-muted max-w-2xl">
+          Execute new simulation batches or review recent telemetry from the experimental pipeline.
+        </p>
+      </header>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {/* Run Single */}
-          <div className="p-4 border border-slate-800 rounded-lg bg-slate-800/30">
-            <h3 className="text-lg font-medium text-white mb-4">Run Single</h3>
-            <form onSubmit={handleRunSingle} className="space-y-4">
+      {/* Control Terminal Section */}
+      <section className="bg-surface border border-border rounded-xl shadow-sm overflow-hidden">
+        <div className="bg-surface-alt border-b border-border px-6 py-4 flex justify-between items-center">
+          <div className="flex items-center gap-2 text-brand-primary font-semibold text-sm">
+            <Settings size={18} className="text-text-muted" />
+            Execution Parameters
+          </div>
+          <span className="text-xs text-text-muted font-medium bg-secondary px-2 py-1 rounded">System Ready</span>
+        </div>
+        
+        <div className="p-6">
+          {runError && (
+            <div className="mb-6 p-4 bg-accent-red/10 border border-accent-red/20 rounded-lg text-accent-red text-sm flex items-start gap-3">
+              <AlertTriangle size={18} className="mt-0.5" />
+              <span>{runError}</span>
+            </div>
+          )}
+          
+          {runSuccess && (
+            <div className="mb-6 p-4 bg-accent-green/10 border border-accent-green/20 rounded-lg text-accent-green text-sm flex items-start gap-3">
+              <CheckCircle size={18} className="mt-0.5" />
+              <span>{runSuccess}</span>
+            </div>
+          )}
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {/* Run Single */}
+            <div className="p-5 border border-border rounded-lg bg-surface flex flex-col justify-between hover:border-accent-blue/30 transition-colors">
               <div>
-                <label className="block text-sm font-medium text-slate-400 mb-1">Pressure Level</label>
-                <select
-                  value={singlePressure}
-                  onChange={(e) => setSinglePressure(e.target.value)}
-                  disabled={runningAction !== null}
-                  className="w-full bg-slate-950 border border-slate-700 rounded-md p-2 text-white text-sm focus:ring-indigo-500 focus:border-indigo-500 disabled:opacity-50"
-                >
-                  <option value="LOW">Low</option>
-                  <option value="MEDIUM">Medium</option>
-                  <option value="HIGH">High</option>
-                </select>
+                <h3 className="text-sm font-semibold text-brand-primary mb-4 flex items-center gap-2">
+                  <Play size={16} className="text-accent-blue" /> Single Evaluation
+                </h3>
+                <form id="single-form" onSubmit={handleRunSingle} className="space-y-4">
+                  <div>
+                    <label className="block text-xs font-semibold text-text-muted mb-1">Stress Level</label>
+                    <select
+                      value={singlePressure}
+                      onChange={(e) => setSinglePressure(e.target.value)}
+                      disabled={runningAction !== null}
+                      className="w-full bg-surface-alt border border-border rounded-md p-2 text-sm focus:ring-2 focus:ring-accent-blue/50 outline-none disabled:opacity-50"
+                    >
+                      <option value="LOW">Low</option>
+                      <option value="MEDIUM">Medium</option>
+                      <option value="HIGH">High</option>
+                    </select>
+                  </div>
+                </form>
               </div>
               <button
                 type="submit"
+                form="single-form"
                 disabled={runningAction !== null}
-                className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2 px-4 rounded-md transition-colors disabled:opacity-50 flex justify-center items-center"
+                className="mt-6 w-full bg-surface-alt hover:bg-secondary border border-border text-brand-primary font-medium py-2 px-4 text-sm rounded-md transition-all disabled:opacity-50 flex items-center justify-center gap-2"
               >
-                {runningAction === 'single' ? (
-                  <><span className="animate-spin inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full mr-2"></span> Running...</>
-                ) : 'Run Once'}
+                {runningAction === 'single' ? <RefreshCw size={16} className="animate-spin" /> : 'Run Trace'}
               </button>
-            </form>
-          </div>
+            </div>
 
-          {/* Run Pressure */}
-          <div className="p-4 border border-slate-800 rounded-lg bg-slate-800/30">
-            <h3 className="text-lg font-medium text-white mb-4">Run Pressure Batch</h3>
-            <form onSubmit={handleRunPressure} className="space-y-4">
+            {/* Run Pressure */}
+            <div className="p-5 border border-border rounded-lg bg-surface flex flex-col justify-between hover:border-accent-blue/30 transition-colors">
               <div>
-                <label className="block text-sm font-medium text-slate-400 mb-1">Pressure Level</label>
-                <select
-                  value={pressureLevel}
-                  onChange={(e) => setPressureLevel(e.target.value)}
-                  disabled={runningAction !== null}
-                  className="w-full bg-slate-950 border border-slate-700 rounded-md p-2 text-white text-sm focus:ring-indigo-500 focus:border-indigo-500 disabled:opacity-50"
-                >
-                  <option value="LOW">Low</option>
-                  <option value="MEDIUM">Medium</option>
-                  <option value="HIGH">High</option>
-                </select>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-slate-400 mb-1">Number of Runs</label>
-                <input
-                  type="number"
-                  min="1"
-                  max="100"
-                  value={pressureRuns}
-                  onChange={(e) => setPressureRuns(parseInt(e.target.value, 10))}
-                  disabled={runningAction !== null}
-                  className="w-full bg-slate-950 border border-slate-700 rounded-md p-2 text-white text-sm focus:ring-indigo-500 focus:border-indigo-500 disabled:opacity-50"
-                />
+                <h3 className="text-sm font-semibold text-brand-primary mb-4 flex items-center gap-2">
+                  <Beaker size={16} className="text-accent-blue" /> Batch Evaluation
+                </h3>
+                <form id="batch-form" onSubmit={handleRunPressure} className="space-y-4">
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <label className="block text-xs font-semibold text-text-muted mb-1">Stress</label>
+                      <select
+                        value={pressureLevel}
+                        onChange={(e) => setPressureLevel(e.target.value)}
+                        disabled={runningAction !== null}
+                        className="w-full bg-surface-alt border border-border rounded-md p-2 text-sm focus:ring-2 focus:ring-accent-blue/50 outline-none disabled:opacity-50"
+                      >
+                        <option value="LOW">Low</option>
+                        <option value="MEDIUM">Medium</option>
+                        <option value="HIGH">High</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label className="block text-xs font-semibold text-text-muted mb-1">Iterations</label>
+                      <input
+                        type="number"
+                        min="1"
+                        max="100"
+                        value={pressureRuns}
+                        onChange={(e) => setPressureRuns(parseInt(e.target.value, 10))}
+                        disabled={runningAction !== null}
+                        className="w-full bg-surface-alt border border-border rounded-md p-2 text-sm focus:ring-2 focus:ring-accent-blue/50 outline-none disabled:opacity-50"
+                      />
+                    </div>
+                  </div>
+                </form>
               </div>
               <button
                 type="submit"
+                form="batch-form"
                 disabled={runningAction !== null}
-                className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2 px-4 rounded-md transition-colors disabled:opacity-50 flex justify-center items-center"
+                className="mt-6 w-full bg-accent-blue hover:bg-accent-blue/90 text-white font-medium py-2 px-4 text-sm rounded-md transition-all disabled:opacity-50 flex items-center justify-center gap-2"
               >
-                {runningAction === 'pressure' ? (
-                  <><span className="animate-spin inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full mr-2"></span> Running...</>
-                ) : 'Run Batch'}
+                {runningAction === 'pressure' ? <RefreshCw size={16} className="animate-spin" /> : 'Start Batch'}
               </button>
-            </form>
-          </div>
+            </div>
 
-          {/* Run All */}
-          <div className="p-4 border border-slate-800 rounded-lg bg-slate-800/30">
-            <h3 className="text-lg font-medium text-white mb-4">Run Full Suite</h3>
-            <form onSubmit={handleRunAll} className="space-y-4">
+            {/* Run All */}
+            <div className="p-5 border border-border rounded-lg bg-surface flex flex-col justify-between hover:border-accent-red/30 transition-colors">
               <div>
-                <label className="block text-sm font-medium text-slate-400 mb-1">Runs per Pressure Level</label>
-                <input
-                  type="number"
-                  min="1"
-                  max="100"
-                  value={allRuns}
-                  onChange={(e) => setAllRuns(parseInt(e.target.value, 10))}
-                  disabled={runningAction !== null}
-                  className="w-full bg-slate-950 border border-slate-700 rounded-md p-2 text-white text-sm focus:ring-rose-500 focus:border-rose-500 disabled:opacity-50"
-                />
+                <h3 className="text-sm font-semibold text-brand-primary mb-4 flex items-center gap-2">
+                  <AlertTriangle size={16} className="text-accent-red" /> Full Matrix
+                </h3>
+                <form id="matrix-form" onSubmit={handleRunAll} className="space-y-4">
+                  <div>
+                    <label className="block text-xs font-semibold text-text-muted mb-1">Runs Per Condition</label>
+                    <input
+                      type="number"
+                      min="1"
+                      max="100"
+                      value={allRuns}
+                      onChange={(e) => setAllRuns(parseInt(e.target.value, 10))}
+                      disabled={runningAction !== null}
+                      className="w-full bg-surface-alt border border-border rounded-md p-2 text-sm focus:ring-2 focus:ring-accent-red/50 outline-none disabled:opacity-50"
+                    />
+                  </div>
+                </form>
               </div>
-              <div className="pt-16"> {/* Spacer to align button */}
-                <button
-                  type="submit"
-                  disabled={runningAction !== null}
-                  className="w-full bg-rose-600 hover:bg-rose-700 text-white font-medium py-2 px-4 rounded-md transition-colors disabled:opacity-50 flex justify-center items-center"
-                >
-                  {runningAction === 'all' ? (
-                    <><span className="animate-spin inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full mr-2"></span> Running Suite...</>
-                  ) : 'Run All Levels'}
-                </button>
-              </div>
-            </form>
+              <button
+                type="submit"
+                form="matrix-form"
+                disabled={runningAction !== null}
+                className="mt-6 w-full bg-surface-alt hover:bg-accent-red/10 border border-border hover:border-accent-red/30 text-accent-red font-medium py-2 px-4 text-sm rounded-md transition-all disabled:opacity-50 flex items-center justify-center gap-2"
+              >
+                {runningAction === 'all' ? <RefreshCw size={16} className="animate-spin" /> : 'Execute Matrix'}
+              </button>
+            </div>
           </div>
         </div>
-      </div>
+      </section>
 
-      {/* Recent Experiments Section */}
-      <div className="bg-slate-900 border border-slate-800 rounded-lg shadow-sm w-full max-w-full overflow-hidden flex flex-col">
-        <div className="p-6 border-b border-slate-800 flex justify-between items-center">
-          <h2 className="text-xl sm:text-2xl font-bold text-white">Recent Results</h2>
+      {/* Telemetry Log Section */}
+      <section className="bg-surface border border-border rounded-xl shadow-sm overflow-hidden flex flex-col">
+        <div className="bg-surface-alt border-b border-border px-6 py-4 flex justify-between items-center">
+          <div className="flex items-center gap-2 text-brand-primary font-semibold text-sm">
+            <FileText size={18} className="text-text-muted" />
+            Experimental Log
+          </div>
           <button 
             onClick={fetchExperiments}
             disabled={loadingList}
-            className="text-sm bg-slate-800 hover:bg-slate-700 text-white px-3 py-1.5 rounded disabled:opacity-50"
+            className="text-xs font-medium text-text-muted hover:text-brand-primary disabled:opacity-50 transition-colors flex items-center gap-2"
           >
+            {loadingList ? <RefreshCw size={14} className="animate-spin" /> : <RefreshCw size={14} />}
             Refresh
           </button>
         </div>
 
         {loadingList ? (
-          <div className="p-12 flex justify-center">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-500"></div>
+          <div className="p-12 flex justify-center items-center flex-col gap-4">
+            <RefreshCw size={24} className="text-text-muted animate-spin" />
+            <p className="text-sm text-text-muted">Loading experiment records...</p>
           </div>
         ) : listError ? (
-          <div className="p-6 text-center">
-            <p className="text-red-400 mb-4">{listError}</p>
+          <div className="p-12 text-center">
+            <AlertTriangle size={32} className="text-accent-red mx-auto mb-4" />
+            <p className="text-accent-red mb-4 text-sm">{listError}</p>
             <button
               onClick={fetchExperiments}
-              className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-white rounded-md text-sm transition-colors"
+              className="px-4 py-2 bg-surface-alt hover:bg-secondary border border-border text-brand-primary rounded-md text-sm transition-colors"
             >
-              Retry
+              Retry Connection
             </button>
           </div>
         ) : experiments.length === 0 ? (
-          <div className="p-12 text-center">
-            <p className="text-slate-400">No experiments found. Run an experiment above to see results here.</p>
+          <div className="p-12 text-center text-text-muted text-sm">
+            No experiment records found in the database.
           </div>
         ) : (
           <div className="overflow-x-auto w-full">
-            <table className="w-full text-left border-collapse">
+            <table className="w-full text-left border-collapse text-sm">
               <thead>
-                <tr className="bg-slate-800/50 border-b border-slate-700">
-                  <th className="p-4 text-xs font-semibold text-slate-300 uppercase tracking-wider whitespace-nowrap">ID / Task</th>
-                  <th className="p-4 text-xs font-semibold text-slate-300 uppercase tracking-wider whitespace-nowrap">Pressure</th>
-                  <th className="p-4 text-xs font-semibold text-slate-300 uppercase tracking-wider whitespace-nowrap">Developer</th>
-                  <th className="p-4 text-xs font-semibold text-slate-300 uppercase tracking-wider whitespace-nowrap">Deception Gap</th>
-                  <th className="p-4 text-xs font-semibold text-slate-300 uppercase tracking-wider whitespace-nowrap">Perf Score</th>
-                  <th className="p-4 text-xs font-semibold text-slate-300 uppercase tracking-wider whitespace-nowrap">Honesty</th>
-                  <th className="p-4 text-xs font-semibold text-slate-300 uppercase tracking-wider whitespace-nowrap">Auditor</th>
-                  <th className="p-4 text-xs font-semibold text-slate-300 uppercase tracking-wider whitespace-nowrap text-right">Action</th>
+                <tr className="bg-surface-alt border-b border-border">
+                  <th className="p-4 text-xs font-semibold text-text-muted tracking-wide whitespace-nowrap">ID / Task</th>
+                  <th className="p-4 text-xs font-semibold text-text-muted tracking-wide whitespace-nowrap">Stress</th>
+                  <th className="p-4 text-xs font-semibold text-text-muted tracking-wide whitespace-nowrap">Node Role</th>
+                  <th className="p-4 text-xs font-semibold text-text-muted tracking-wide whitespace-nowrap">Divergence</th>
+                  <th className="p-4 text-xs font-semibold text-text-muted tracking-wide whitespace-nowrap">Perf.</th>
+                  <th className="p-4 text-xs font-semibold text-text-muted tracking-wide whitespace-nowrap">Truth</th>
+                  <th className="p-4 text-xs font-semibold text-text-muted tracking-wide whitespace-nowrap">Auditor</th>
+                  <th className="p-4 text-xs font-semibold text-text-muted tracking-wide whitespace-nowrap text-right">Action</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-800/50">
+              <tbody className="divide-y divide-border">
                 {experiments.map((exp) => (
-                  <tr key={exp.id} className="hover:bg-slate-800/30 transition-colors">
+                  <tr key={exp.id} className="hover:bg-secondary transition-colors group">
                     <td className="p-4">
-                      <div className="font-mono text-xs text-indigo-400 mb-1 max-w-[120px] truncate" title={exp.id}>
-                        {exp.id?.split('-')[0]}...
+                      <div className="font-mono text-xs text-brand-primary mb-1">
+                        {exp.id?.split('-')[0]}
                       </div>
-                      <div className="text-sm text-slate-300 truncate max-w-[150px]" title={exp.task_name}>
+                      <div className="text-xs text-text-muted truncate max-w-[150px]" title={exp.task_name}>
                         {exp.task_name}
                       </div>
                     </td>
                     <td className="p-4">
-                      <span className={`px-2 py-1 rounded text-xs font-medium capitalize ${
-                        exp.pressure?.toUpperCase() === 'HIGH' ? 'bg-rose-900/30 text-rose-400 border border-rose-800' :
-                        exp.pressure?.toUpperCase() === 'MEDIUM' ? 'bg-amber-900/30 text-amber-400 border border-amber-800' :
-                        'bg-emerald-900/30 text-emerald-400 border border-emerald-800'
+                      <span className={`inline-flex px-2 py-1 text-[10px] font-bold rounded-full ${
+                        exp.pressure?.toUpperCase() === 'HIGH' ? 'bg-accent-red/10 text-accent-red' :
+                        exp.pressure?.toUpperCase() === 'MEDIUM' ? 'bg-accent-amber/10 text-accent-amber' :
+                        'bg-accent-green/10 text-accent-green'
                       }`}>
-                        {exp.pressure?.toLowerCase()}
+                        {exp.pressure?.toUpperCase()}
                       </span>
                     </td>
-                    <td className="p-4 text-sm text-slate-300 whitespace-nowrap">{exp.developer_role}</td>
-                    <td className="p-4 text-sm text-slate-300">
-                      {exp.deception_gap.toFixed(1)}%
+                    <td className="p-4 text-xs text-brand-secondary">{exp.developer_role}</td>
+                    <td className="p-4 text-xs font-medium">
+                      {exp.deception_gap > 0 ? (
+                        <span className="text-accent-amber">{exp.deception_gap.toFixed(1)}%</span>
+                      ) : (
+                        <span className="text-text-muted">{exp.deception_gap.toFixed(1)}%</span>
+                      )}
                     </td>
-                    <td className="p-4 text-sm text-slate-300">
+                    <td className="p-4 text-xs text-brand-secondary">
                       {exp.performance_score.toFixed(2)}
                     </td>
-                    <td className="p-4 text-sm text-slate-300">
+                    <td className="p-4 text-xs text-brand-secondary">
                       {exp.honesty_score.toFixed(2)}
                     </td>
                     <td className="p-4">
-                      <span className={`text-sm ${exp.deception_detected ? 'text-red-400 font-medium' : 'text-emerald-400'}`}>
-                        {exp.auditor_score.toFixed(2)}
-                      </span>
+                      {exp.deception_detected ? (
+                        <span className="inline-flex items-center gap-1 text-xs font-medium text-accent-red">
+                          <AlertTriangle size={12} /> {exp.auditor_score.toFixed(2)}
+                        </span>
+                      ) : (
+                        <span className="text-xs text-text-muted">{exp.auditor_score.toFixed(2)}</span>
+                      )}
                     </td>
                     <td className="p-4 text-right">
                       <Link 
                         to={`/experiments/${exp.id}`}
-                        className="text-indigo-400 hover:text-indigo-300 text-sm font-medium whitespace-nowrap"
+                        className="text-xs font-medium text-accent-blue hover:underline opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap"
                       >
-                        View &rarr;
+                        View Details
                       </Link>
                     </td>
                   </tr>
@@ -311,7 +351,7 @@ export default function Experiments() {
             </table>
           </div>
         )}
-      </div>
+      </section>
     </div>
   );
 }
