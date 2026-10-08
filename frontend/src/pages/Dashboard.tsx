@@ -55,8 +55,8 @@ export default function Dashboard() {
               {overview ? overview.total_experiments.toLocaleString() : '-'}
             </div>
             <div className="font-mono text-[10px] text-text-muted mt-4 border-t border-border/50 pt-3 flex justify-between uppercase">
-              <span>Vol:</span>
-              <span className="text-accent-mint font-bold">{overview ? '[OK]' : '[LOADING]'}</span>
+              <span>Records:</span>
+              <span className="text-accent-mint font-bold\">{overview ? '100% INDEXED' : '...'}</span>
             </div>
           </div>
           
@@ -72,7 +72,7 @@ export default function Dashboard() {
             </div>
             <div className="font-mono text-[10px] text-text-muted mt-4 border-t border-border/50 pt-3 flex justify-between uppercase">
               <span>Status:</span>
-              <span className="text-accent-amber font-bold">{overview ? '[CRITICAL_TRACKING]' : '...'}</span>
+              <span className="text-accent-amber font-bold\">{overview?.system_status ? `[${overview.system_status}]` : '...'}</span>
             </div>
           </div>
 
@@ -101,8 +101,8 @@ export default function Dashboard() {
               {overview?.avg_honesty_score != null ? overview.avg_honesty_score.toFixed(1) : '-'}<span className="text-lg text-text-muted font-light ml-1">/100</span>
             </div>
             <div className="font-mono text-[10px] text-text-muted mt-4 border-t border-border/50 pt-3 flex justify-between uppercase">
-              <span>Sys Health:</span>
-              <span className="text-accent-mint font-bold">{overview ? '[TRACKING]' : '...'}</span>
+              <span>Mean Quality:</span>
+              <span className="text-accent-mint font-bold\">{overview?.avg_code_quality != null ? overview.avg_code_quality.toFixed(1) : '...'}</span>
             </div>
           </div>
 
@@ -171,17 +171,18 @@ export default function Dashboard() {
           <div className="p-5 flex-1 flex flex-col gap-6">
             {pressure.length > 0 ? pressure.map((tier, idx) => {
                 const gap = tier.deception_gap || 0;
+                const isAlert = tier.is_alert;
                 const width = Math.min(Math.max(gap, 0), 100);
                 return (
-                  <div key={tier.pressure || idx}>
+                  <div key={String(tier.pressure || idx)}>
                     <div className="flex justify-between font-mono text-[10px] mb-2 uppercase tracking-widest">
                       <span className="text-text-muted">{tier.pressure} PRESSURE</span>
-                      <span className={gap > 20 ? "text-accent-amber font-bold" : "text-accent-mint font-bold"}>
+                      <span className={isAlert ? "text-accent-amber font-bold" : "text-accent-mint font-bold"}>
                         {gap.toFixed(1)}%
                       </span>
                     </div>
                     <div className="h-1 bg-border w-full flex">
-                      <div className={gap > 20 ? "h-full bg-accent-amber" : "h-full bg-accent-mint"} style={{ width: `${width}%` }}></div>
+                      <div className={isAlert ? "h-full bg-accent-amber" : "h-full bg-accent-mint"} style={{ width: `${width}%` }}></div>
                     </div>
                   </div>
                 );
@@ -197,7 +198,7 @@ export default function Dashboard() {
       {/* Technical Footer */}
       <footer className="border-t border-border py-4 mt-2 flex justify-between items-center font-mono text-[10px] text-text-muted tracking-widest">
         <div>
-          SYS_ID: 0x9F4A.2B // TELEMETRY_STREAM_OK
+          RECORDS_ANALYSED: {overview?.total_experiments ?? 0} // TELEMETRY_STREAM_OK
         </div>
         <div>
           [ EOF ]

@@ -98,6 +98,18 @@ export default function ExperimentDetail() {
             </h3>
             <div className="space-y-3 text-sm">
               <div className="flex flex-col">
+                <span className="text-text-muted text-xs mb-0.5">Model</span>
+                <span className="text-brand-primary font-medium">{experiment.model || '[NO_DATA]'}</span>
+              </div>
+              <div className="flex flex-col">
+                <span className="text-text-muted text-xs mb-0.5">Seed</span>
+                <span className="text-brand-primary font-medium">{experiment.seed || '[NO_DATA]'}</span>
+              </div>
+              <div className="flex flex-col">
+                <span className="text-text-muted text-xs mb-0.5">Timestamp</span>
+                <span className="text-brand-primary font-medium">{experiment.timestamp || '[NO_DATA]'}</span>
+              </div>
+              <div className="flex flex-col">
                 <span className="text-text-muted text-xs mb-0.5">Task</span>
                 <span className="text-brand-primary font-medium">{experiment.task_name}</span>
               </div>
@@ -127,6 +139,18 @@ export default function ExperimentDetail() {
             </h3>
             <div className="space-y-3 text-sm">
               <div className="flex flex-col">
+                <span className="text-text-muted text-xs mb-0.5">Model</span>
+                <span className="text-brand-primary font-medium">{experiment.model || '[NO_DATA]'}</span>
+              </div>
+              <div className="flex flex-col">
+                <span className="text-text-muted text-xs mb-0.5">Seed</span>
+                <span className="text-brand-primary font-medium">{experiment.seed || '[NO_DATA]'}</span>
+              </div>
+              <div className="flex flex-col">
+                <span className="text-text-muted text-xs mb-0.5">Timestamp</span>
+                <span className="text-brand-primary font-medium">{experiment.timestamp || '[NO_DATA]'}</span>
+              </div>
+              <div className="flex flex-col">
                 <span className="text-text-muted text-xs mb-0.5">Actual Progress</span>
                 <span className="text-brand-primary font-medium">{experiment.actual_progress.toFixed(1)}%</span>
               </div>
@@ -155,6 +179,18 @@ export default function ExperimentDetail() {
               Behavioral Metrics
             </h3>
             <div className="space-y-3 text-sm">
+              <div className="flex flex-col">
+                <span className="text-text-muted text-xs mb-0.5">Model</span>
+                <span className="text-brand-primary font-medium">{experiment.model || '[NO_DATA]'}</span>
+              </div>
+              <div className="flex flex-col">
+                <span className="text-text-muted text-xs mb-0.5">Seed</span>
+                <span className="text-brand-primary font-medium">{experiment.seed || '[NO_DATA]'}</span>
+              </div>
+              <div className="flex flex-col">
+                <span className="text-text-muted text-xs mb-0.5">Timestamp</span>
+                <span className="text-brand-primary font-medium">{experiment.timestamp || '[NO_DATA]'}</span>
+              </div>
               <div className="flex flex-col">
                 <span className="text-text-muted text-xs mb-0.5">Strategy Employed</span>
                 <span className="text-brand-primary font-medium">{experiment.behavior_strategy}</span>
@@ -187,6 +223,18 @@ export default function ExperimentDetail() {
             </h3>
             <div className="space-y-3 text-sm">
               <div className="flex flex-col">
+                <span className="text-text-muted text-xs mb-0.5">Model</span>
+                <span className="text-brand-primary font-medium">{experiment.model || '[NO_DATA]'}</span>
+              </div>
+              <div className="flex flex-col">
+                <span className="text-text-muted text-xs mb-0.5">Seed</span>
+                <span className="text-brand-primary font-medium">{experiment.seed || '[NO_DATA]'}</span>
+              </div>
+              <div className="flex flex-col">
+                <span className="text-text-muted text-xs mb-0.5">Timestamp</span>
+                <span className="text-brand-primary font-medium">{experiment.timestamp || '[NO_DATA]'}</span>
+              </div>
+              <div className="flex flex-col">
                 <span className="text-text-muted text-xs mb-0.5">Auditor Score</span>
                 <span className="text-brand-primary font-medium">{experiment.auditor_score.toFixed(2)}</span>
               </div>
@@ -205,19 +253,19 @@ export default function ExperimentDetail() {
           <div>
             <h3 className="text-xs font-semibold text-text-muted uppercase tracking-wider mb-3">Manager Message</h3>
             <div className="bg-surface border border-border p-5 rounded-lg text-brand-secondary text-sm whitespace-pre-wrap font-mono shadow-sm">
-              {experiment.manager_message || 'N/A'}
+              {experiment.manager_message || '[NO_DATA]'}
             </div>
           </div>
           <div>
             <h3 className="text-xs font-semibold text-text-muted uppercase tracking-wider mb-3">Developer Reasoning</h3>
             <div className="bg-surface border border-border p-5 rounded-lg text-brand-secondary text-sm whitespace-pre-wrap font-mono shadow-sm">
-              {experiment.developer_reasoning || 'N/A'}
+              {experiment.developer_reasoning || '[NO_DATA]'}
             </div>
           </div>
           <div>
             <h3 className="text-xs font-semibold text-text-muted uppercase tracking-wider mb-3">Auditor Explanation</h3>
             <div className="bg-surface border border-border p-5 rounded-lg text-brand-secondary text-sm whitespace-pre-wrap font-mono shadow-sm">
-              {experiment.auditor_explanation || 'N/A'}
+              {experiment.auditor_explanation || '[NO_DATA]'}
             </div>
           </div>
         </div>
