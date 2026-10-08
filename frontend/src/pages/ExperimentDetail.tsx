@@ -65,7 +65,7 @@ export default function ExperimentDetail() {
   }
 
   return (
-    <div className="flex flex-col h-full text-text-main gap-8 max-w-4xl mx-auto w-full pb-12">
+    <div className="flex flex-col min-h-full text-text-main gap-8 max-w-4xl mx-auto w-full pb-12">
       <div className="flex items-center space-x-4">
         <Link
           to="/experiments"

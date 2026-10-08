@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, forwardRef, useImperativeHandle } from 'react';
 import { api } from '../../services/api';
 import type { DatasetRecord, GroupAnalysisRow } from '../../types/api';
 import AnalysisChartCard from './AnalysisChartCard';
@@ -19,7 +19,12 @@ import {
 // Sleek, modern tech colors
 const COLORS = ['#818cf8', '#a78bfa', '#34d399', '#f472b6', '#60a5fa', '#fbbf24'];
 
-export default function BehaviourAnalysis() {
+export interface BehaviourAnalysisRef {
+  fetchData: () => Promise<void>;
+  hasData: boolean;
+}
+
+const BehaviourAnalysis = forwardRef<BehaviourAnalysisRef, {}>((_props, ref) => {
   const [dataset, setDataset] = useState<DatasetRecord[]>([]);
   const [personalityData, setPersonalityData] = useState<GroupAnalysisRow[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -37,13 +42,19 @@ export default function BehaviourAnalysis() {
       setPersonalityData(personalityRes);
     } catch (err: any) {
       setError(err.message || 'Failed to fetch behaviour data');
+      throw err;
     } finally {
       setIsLoading(false);
     }
   };
 
+  useImperativeHandle(ref, () => ({
+    fetchData,
+    hasData: dataset.length > 0
+  }));
+
   useEffect(() => {
-    fetchData();
+    fetchData().catch(() => {});
   }, []);
 
   if (isLoading) {
@@ -67,7 +78,7 @@ export default function BehaviourAnalysis() {
   }
 
   if (dataset.length === 0 && personalityData.length === 0) {
-    return <div className="text-slate-500 p-6 text-sm text-center bg-slate-900/30 border border-slate-800 rounded-2xl">No behavior data available for this timeframe.</div>;
+    return <div className="text-slate-500 p-6 text-sm text-center bg-slate-900/30 border border-slate-800 rounded-2xl">No behavior data available.</div>;
   }
 
   // Process data for scatter
@@ -94,7 +105,7 @@ export default function BehaviourAnalysis() {
             <span className="text-slate-400">Reported Progress</span>
             <span className="text-right text-slate-200 font-medium">{data.reported_progress?.toFixed(1)}%</span>
             <span className="text-slate-400">Deception Gap</span>
-            <span className="text-right text-rose-400 font-medium">+{data.deception_gap?.toFixed(1)}%</span>
+            <span className="text-right text-rose-400 font-medium">{data.deception_gap > 0 ? '+' : ''}{data.deception_gap?.toFixed(1)}%</span>
           </div>
         </div>
       );
@@ -137,7 +148,8 @@ export default function BehaviourAnalysis() {
   // Calculate high-level KPIs for hierarchy
   const avgGap = dataset.length ? dataset.reduce((acc, d) => acc + (d.deception_gap || 0), 0) / dataset.length : 0;
   const criticalCount = dataset.filter(d => (d.deception_gap || 0) > 20).length;
-  const sortedPersonalities = [...personalityData].sort((a, b) => (a.honesty_score || 0) - (b.honesty_score || 0));
+  const validPersonalities = personalityData.filter(p => p.honesty_score != null);
+  const sortedPersonalities = [...validPersonalities].sort((a, b) => a.honesty_score! - b.honesty_score!);
   const lowestHonesty = sortedPersonalities[0]?.personality || 'None';
   const lowestScore = sortedPersonalities[0]?.honesty_score || 0;
 
@@ -146,13 +158,13 @@ export default function BehaviourAnalysis() {
       {/* KPI Overview Row - Highest Hierarchy */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <div className="bg-slate-900/40 border border-slate-800/80 rounded-2xl p-5 flex flex-col justify-between">
-          <span className="text-slate-500 text-xs font-semibold uppercase tracking-wider mb-2">Total Agents</span>
+          <span className="text-slate-500 text-xs font-semibold uppercase tracking-wider mb-2">Total Experiments</span>
           <span className="text-3xl font-light text-slate-100">{dataset.length}</span>
         </div>
         <div className="bg-slate-900/40 border border-slate-800/80 rounded-2xl p-5 flex flex-col justify-between">
           <span className="text-slate-500 text-xs font-semibold uppercase tracking-wider mb-2">Avg Deception Gap</span>
           <div className="flex items-baseline gap-2">
-            <span className="text-3xl font-light text-indigo-400">+{avgGap.toFixed(1)}%</span>
+            <span className="text-3xl font-light text-indigo-400">{avgGap > 0 ? '+' : ''}{avgGap.toFixed(1)}%</span>
           </div>
         </div>
         <div className="bg-rose-950/20 border border-rose-900/30 rounded-2xl p-5 flex flex-col justify-between">
@@ -254,4 +266,6 @@ export default function BehaviourAnalysis() {
     </div>
     </div>
   );
-}
+});
+
+export default BehaviourAnalysis;

@@ -64,7 +64,7 @@ export default function Agents() {
   }
 
   return (
-    <div className="flex flex-col h-full text-text-main gap-8 max-w-6xl mx-auto w-full pb-12">
+    <div className="flex flex-col min-h-full text-text-main gap-8 max-w-6xl mx-auto w-full pb-12">
       <header className="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-4 border-b border-border pb-4">
         <div>
           <h1 className="font-serif text-3xl font-bold text-brand-primary mb-2">Agent Directory</h1>

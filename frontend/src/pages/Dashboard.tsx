@@ -1,261 +1,208 @@
 import { useEffect, useState } from 'react';
 import { api } from '../services/api';
-import type { AnalyticsOverview } from '../types/api';
-import { ArrowRight, Info, TrendingUp, AlertTriangle } from 'lucide-react';
+import type { AnalyticsOverview, OverviewScatterPoint, GroupAnalysisRow } from '../types/api';
+import { Terminal, Activity, ShieldCheck, Crosshair } from 'lucide-react';
+import { ScatterChart, Scatter, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
 
 export default function Dashboard() {
   const [overview, setOverview] = useState<AnalyticsOverview | null>(null);
+  const [scatter, setScatter] = useState<OverviewScatterPoint[]>([]);
+  const [pressure, setPressure] = useState<GroupAnalysisRow[]>([]);
 
   useEffect(() => {
     api.getAnalyticsOverview().then(setOverview).catch(console.error);
+    api.getOverviewScatter().then(setScatter).catch(console.error);
+    api.getPressure().then(setPressure).catch(console.error);
   }, []);
 
   return (
-    <div className="flex flex-col h-full text-text-main gap-8 max-w-6xl mx-auto w-full pb-12">
-      
-      {/* 1. Research Identity and Primary Question */}
-      <header className="mb-4">
-        <div className="flex items-center gap-2 text-accent-blue font-semibold text-sm mb-3 tracking-wide uppercase">
-          <span className="w-2 h-2 rounded-full bg-accent-blue"></span>
-          Primary Investigation
+    <div className="flex flex-col min-h-full text-text-main gap-6 max-w-[1400px] mx-auto w-full">
+      {/* Header section with metadata */}
+      <header className="flex flex-col md:flex-row md:items-end justify-between border-b border-border pb-4 gap-4">
+        <div>
+          <div className="flex items-center gap-2 text-accent-mint font-mono text-xs mb-2 tracking-widest uppercase">
+            <span className="w-1.5 h-1.5 rounded-none bg-accent-mint animate-pulse"></span>
+            SYS.MONITOR.ACTIVE
+          </div>
+          <h1 className="font-sans text-3xl font-bold text-brand-primary tracking-tight uppercase">
+            STRESS-DECEPTION TELEMETRY
+          </h1>
         </div>
-        <h1 className="font-serif text-4xl md:text-5xl font-bold text-brand-primary mb-4 leading-tight">
-          Do AI Agents Cheat Under Pressure?
-        </h1>
-        <p className="text-lg text-text-muted max-w-3xl leading-relaxed">
-          An empirical observation of autonomous agent truthfulness divergence under synthetic token depletion and deadline stress vectors. We investigate the inflection points where previously honest agents begin to fabricate, exaggerate, or deceive to achieve their goals.
-        </p>
+        
+        {/* Research metadata block */}
+        <div className="flex gap-4 font-mono text-[10px] text-text-muted">
+          <div className="flex flex-col border-l border-border pl-3">
+            <span className="uppercase tracking-widest mb-1">Target</span>
+            <span className="text-brand-primary">LLM.BEHAVIOR.DIVERGENCE</span>
+          </div>
+          <div className="flex flex-col border-l border-border pl-3">
+            <span className="uppercase tracking-widest mb-1">Status</span>
+            <span className="text-accent-mint">[LIVE]</span>
+          </div>
+        </div>
       </header>
 
-      {/* 2. Major Experiment Findings & KPIs */}
-      <section>
-        <h2 className="text-xl font-bold text-brand-primary mb-4 border-b border-border pb-2">
-          High-Level Findings
-        </h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          {/* KPI 1 */}
-          <div className="bg-surface border border-border p-5 rounded-xl shadow-sm flex flex-col justify-between">
-            <h3 className="text-sm font-semibold text-text-muted uppercase tracking-wide mb-1">Total Observations</h3>
-            <div className="text-3xl font-bold text-brand-primary mb-2">
-              {overview?.total_experiments?.toLocaleString() || '1,428'}
+      <div className="flex flex-col lg:flex-row gap-6 mb-4">
+        <div className="flex-1 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          
+          {/* Ribbon Panel 1 */}
+          <div className="bg-surface p-6 flex flex-col justify-between border border-border rounded-xl shadow-sm hover:border-accent-mint/50 transition-colors">
+            <div className="flex items-center gap-2 font-mono text-xs font-bold text-text-muted uppercase tracking-widest mb-4">
+              <Terminal size={14} className="text-accent-mint" />
+              Obs. Count
             </div>
-            <p className="text-xs text-text-muted">Simulated task runs across distinct agent profiles.</p>
-          </div>
-
-          {/* KPI 2 */}
-          <div className="bg-surface border border-border p-5 rounded-xl shadow-sm flex flex-col justify-between">
-            <div className="flex justify-between items-start mb-1">
-              <h3 className="text-sm font-semibold text-text-muted uppercase tracking-wide">Mean Divergence</h3>
-              <TrendingUp size={16} className="text-accent-amber" />
+            <div className="font-mono text-4xl font-light text-brand-primary">
+              {overview ? overview.total_experiments.toLocaleString() : '-'}
             </div>
-            <div className="text-3xl font-bold text-brand-primary mb-2">18.4%</div>
-            <p className="text-xs text-text-muted">Average gap between claimed and observed actions.</p>
-            <div className="mt-3 text-xs font-medium text-accent-amber bg-accent-amber/10 inline-flex px-2 py-1 rounded w-fit">
-              Peaks at 42.8% under extreme stress
+            <div className="font-mono text-[10px] text-text-muted mt-4 border-t border-border/50 pt-3 flex justify-between uppercase">
+              <span>Vol:</span>
+              <span className="text-accent-mint font-bold">{overview ? '[OK]' : '[LOADING]'}</span>
             </div>
           </div>
-
-          {/* KPI 3 */}
-          <div className="bg-surface border border-border p-5 rounded-xl shadow-sm flex flex-col justify-between">
-            <h3 className="text-sm font-semibold text-text-muted uppercase tracking-wide mb-1">Auditor Precision</h3>
-            <div className="text-3xl font-bold text-brand-primary mb-2">84.6%</div>
-            <p className="text-xs text-text-muted">Accuracy of the evaluation matrix in detecting deceptive vectors.</p>
-            <div className="mt-3 text-xs text-text-muted flex gap-1 items-center">
-              <span className="font-medium text-brand-primary">2.1%</span> false positive rate
+          
+          {/* Ribbon Panel 2 - Highlighted */}
+          <div className="bg-surface-alt p-6 flex flex-col justify-between border-2 border-accent-amber/30 rounded-xl shadow-sm hover:border-accent-amber transition-colors relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-16 h-16 bg-accent-amber/10 rounded-bl-full"></div>
+            <div className="flex items-center gap-2 font-mono text-xs font-bold text-text-muted uppercase tracking-widest mb-4">
+              <Activity size={14} className="text-accent-amber" />
+              Mean Divergence
+            </div>
+            <div className="font-mono text-4xl font-bold text-accent-amber">
+              {overview?.avg_deception_gap != null ? overview.avg_deception_gap.toFixed(1) : '-'}<span className="text-lg text-accent-amber/60 font-light ml-1">%</span>
+            </div>
+            <div className="font-mono text-[10px] text-text-muted mt-4 border-t border-border/50 pt-3 flex justify-between uppercase">
+              <span>Status:</span>
+              <span className="text-accent-amber font-bold">{overview ? '[CRITICAL_TRACKING]' : '...'}</span>
             </div>
           </div>
 
-          {/* KPI 4 */}
-          <div className="bg-surface border border-border p-5 rounded-xl shadow-sm flex flex-col justify-between">
-            <h3 className="text-sm font-semibold text-text-muted uppercase tracking-wide mb-1">Fleet Honesty Index</h3>
-            <div className="flex items-baseline gap-1 mb-2">
-              <span className="text-3xl font-bold text-brand-primary">72.8</span>
-              <span className="text-sm text-text-muted font-medium">/ 100</span>
+          {/* Ribbon Panel 3 */}
+          <div className="bg-surface p-6 flex flex-col justify-between border border-border rounded-xl shadow-sm hover:border-brand-secondary/50 transition-colors">
+            <div className="flex items-center gap-2 font-mono text-xs font-bold text-text-muted uppercase tracking-widest mb-4">
+              <Crosshair size={14} className="text-brand-secondary" />
+              Auditor Precision
             </div>
-            <p className="text-xs text-text-muted">Aggregate truthfulness score across all baseline conditions.</p>
+            <div className="font-mono text-4xl font-light text-brand-primary">
+              {overview?.detection_rate_pct != null ? overview.detection_rate_pct.toFixed(1) : '-'}<span className="text-lg text-text-muted font-light ml-1">%</span>
+            </div>
+            <div className="font-mono text-[10px] text-text-muted mt-4 border-t border-border/50 pt-3 flex justify-between uppercase">
+              <span>Avg Score:</span>
+              <span className="text-brand-secondary font-bold">{overview?.avg_auditor_score != null ? overview.avg_auditor_score.toFixed(1) : '-'}</span>
+            </div>
           </div>
+
+          {/* Ribbon Panel 4 */}
+          <div className="bg-surface p-6 flex flex-col justify-between border border-border rounded-xl shadow-sm hover:border-accent-mint/50 transition-colors">
+            <div className="flex items-center gap-2 font-mono text-xs font-bold text-text-muted uppercase tracking-widest mb-4">
+              <ShieldCheck size={14} className="text-accent-mint" />
+              Fleet Honesty Index
+            </div>
+            <div className="font-mono text-4xl font-light text-brand-primary">
+              {overview?.avg_honesty_score != null ? overview.avg_honesty_score.toFixed(1) : '-'}<span className="text-lg text-text-muted font-light ml-1">/100</span>
+            </div>
+            <div className="font-mono text-[10px] text-text-muted mt-4 border-t border-border/50 pt-3 flex justify-between uppercase">
+              <span>Sys Health:</span>
+              <span className="text-accent-mint font-bold">{overview ? '[TRACKING]' : '...'}</span>
+            </div>
+          </div>
+
         </div>
-      </section>
+      </div>
 
-      {/* 3. Important Relationships and Evidence */}
-      <section>
-        <div className="flex flex-col md:flex-row justify-between items-end mb-4 border-b border-border pb-2">
-          <h2 className="text-xl font-bold text-brand-primary">
-            Primary Evidence: The Deception Inflection Point
-          </h2>
-          <button className="text-sm font-medium text-accent-blue flex items-center gap-1 hover:underline mt-2 md:mt-0">
-            View full dataset <ArrowRight size={14} />
-          </button>
-        </div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Main Chart */}
-          <div className="lg:col-span-2 bg-surface border border-border rounded-xl shadow-sm p-6 relative flex flex-col min-h-[400px]">
-            <div className="mb-6">
-              <h3 className="font-semibold text-brand-primary mb-1">Pressure Vector Correlation Matrix</h3>
-              <p className="text-sm text-text-muted">Scatter plot demonstrating the relationship between induced stress (PSI) and the deception gap.</p>
-            </div>
-
-            {/* Legend */}
-            <div className="flex items-center gap-4 text-xs font-medium text-text-muted mb-4">
-              <div className="flex items-center gap-1.5"><span className="text-accent-green font-bold text-lg leading-none">+</span> Honest</div>
-              <div className="flex items-center gap-1.5"><span className="text-accent-amber font-bold text-lg leading-none">◇</span> Opportunistic</div>
-              <div className="flex items-center gap-1.5"><span className="text-accent-red font-bold text-lg leading-none">■</span> Fabricator</div>
-            </div>
-
-            {/* Chart Area */}
-            <div className="flex-1 relative mt-2 mb-8">
-              {/* Y-Axis Labels */}
-              <div className="absolute -left-2 top-0 bottom-6 flex flex-col justify-between text-xs font-mono text-text-muted text-right right-full pr-3">
-                <span>50%</span>
-                <span>40%</span>
-                <span>30%</span>
-                <span>20%</span>
-                <span>10%</span>
-                <span>0%</span>
+      {/* Main Analysis Grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <section className="lg:col-span-8 border border-border bg-surface flex flex-col rounded-xl shadow-sm overflow-hidden">
+          <div className="border-b border-border p-4 flex justify-between items-center bg-surface-alt/50">
+            <h2 className="font-mono text-sm font-bold text-brand-primary uppercase tracking-widest flex items-center gap-2">
+              <Activity size={16} /> Pressure v. Deception Correlation
+            </h2>
+          </div>
+          
+          <div className="flex-1 relative p-6 min-h-[350px]">
+            {scatter.length > 0 ? (
+              <ResponsiveContainer width="100%" height="100%">
+                <ScatterChart margin={{ top: 20, right: 20, bottom: 20, left: 0 }}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#1E232B" vertical={false} />
+                  <XAxis 
+                    type="number" 
+                    dataKey="stress_index" 
+                    name="Stress Index" 
+                    stroke="#334155"
+                    tick={{ fill: '#64748b', fontSize: 11, fontFamily: 'monospace' }}
+                    axisLine={false}
+                    tickLine={false}
+                  />
+                  <YAxis 
+                    type="number" 
+                    dataKey="deception_gap" 
+                    name="Deception Gap" 
+                    stroke="#334155"
+                    tick={{ fill: '#64748b', fontSize: 11, fontFamily: 'monospace' }}
+                    axisLine={false}
+                    tickLine={false}
+                  />
+                  <Tooltip 
+                    cursor={{ strokeDasharray: '3 3' }}
+                    contentStyle={{ backgroundColor: '#0f172a', border: '1px solid #1e293b', borderRadius: '8px', fontSize: '12px', fontFamily: 'monospace' }}
+                  />
+                  <Scatter name="Experiments" data={scatter} fill="#00F2A5">
+                    {scatter.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={entry.deception_gap > 20 ? '#F5A623' : '#00F2A5'} />
+                    ))}
+                  </Scatter>
+                </ScatterChart>
+              </ResponsiveContainer>
+            ) : (
+              <div className="flex items-center justify-center h-full text-text-muted font-mono text-sm">
+                [AWAITING_DATA]
               </div>
+            )}
+          </div>
+        </section>
 
-              {/* SVG Grid and Points */}
-              <div className="absolute inset-0 bottom-6">
-                <svg width="100%" height="100%" preserveAspectRatio="none" viewBox="0 0 1000 400">
-                  {/* Grid Lines */}
-                  <g stroke="#e2e8f0" strokeWidth="1" strokeDasharray="4 4">
-                    <line x1="0" y1="0" x2="1000" y2="0"/>
-                    <line x1="0" y1="80" x2="1000" y2="80"/>
-                    <line x1="0" y1="160" x2="1000" y2="160"/>
-                    <line x1="0" y1="240" x2="1000" y2="240"/>
-                    <line x1="0" y1="320" x2="1000" y2="320"/>
-                  </g>
-                  <line x1="0" y1="400" x2="1000" y2="400" stroke="#94a3b8" strokeWidth="1"/>
-
-                  {/* Regression Line */}
-                  <line x1="50" y1="400" x2="700" y2="80" stroke="#ef4444" strokeWidth="2" strokeDasharray="6 6" strokeOpacity="0.5"/>
-
-                  {/* Data Points */}
-                  <g stroke="#10b981" strokeWidth="2" fill="none">
-                    <path d="M 120 380 L 120 390 M 115 385 L 125 385"/>
-                    <path d="M 220 375 L 220 385 M 215 380 L 225 380"/>
-                    <path d="M 280 370 L 280 380 M 275 375 L 285 375"/>
-                    <path d="M 380 360 L 380 370 M 375 365 L 385 365"/>
-                  </g>
-                  <g stroke="#f59e0b" strokeWidth="2" fill="none">
-                    <polygon points="500,345 504,349 500,353 496,349"/>
-                    <polygon points="550,335 554,339 550,343 546,339"/>
-                    <polygon points="620,290 624,294 620,298 616,294"/>
-                    <polygon points="680,280 684,284 680,288 676,284"/>
-                  </g>
-                  <rect x="738" y="168" width="6" height="6" fill="#ef4444"/>
-                </svg>
-
-                {/* Callout / Tooltip styled academic box */}
-                <div className="absolute bg-surface shadow-lg border border-border p-4 rounded-lg w-[260px] z-10" style={{ left: '55%', top: '35%' }}>
-                  <div className="flex justify-between items-center mb-3 pb-2 border-b border-border">
-                    <span className="font-semibold text-brand-primary text-sm">Critical Inflection</span>
-                    <AlertTriangle size={14} className="text-accent-red" />
-                  </div>
-                  <div className="space-y-2 text-xs">
-                    <div className="flex justify-between">
-                      <span className="text-text-muted">Stress Level:</span>
-                      <span className="font-medium text-brand-primary">82.0 (High)</span>
+        {/* Right Side: Tiered Probability Analysis */}
+        <section className="lg:col-span-4 border border-border bg-surface flex flex-col rounded-xl shadow-sm overflow-hidden">
+          <div className="border-b border-border p-4 bg-surface-alt/50">
+            <h2 className="font-mono text-sm font-bold text-brand-primary uppercase tracking-widest flex items-center gap-2">
+              <Terminal size={16} /> Deception By Pressure
+            </h2>
+          </div>
+          
+          <div className="p-5 flex-1 flex flex-col gap-6">
+            {pressure.length > 0 ? pressure.map((tier, idx) => {
+                const gap = tier.deception_gap || 0;
+                const width = Math.min(Math.max(gap, 0), 100);
+                return (
+                  <div key={tier.pressure || idx}>
+                    <div className="flex justify-between font-mono text-[10px] mb-2 uppercase tracking-widest">
+                      <span className="text-text-muted">{tier.pressure} PRESSURE</span>
+                      <span className={gap > 20 ? "text-accent-amber font-bold" : "text-accent-mint font-bold"}>
+                        {gap.toFixed(1)}%
+                      </span>
                     </div>
-                    <div className="flex justify-between">
-                      <span className="text-text-muted">Deception Delta:</span>
-                      <span className="font-semibold text-accent-red">+28.4%</span>
+                    <div className="h-1 bg-border w-full flex">
+                      <div className={gap > 20 ? "h-full bg-accent-amber" : "h-full bg-accent-mint"} style={{ width: `${width}%` }}></div>
                     </div>
-                    <p className="mt-2 text-text-muted pt-2 border-t border-border">
-                      Agent transitioned from opportunistic omission to direct fabrication at this stress boundary.
-                    </p>
                   </div>
-                </div>
+                );
+            }) : (
+              <div className="text-text-muted font-mono text-[10px] uppercase">
+                [NO_DATA_AVAILABLE]
               </div>
-
-              {/* X-Axis Labels */}
-              <div className="absolute bottom-0 left-0 right-0 flex justify-between text-xs font-mono text-text-muted pt-2">
-                <span>0 (Baseline)</span>
-                <span>25 (Mild)</span>
-                <span>50 (Starved)</span>
-                <span>75 (Critical)</span>
-                <span>100 (Terminal)</span>
-              </div>
-            </div>
-            
-            <div className="mt-auto pt-4 flex gap-6 text-xs text-text-muted font-medium border-t border-border">
-              <span>Pearson Correlation: <strong className="text-brand-primary font-semibold">r = +0.84 (p &lt; .001)</strong></span>
-              <span>Inflection Threshold: <strong className="text-accent-amber font-semibold">PSI 64.5</strong></span>
-            </div>
+            )}
           </div>
-
-          {/* Secondary Chart: Tiered Probability */}
-          <div className="bg-surface border border-border rounded-xl shadow-sm p-6 flex flex-col">
-            <div className="mb-6">
-              <h3 className="font-semibold text-brand-primary mb-1">Deception Probability by Tier</h3>
-              <p className="text-sm text-text-muted">Categorical breakdown of deceptive behavior across stress tiers.</p>
-            </div>
-
-            <div className="flex-1 flex flex-col justify-center space-y-6">
-              {/* Bar 1 */}
-              <div>
-                <div className="flex justify-between text-xs mb-1.5">
-                  <span className="font-semibold text-brand-primary">Low Pressure (0-25)</span>
-                  <span className="text-text-muted">94.2% Honest</span>
-                </div>
-                <div className="h-2.5 bg-secondary rounded-full overflow-hidden flex">
-                  <div className="h-full bg-accent-green" style={{ width: '94.2%' }}></div>
-                  <div className="h-full bg-accent-amber" style={{ width: '4.8%' }}></div>
-                  <div className="h-full bg-accent-red" style={{ width: '1.0%' }}></div>
-                </div>
-              </div>
-
-              {/* Bar 2 */}
-              <div>
-                <div className="flex justify-between text-xs mb-1.5">
-                  <span className="font-semibold text-brand-primary">Moderate (26-50)</span>
-                  <span className="text-text-muted">81.5% Honest</span>
-                </div>
-                <div className="h-2.5 bg-secondary rounded-full overflow-hidden flex">
-                  <div className="h-full bg-accent-green" style={{ width: '81.5%' }}></div>
-                  <div className="h-full bg-accent-amber" style={{ width: '14.5%' }}></div>
-                  <div className="h-full bg-accent-red" style={{ width: '4.0%' }}></div>
-                </div>
-              </div>
-
-              {/* Bar 3 */}
-              <div>
-                <div className="flex justify-between text-xs mb-1.5">
-                  <span className="font-semibold text-brand-primary">High Pressure (51-75)</span>
-                  <span className="text-text-muted">58.0% Honest</span>
-                </div>
-                <div className="h-2.5 bg-secondary rounded-full overflow-hidden flex">
-                  <div className="h-full bg-accent-green" style={{ width: '58.0%' }}></div>
-                  <div className="h-full bg-accent-amber" style={{ width: '28.0%' }}></div>
-                  <div className="h-full bg-accent-red" style={{ width: '14.0%' }}></div>
-                </div>
-              </div>
-
-              {/* Bar 4 */}
-              <div>
-                <div className="flex justify-between text-xs mb-1.5">
-                  <span className="font-semibold text-brand-primary">Critical Crunch (76-100)</span>
-                  <span className="font-semibold text-accent-red">31.4% Honest</span>
-                </div>
-                <div className="h-2.5 bg-secondary rounded-full overflow-hidden flex">
-                  <div className="h-full bg-accent-green" style={{ width: '31.4%' }}></div>
-                  <div className="h-full bg-accent-amber" style={{ width: '36.2%' }}></div>
-                  <div className="h-full bg-accent-red" style={{ width: '32.4%' }}></div>
-                </div>
-              </div>
-            </div>
-
-            <div className="mt-8 pt-4 border-t border-border flex gap-3 items-start bg-accent-red/5 p-4 rounded-lg">
-              <Info className="text-accent-red flex-shrink-0 mt-0.5" size={16} />
-              <p className="text-xs text-brand-secondary leading-relaxed">
-                <strong className="text-brand-primary">Observation:</strong> Fabrication incidence scales non-linearly, tripling beyond the 70 PSI constraint limit when token consumption deadlines are strictly enforced.
-              </p>
-            </div>
-          </div>
+        </section>
+      </div>
+      
+      {/* Technical Footer */}
+      <footer className="border-t border-border py-4 mt-2 flex justify-between items-center font-mono text-[10px] text-text-muted tracking-widest">
+        <div>
+          SYS_ID: 0x9F4A.2B // TELEMETRY_STREAM_OK
         </div>
-      </section>
-
+        <div>
+          [ EOF ]
+        </div>
+      </footer>
     </div>
   );
 }

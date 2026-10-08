@@ -96,19 +96,19 @@ export default function Experiments() {
   };
 
   return (
-    <div className="flex flex-col h-full text-text-main gap-8 max-w-6xl mx-auto w-full pb-12">
+    <div className="flex flex-col min-h-full text-text-main gap-8 max-w-6xl mx-auto w-full pb-12">
       <header className="mb-2">
-        <h1 className="font-serif text-3xl font-bold text-brand-primary mb-2">Experiment Control & Logs</h1>
-        <p className="text-text-muted max-w-2xl">
+        <h1 className="font-mono text-3xl font-bold tracking-tight uppercase text-brand-primary mb-2">Experiment Control & Logs</h1>
+        <p className="text-text-muted max-w-2xl font-sans">
           Execute new simulation batches or review recent telemetry from the experimental pipeline.
         </p>
       </header>
 
       {/* Control Terminal Section */}
-      <section className="bg-surface border border-border rounded-xl shadow-sm overflow-hidden">
+      <section className="bg-surface border border-border rounded-xl shadow-sm overflow-hidden shrink-0">
         <div className="bg-surface-alt border-b border-border px-6 py-4 flex justify-between items-center">
-          <div className="flex items-center gap-2 text-brand-primary font-semibold text-sm">
-            <Settings size={18} className="text-text-muted" />
+          <div className="flex items-center gap-2 text-brand-primary font-mono text-sm uppercase tracking-widest font-bold">
+            <Settings size={16} className="text-text-muted" />
             Execution Parameters
           </div>
           <span className="text-xs text-text-muted font-medium bg-secondary px-2 py-1 rounded">System Ready</span>
@@ -131,19 +131,20 @@ export default function Experiments() {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {/* Run Single */}
-            <div className="p-5 border border-border rounded-lg bg-surface flex flex-col justify-between hover:border-accent-blue/30 transition-colors">
+            <div className="p-6 border border-border rounded-xl bg-surface flex flex-col justify-between hover:border-accent-blue/50 transition-colors shadow-sm relative overflow-hidden group">
+              <div className="absolute top-0 right-0 w-12 h-12 bg-accent-blue/10 rounded-bl-full opacity-0 group-hover:opacity-100 transition-opacity"></div>
               <div>
-                <h3 className="text-sm font-semibold text-brand-primary mb-4 flex items-center gap-2">
+                <h3 className="text-sm font-bold text-brand-primary mb-4 flex items-center gap-2 uppercase tracking-wide font-mono">
                   <Play size={16} className="text-accent-blue" /> Single Evaluation
                 </h3>
-                <form id="single-form" onSubmit={handleRunSingle} className="space-y-4">
+                <form id="single-form" onSubmit={handleRunSingle} className="space-y-4 relative z-10">
                   <div>
-                    <label className="block text-xs font-semibold text-text-muted mb-1">Stress Level</label>
+                    <label className="block text-[10px] font-bold text-text-muted mb-1 uppercase tracking-widest">Stress Level</label>
                     <select
                       value={singlePressure}
                       onChange={(e) => setSinglePressure(e.target.value)}
                       disabled={runningAction !== null}
-                      className="w-full bg-surface-alt border border-border rounded-md p-2 text-sm focus:ring-2 focus:ring-accent-blue/50 outline-none disabled:opacity-50"
+                      className="w-full bg-surface-alt border border-border rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-accent-blue/50 outline-none disabled:opacity-50"
                     >
                       <option value="LOW">Low</option>
                       <option value="MEDIUM">Medium</option>
@@ -156,27 +157,28 @@ export default function Experiments() {
                 type="submit"
                 form="single-form"
                 disabled={runningAction !== null}
-                className="mt-6 w-full bg-surface-alt hover:bg-secondary border border-border text-brand-primary font-medium py-2 px-4 text-sm rounded-md transition-all disabled:opacity-50 flex items-center justify-center gap-2"
+                className="mt-6 w-full bg-accent-blue hover:bg-accent-blue/90 text-background font-bold py-2.5 px-4 text-sm rounded-lg transition-all disabled:opacity-50 flex items-center justify-center gap-2 shadow-sm relative z-10"
               >
                 {runningAction === 'single' ? <RefreshCw size={16} className="animate-spin" /> : 'Run Trace'}
               </button>
             </div>
 
             {/* Run Pressure */}
-            <div className="p-5 border border-border rounded-lg bg-surface flex flex-col justify-between hover:border-accent-blue/30 transition-colors">
+            <div className="p-6 border border-border rounded-xl bg-surface flex flex-col justify-between hover:border-brand-secondary/50 transition-colors shadow-sm relative overflow-hidden group">
+              <div className="absolute top-0 right-0 w-12 h-12 bg-brand-secondary/10 rounded-bl-full opacity-0 group-hover:opacity-100 transition-opacity"></div>
               <div>
-                <h3 className="text-sm font-semibold text-brand-primary mb-4 flex items-center gap-2">
-                  <Beaker size={16} className="text-accent-blue" /> Batch Evaluation
+                <h3 className="text-sm font-bold text-brand-primary mb-4 flex items-center gap-2 uppercase tracking-wide font-mono">
+                  <Beaker size={16} className="text-brand-secondary" /> Batch Evaluation
                 </h3>
-                <form id="batch-form" onSubmit={handleRunPressure} className="space-y-4">
+                <form id="batch-form" onSubmit={handleRunPressure} className="space-y-4 relative z-10">
                   <div className="grid grid-cols-2 gap-3">
                     <div>
-                      <label className="block text-xs font-semibold text-text-muted mb-1">Stress</label>
+                      <label className="block text-[10px] font-bold text-text-muted mb-1 uppercase tracking-widest">Stress</label>
                       <select
                         value={pressureLevel}
                         onChange={(e) => setPressureLevel(e.target.value)}
                         disabled={runningAction !== null}
-                        className="w-full bg-surface-alt border border-border rounded-md p-2 text-sm focus:ring-2 focus:ring-accent-blue/50 outline-none disabled:opacity-50"
+                        className="w-full bg-surface-alt border border-border rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-brand-secondary/50 outline-none disabled:opacity-50"
                       >
                         <option value="LOW">Low</option>
                         <option value="MEDIUM">Medium</option>
@@ -184,7 +186,7 @@ export default function Experiments() {
                       </select>
                     </div>
                     <div>
-                      <label className="block text-xs font-semibold text-text-muted mb-1">Iterations</label>
+                      <label className="block text-[10px] font-bold text-text-muted mb-1 uppercase tracking-widest">Iterations</label>
                       <input
                         type="number"
                         min="1"
@@ -192,7 +194,7 @@ export default function Experiments() {
                         value={pressureRuns}
                         onChange={(e) => setPressureRuns(parseInt(e.target.value, 10))}
                         disabled={runningAction !== null}
-                        className="w-full bg-surface-alt border border-border rounded-md p-2 text-sm focus:ring-2 focus:ring-accent-blue/50 outline-none disabled:opacity-50"
+                        className="w-full bg-surface-alt border border-border rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-brand-secondary/50 outline-none disabled:opacity-50"
                       />
                     </div>
                   </div>
@@ -202,21 +204,22 @@ export default function Experiments() {
                 type="submit"
                 form="batch-form"
                 disabled={runningAction !== null}
-                className="mt-6 w-full bg-accent-blue hover:bg-accent-blue/90 text-white font-medium py-2 px-4 text-sm rounded-md transition-all disabled:opacity-50 flex items-center justify-center gap-2"
+                className="mt-6 w-full bg-brand-secondary hover:bg-brand-secondary/90 text-background font-bold py-2.5 px-4 text-sm rounded-lg transition-all disabled:opacity-50 flex items-center justify-center gap-2 shadow-sm relative z-10"
               >
                 {runningAction === 'pressure' ? <RefreshCw size={16} className="animate-spin" /> : 'Start Batch'}
               </button>
             </div>
 
             {/* Run All */}
-            <div className="p-5 border border-border rounded-lg bg-surface flex flex-col justify-between hover:border-accent-red/30 transition-colors">
+            <div className="p-6 border border-border rounded-xl bg-surface flex flex-col justify-between hover:border-accent-red/50 transition-colors shadow-sm relative overflow-hidden group">
+              <div className="absolute top-0 right-0 w-12 h-12 bg-accent-red/10 rounded-bl-full opacity-0 group-hover:opacity-100 transition-opacity"></div>
               <div>
-                <h3 className="text-sm font-semibold text-brand-primary mb-4 flex items-center gap-2">
+                <h3 className="text-sm font-bold text-brand-primary mb-4 flex items-center gap-2 uppercase tracking-wide font-mono">
                   <AlertTriangle size={16} className="text-accent-red" /> Full Matrix
                 </h3>
-                <form id="matrix-form" onSubmit={handleRunAll} className="space-y-4">
+                <form id="matrix-form" onSubmit={handleRunAll} className="space-y-4 relative z-10">
                   <div>
-                    <label className="block text-xs font-semibold text-text-muted mb-1">Runs Per Condition</label>
+                    <label className="block text-[10px] font-bold text-text-muted mb-1 uppercase tracking-widest">Runs Per Condition</label>
                     <input
                       type="number"
                       min="1"
@@ -224,7 +227,7 @@ export default function Experiments() {
                       value={allRuns}
                       onChange={(e) => setAllRuns(parseInt(e.target.value, 10))}
                       disabled={runningAction !== null}
-                      className="w-full bg-surface-alt border border-border rounded-md p-2 text-sm focus:ring-2 focus:ring-accent-red/50 outline-none disabled:opacity-50"
+                      className="w-full bg-surface-alt border border-border rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-accent-red/50 outline-none disabled:opacity-50"
                     />
                   </div>
                 </form>
@@ -233,7 +236,7 @@ export default function Experiments() {
                 type="submit"
                 form="matrix-form"
                 disabled={runningAction !== null}
-                className="mt-6 w-full bg-surface-alt hover:bg-accent-red/10 border border-border hover:border-accent-red/30 text-accent-red font-medium py-2 px-4 text-sm rounded-md transition-all disabled:opacity-50 flex items-center justify-center gap-2"
+                className="mt-6 w-full bg-accent-red hover:bg-accent-red/90 text-white font-bold py-2.5 px-4 text-sm rounded-lg transition-all disabled:opacity-50 flex items-center justify-center gap-2 shadow-sm relative z-10"
               >
                 {runningAction === 'all' ? <RefreshCw size={16} className="animate-spin" /> : 'Execute Matrix'}
               </button>
@@ -243,7 +246,7 @@ export default function Experiments() {
       </section>
 
       {/* Telemetry Log Section */}
-      <section className="bg-surface border border-border rounded-xl shadow-sm overflow-hidden flex flex-col">
+      <section className="bg-surface border border-border rounded-xl shadow-sm overflow-hidden flex flex-col shrink-0">
         <div className="bg-surface-alt border-b border-border px-6 py-4 flex justify-between items-center">
           <div className="flex items-center gap-2 text-brand-primary font-semibold text-sm">
             <FileText size={18} className="text-text-muted" />

@@ -154,5 +154,12 @@ export const api = {
       throw new Error(`API error: ${response.status} ${response.statusText}`);
     }
     return response.json();
+  },
+  getSystemModelInfo: async (): Promise<import('../types/api').SystemModelInfo> => {
+    const response = await fetch(`${API_BASE_URL}/system/model`);
+    if (!response.ok) {
+      throw new Error(`API error: ${response.status} ${response.statusText}`);
+    }
+    return response.json();
   }
 };

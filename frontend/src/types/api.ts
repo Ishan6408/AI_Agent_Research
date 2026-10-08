@@ -300,3 +300,13 @@ export interface AuditorResponse {
 export interface HealthResponse {
   status: string;
 }
+
+// ---------------------------------------------------------------------------
+// System
+// ---------------------------------------------------------------------------
+
+export interface SystemModelInfo {
+  name: string;
+  runtime: string;
+  params: string | null;
+}

@@ -97,7 +97,7 @@ export default function Dataset() {
   const uniqueDevelopers = Array.from(new Set(data.map(d => d.developer_role))).filter(Boolean);
 
   return (
-    <div className="flex flex-col h-full text-text-main gap-8 max-w-6xl mx-auto w-full pb-12">
+    <div className="flex flex-col min-h-full text-text-main gap-8 max-w-6xl mx-auto w-full pb-12">
       {/* Overview / Metadata */}
       <header className="flex flex-col md:flex-row justify-between items-start md:items-end mb-2 border-b border-border pb-4 gap-4">
         <div>
