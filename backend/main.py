@@ -36,9 +36,23 @@ async def global_exception_handler(request: Request, exc: Exception):
         headers=headers
     )
 
+from config.settings import MODEL_NAME
+
 @app.get(f"{settings.API_V1_STR}/health")
 async def health_check():
     return {"status": "ok"}
+
+@app.get(f"{settings.API_V1_STR}/system/model")
+async def get_model_info():
+    parts = MODEL_NAME.split(":")
+    params = None
+    if len(parts) > 1 and "b" in parts[1].lower():
+        params = parts[1].upper()
+    return {
+        "name": MODEL_NAME,
+        "runtime": "OLLAMA",
+        "params": params
+    }
 
 app.include_router(experiments.router, prefix=f"{settings.API_V1_STR}/experiments", tags=["experiments"])
 app.include_router(dataset.router, prefix=f"{settings.API_V1_STR}/dataset", tags=["dataset"])

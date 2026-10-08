@@ -61,7 +61,7 @@ export default function Reports() {
   }
 
   return (
-    <div className="flex flex-col h-full text-text-main gap-10 max-w-5xl mx-auto w-full pb-12">
+    <div className="flex flex-col min-h-full text-text-main gap-10 max-w-5xl mx-auto w-full pb-12">
       {/* Header */}
       <header className="border-b border-border pb-6 flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
         <div>
