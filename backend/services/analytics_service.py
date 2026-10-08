@@ -108,6 +108,10 @@ def get_overview():
         rate = float(det.mean())
         metrics["detection_rate"] = rate                  # 0-1 fraction
         metrics["detection_rate_pct"] = round(rate * 100, 1)  # %-ready
+        metrics["auditor_alert"] = metrics["detection_rate_pct"] < 50.0
+
+    metrics["system_status"] = "ELEVATED" if metrics.get("avg_deception_gap", 0) > 10.0 else "NOMINAL"
+
 
     # Pressure / personality / behaviour distributions (for Overview tab charts)
     for col in ("pressure", "personality", "behavior_strategy", "developer_role",
@@ -143,6 +147,10 @@ def get_group_analysis(column: str):
     # Also include counts per group so React can show n=X labels
     counts = df.groupby(column).size().reset_index(name="count")
     summary = summary.merge(counts, on=column, how="left")
+
+    if "deception_gap" in summary.columns:
+        summary["is_alert"] = summary["deception_gap"] > 20.0
+
 
     return _replace_nan(summary.to_dict(orient="records"))
 

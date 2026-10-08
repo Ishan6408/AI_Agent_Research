@@ -82,14 +82,14 @@ export default function Reports() {
         </h3>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-6">
           <MetricCard label="Total Deployments" value={overview.total_experiments} />
-          <MetricCard label="Mean Performance" value={overview.avg_performance_score?.toFixed(1) || 'N/A'} />
-          <MetricCard label="Mean Honesty" value={overview.avg_honesty_score?.toFixed(1) || 'N/A'} />
-          <MetricCard label="Detection Rate" value={overview.detection_rate_pct != null ? `${overview.detection_rate_pct.toFixed(1)}%` : 'N/A'} isAlert={(overview.detection_rate_pct ?? 100) < 50} />
+          <MetricCard label="Mean Performance" value={overview.avg_performance_score?.toFixed(1) || '[NO_DATA]'} />
+          <MetricCard label="Mean Honesty" value={overview.avg_honesty_score?.toFixed(1) || '[NO_DATA]'} />
+          <MetricCard label="Detection Rate" value={overview.detection_rate_pct != null ? `${overview.detection_rate_pct.toFixed(1)}%` : '[NO_DATA]'} isAlert={overview.auditor_alert} />
           
-          <MetricCard label="Mean Stress Index" value={overview.avg_stress_index?.toFixed(2) || 'N/A'} />
-          <MetricCard label="Aggregate Deception Gap" value={overview.avg_deception_gap?.toFixed(2) || 'N/A'} />
-          <MetricCard label="Auditor Strictness" value={overview.avg_auditor_score?.toFixed(2) || 'N/A'} />
-          <MetricCard label="Mean Bugs Introduced" value={overview.avg_bugs_introduced?.toFixed(2) || 'N/A'} />
+          <MetricCard label="Mean Stress Index" value={overview.avg_stress_index?.toFixed(2) || '[NO_DATA]'} />
+          <MetricCard label="Aggregate Deception Gap" value={overview.avg_deception_gap?.toFixed(2) || '[NO_DATA]'} />
+          <MetricCard label="Auditor Strictness" value={overview.avg_auditor_score?.toFixed(2) || '[NO_DATA]'} />
+          <MetricCard label="Mean Bugs Introduced" value={overview.avg_bugs_introduced?.toFixed(2) || '[NO_DATA]'} />
         </div>
       </section>
 
@@ -102,15 +102,15 @@ export default function Reports() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div className="bg-surface border border-border p-5 rounded-xl shadow-sm border-l-4 border-l-accent-amber">
               <div className="text-xs font-semibold text-text-muted uppercase tracking-wider mb-2">Primary Deceptive Vector (Personality)</div>
-              <div className="text-xl font-bold text-brand-primary">{findings.most_deceptive_personality || 'N/A'}</div>
+              <div className="text-xl font-bold text-brand-primary">{findings.most_deceptive_personality || '[NO_DATA]'}</div>
             </div>
             <div className="bg-surface border border-border p-5 rounded-xl shadow-sm border-l-4 border-l-accent-amber">
               <div className="text-xs font-semibold text-text-muted uppercase tracking-wider mb-2">Primary Deceptive Vector (Role)</div>
-              <div className="text-xl font-bold text-brand-primary">{findings.most_deceptive_developer || 'N/A'}</div>
+              <div className="text-xl font-bold text-brand-primary">{findings.most_deceptive_developer || '[NO_DATA]'}</div>
             </div>
             <div className="bg-surface border border-border p-5 rounded-xl shadow-sm border-l-4 border-l-accent-red">
               <div className="text-xs font-semibold text-text-muted uppercase tracking-wider mb-2">Max Deception Threshold</div>
-              <div className="text-xl font-bold text-brand-primary">{findings.highest_deception_pressure || 'N/A'}</div>
+              <div className="text-xl font-bold text-brand-primary">{findings.highest_deception_pressure || '[NO_DATA]'}</div>
             </div>
           </div>
         </section>

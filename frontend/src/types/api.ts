@@ -52,6 +52,11 @@ export interface ExperimentResult {
 
   /** Stable identifier derived from the JSON filename (JSON-backed only). */
   id?: string;
+  experiment_id?: string;
+  timestamp?: string;
+  model?: string;
+  temperature?: number;
+  seed?: number;
 }
 
 /** Backward-compatible alias used by Phase 3 placeholders */
@@ -168,6 +173,8 @@ export interface AnalyticsOverview {
   detection_rate?: number | null;
   /** Detection rate as a percentage (0-100) */
   detection_rate_pct?: number | null;
+  auditor_alert?: boolean;
+  system_status?: string;
   pressure_distribution?: Record<string, number>;
   personality_distribution?: Record<string, number>;
   behavior_strategy_distribution?: Record<string, number>;
@@ -192,7 +199,7 @@ export interface OverviewScatterPoint {
  */
 export interface GroupAnalysisRow {
   /** The groupby key value (e.g. "LOW", "HIGH", "OPTIMISTIC") */
-  [groupKey: string]: string | number | null | undefined;
+  [groupKey: string]: string | number | boolean | null | undefined;
   count?: number;
   performance_score?: number | null;
   honesty_score?: number | null;
@@ -207,6 +214,7 @@ export interface GroupAnalysisRow {
   penalty?: number | null;
   deadline_hours?: number | null;
   deception_detected?: number | null;
+  is_alert?: boolean;
 }
 
 /**

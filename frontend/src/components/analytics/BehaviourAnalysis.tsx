@@ -1,6 +1,6 @@
 import { useEffect, useState, forwardRef, useImperativeHandle } from 'react';
 import { api } from '../../services/api';
-import type { DatasetRecord, GroupAnalysisRow } from '../../types/api';
+import type { DatasetRecord, GroupAnalysisRow, AnalyticsOverview } from '../../types/api';
 import AnalysisChartCard from './AnalysisChartCard';
 import {
   BarChart,
@@ -26,6 +26,7 @@ export interface BehaviourAnalysisRef {
 
 const BehaviourAnalysis = forwardRef<BehaviourAnalysisRef, {}>((_props, ref) => {
   const [dataset, setDataset] = useState<DatasetRecord[]>([]);
+  const [overview, setOverview] = useState<AnalyticsOverview | null>(null);
   const [personalityData, setPersonalityData] = useState<GroupAnalysisRow[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -34,12 +35,14 @@ const BehaviourAnalysis = forwardRef<BehaviourAnalysisRef, {}>((_props, ref) => 
     setIsLoading(true);
     setError(null);
     try {
-      const [datasetRes, personalityRes] = await Promise.all([
+      const [datasetRes, personalityRes, overviewRes] = await Promise.all([
         api.getDataset(),
-        api.getPersonality()
+        api.getPersonality(),
+        api.getAnalyticsOverview()
       ]);
       setDataset(datasetRes);
       setPersonalityData(personalityRes);
+      setOverview(overviewRes);
     } catch (err: any) {
       setError(err.message || 'Failed to fetch behaviour data');
       throw err;
@@ -146,8 +149,8 @@ const BehaviourAnalysis = forwardRef<BehaviourAnalysisRef, {}>((_props, ref) => 
   });
 
   // Calculate high-level KPIs for hierarchy
-  const avgGap = dataset.length ? dataset.reduce((acc, d) => acc + (d.deception_gap || 0), 0) / dataset.length : 0;
-  const criticalCount = dataset.filter(d => (d.deception_gap || 0) > 20).length;
+  const avgGap = overview?.avg_deception_gap || 0;
+  const criticalCount = dataset.filter(d => d.deception_level === 'CRITICAL_DECEPTION').length;
   const validPersonalities = personalityData.filter(p => p.honesty_score != null);
   const sortedPersonalities = [...validPersonalities].sort((a, b) => a.honesty_score! - b.honesty_score!);
   const lowestHonesty = sortedPersonalities[0]?.personality || 'None';
