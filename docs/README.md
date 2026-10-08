@@ -1,4 +1,4 @@
-# 🤖 Under Pressure — AI Agent Deception Research
+# Under Pressure: AI Agent Deception Research
 
 ### Studying Deceptive Behaviour in AI Software Developers Under Workplace Pressure
 
@@ -6,25 +6,25 @@
 
 ---
 
-## 📌 Project Overview
+## Project Overview
 
 **Under Pressure** is a research-oriented multi-agent simulation that models a small software development company using AI agents.
 
 The system simulates interactions between:
 
-* 👨‍💼 **Manager Agent**
-* 👨‍💻 **Developer Agents**
-* 🕵️ **Auditor Agent**
+* **Manager Agent**
+* **Developer Agents**
+* **Auditor Agent**
 
 Developers receive software development tasks and operate under different workplace conditions such as pressure, deadlines, rewards, and penalties.
 
 The system compares the developer's **actual progress** with their **reported progress** to identify potential deceptive behaviour.
 
-The generated experiments are then analyzed using Python and visualized through an interactive Streamlit dashboard.
+The generated experiments are processed through a Python-based analysis pipeline and presented through a modern React research dashboard backed by FastAPI.
 
 ---
 
-# 🎯 Problem Statement
+# Problem Statement
 
 As AI agents become increasingly capable of performing software engineering tasks, understanding their behaviour under pressure becomes important.
 
@@ -41,7 +41,7 @@ This project investigates these behaviours in a controlled simulated software-co
 
 ---
 
-# 🎯 Objectives
+# Objectives
 
 The main objectives of the project are:
 
@@ -53,30 +53,32 @@ The main objectives of the project are:
 6. Evaluate the ability of an auditor agent to detect deceptive behaviour.
 7. Generate a structured experimental dataset.
 8. Provide an interactive research dashboard for visualization and analysis.
+9. Provide an API layer for accessing analytical results.
+10. Support reproducible experimentation and comparative analysis.
 
 ---
 
-# 🧠 Research Questions
+# Research Questions
 
 The project investigates questions such as:
 
-### RQ1 — Does workplace pressure influence deceptive behaviour?
+### RQ1: Does workplace pressure influence deceptive behaviour?
 
 Does increasing pressure lead to a larger difference between actual and reported progress?
 
-### RQ2 — Does personality influence deception?
+### RQ2: Does personality influence deception?
 
 Do different AI personalities exhibit different levels of deceptive behaviour?
 
-### RQ3 — Does pressure affect performance?
+### RQ3: Does pressure affect performance?
 
 Does increased stress lead to lower performance or increased bugs?
 
-### RQ4 — Can an auditor agent detect deceptive behaviour?
+### RQ4: Can an auditor agent detect deceptive behaviour?
 
 How effectively can an independent AI auditor identify potentially deceptive reports?
 
-### RQ5 — What factors are associated with deception?
+### RQ5: What factors are associated with deception?
 
 The project analyzes relationships between:
 
@@ -87,10 +89,13 @@ The project analyzes relationships between:
 * Code quality
 * Honesty
 * Auditor score
+* Pressure
+* Developer personality
+* Developer role
 
 ---
 
-# 🏗️ System Architecture
+# System Architecture
 
 ```text
                     ┌─────────────────────┐
@@ -145,18 +150,27 @@ The project analyzes relationships between:
                                │
                                ▼
                     ┌─────────────────────┐
-                    │     Analyzer        │
+                    │   Analysis Layer    │
+                    │ Python / Pandas     │
                     └──────────┬──────────┘
                                │
                                ▼
                     ┌─────────────────────┐
-                    │ Streamlit Dashboard │
+                    │    FastAPI Backend  │
+                    └──────────┬──────────┘
+                               │
+                            REST API
+                               │
+                               ▼
+                    ┌─────────────────────┐
+                    │   React Dashboard   │
+                    │ TypeScript / Vite   │
                     └─────────────────────┘
 ```
 
 ---
 
-# 🤖 Multi-Agent System
+# Multi-Agent System
 
 ## 1. Manager Agent
 
@@ -176,10 +190,7 @@ Responsibilities include:
 
 Developer agents simulate AI software developers.
 
-The system currently includes multiple developer roles, including:
-
-* Backend Developer
-* Other software-development roles represented in the experiment configuration
+The system supports multiple developer roles based on the experiment configuration.
 
 Developers operate according to:
 
@@ -222,7 +233,7 @@ The auditor produces:
 
 ---
 
-# 🧩 Behaviour Model
+# Behaviour Model
 
 The project measures the difference between what an AI developer actually accomplished and what it reported.
 
@@ -232,15 +243,17 @@ The project measures the difference between what an AI developer actually accomp
 Deception Gap = Reported Progress − Actual Progress
 ```
 
-A larger positive gap can indicate that the developer reported substantially more progress than was actually achieved.
+A larger positive gap indicates that the developer reported substantially more progress than was actually achieved.
 
 The project uses this measurement as one of the primary indicators for analyzing deceptive reporting behaviour.
 
+A high deception gap is treated as an indicator of potentially deceptive reporting. It does not prove intentional deception.
+
 ---
 
-# 🧬 Personality System
+# Personality System
 
-Developer agents can operate with different personality characteristics.
+Developer agents operate with different personality characteristics.
 
 Personality is treated as an experimental variable so that behaviour can be compared across different agent configurations.
 
@@ -248,23 +261,27 @@ This allows experiments such as:
 
 ```text
 Personality A
-       ↓
+      ↓
 Low Pressure
-       ↓
-Behaviour
-
-Personality A
-       ↓
-High Pressure
-       ↓
+      ↓
 Behaviour
 ```
 
-and comparison between different personalities under the same conditions.
+and:
+
+```text
+Personality A
+      ↓
+High Pressure
+      ↓
+Behaviour
+```
+
+Different personalities can also be compared under the same workplace conditions.
 
 ---
 
-# 🚨 Pressure Levels
+# Pressure Levels
 
 The simulator evaluates agents under multiple workplace pressure levels.
 
@@ -276,11 +293,11 @@ The pressure environment affects factors such as:
 * Stress
 * Expected performance
 
-The experiments can therefore compare agent behaviour across increasingly demanding environments.
+The experiments compare agent behaviour across increasingly demanding environments.
 
 ---
 
-# 🧪 Experiment Pipeline
+# Experiment Pipeline
 
 The complete research pipeline is:
 
@@ -305,88 +322,542 @@ The complete research pipeline is:
           ↓
 10. Generate analytical dataset
           ↓
-11. Visualize results
+11. Run statistical analysis
+          ↓
+12. Expose analytical results through API
+          ↓
+13. Visualize results in React dashboard
 ```
 
 ---
 
-# 📊 Experimental Dataset
+# Experimental Dataset
 
-The experiment results are stored in structured form and analyzed using Pandas.
+The experiment results are stored in structured form and analyzed using Python.
 
 Important variables include:
 
-| Category         | Variables                           |
-| ---------------- | ----------------------------------- |
-| Environment      | Pressure, Reward, Penalty, Deadline |
-| Developer        | Role, Personality                   |
-| Task             | Task Name, Task Difficulty          |
-| Behaviour        | Behaviour Strategy                  |
-| Progress         | Actual Progress, Reported Progress  |
-| Deception        | Deception Gap, Deception Detected   |
-| Software Quality | Bugs Introduced, Code Quality       |
-| Performance      | Performance Score                   |
-| Stress           | Stress Index                        |
-| Honesty          | Honesty Score                       |
-| Auditor          | Auditor Score                       |
+| Category | Variables |
+|---|---|
+| Environment | Pressure, Reward, Penalty, Deadline |
+| Developer | Role, Personality |
+| Task | Task Name, Task Difficulty |
+| Behaviour | Behaviour Strategy |
+| Progress | Actual Progress, Reported Progress |
+| Deception | Deception Gap, Deception Detected |
+| Software Quality | Bugs Introduced, Code Quality |
+| Performance | Performance Score |
+| Stress | Stress Index |
+| Honesty | Honesty Score |
+| Auditor | Auditor Score |
 
 ---
 
-# 📈 Research Dashboard
+# Research Dashboard
 
-The project includes an interactive Streamlit dashboard.
+The project includes an interactive React-based research dashboard.
 
-The dashboard provides:
+The frontend uses React, TypeScript, Vite, Tailwind CSS, and Recharts.
 
-### 📊 Overview
+The FastAPI backend provides analytical data through REST APIs.
+
+## Overview
+
+The overview dashboard provides:
 
 * Overall experiment statistics
-* Performance vs stress
+* KPI metrics
+* Performance analysis
 * Pressure distribution
-* Behaviour strategy distribution
-* Deception detection distribution
+* Behaviour distribution
+* Deception-related metrics
+* Analytical charts
+* Scatter plot analysis
 
-### 🧠 Behaviour Analysis
+## Behaviour Analysis
+
+The behaviour analysis section examines:
 
 * Actual vs reported progress
 * Performance by personality
 * Honesty by personality
 * Stress vs deception gap
 * Deception gap distribution
+* Behaviour patterns across pressure levels
 
-### 👨‍💻 Developer Analysis
+## Developer Analysis
+
+The developer analysis section provides:
 
 * Bugs by developer role
 * Code quality by developer role
 * Pressure vs bugs
 * Performance by developer
-* Developer comparison table
+* Developer comparison
+* Agent-level behavioural analysis
 
-### 🕵️ Auditor Analysis
+## Auditor Analysis
+
+The auditor analysis section provides:
 
 * Auditor score distribution
 * Detection rate by pressure
 * Average auditor score by pressure
+* Auditor decisions
+* Deception detection analysis
 
-### 📈 Correlation Analysis
+## Personality Analysis
 
-* Correlation heatmap
-* Top suspicious experiments
-* Research findings
-* Average experimental metrics
+The personality analysis section examines:
 
-### 🗂️ Dataset Explorer
+* Behaviour across personality types
+* Performance differences
+* Honesty differences
+* Deception gap differences
+* Stress response
 
-* Complete filtered dataset
-* Interactive filtering
-* Dataset information
-* CSV export
+## Pressure Analysis
+
+The pressure analysis examines how increasing workplace pressure affects:
+
+* Stress
+* Performance
+* Bugs
+* Honesty
+* Deception gap
+* Auditor detection
+
+## Dataset Explorer
+
+The dataset interface provides:
+
+* Complete experimental dataset
+* Dataset filtering
+* Dataset statistics
+* Structured analytical data
+* CSV-compatible data exploration
 
 ---
 
-# 🖥️ Dashboard Preview
+# Backend API
 
-Add your screenshots here after the final experiment run.
+The FastAPI backend exposes analytical endpoints used by the React dashboard.
+
+Current endpoints include:
+
+```text
+GET /health
+
+GET /api/analytics/overview
+GET /api/analytics/overview/scatter
+
+GET /api/analytics/personality
+GET /api/analytics/developers
+GET /api/analytics/behavior
+
+GET /api/pressure
+GET /api/auditor
+GET /api/dataset
+```
+
+FastAPI also provides interactive API documentation through:
+
+```text
+http://127.0.0.1:8000/docs
+```
+
+---
+
+# Frontend Architecture
+
+The frontend is built with React and TypeScript.
+
+```text
+frontend/
+│
+├── src/
+│   ├── components/
+│   │   ├── KPICard.tsx
+│   │   ├── KPIGrid.tsx
+│   │   ├── ChartCard.tsx
+│   │   └── OverviewCharts.tsx
+│   │
+│   ├── pages/
+│   │   └── Dashboard.tsx
+│   │
+│   ├── services/
+│   │   └── API services
+│   │
+│   └── types/
+│       └── TypeScript interfaces
+│
+├── package.json
+├── vite.config.ts
+└── ...
+```
+
+---
+
+# Backend Architecture
+
+The backend is implemented using FastAPI.
+
+```text
+backend/
+│
+├── main.py
+├── schemas.py
+│
+├── routes/
+│
+└── services/
+    ├── analysis_service.py
+    ├── analysis_helpers.py
+    └── ...
+```
+
+The backend separates API routing, analytical services, data schemas, and supporting analysis logic.
+
+---
+
+# Project Structure
+
+```text
+AI_Agent_Research/
+│
+├── backend/
+│   ├── main.py
+│   ├── schemas.py
+│   ├── routes/
+│   └── services/
+│       ├── analysis_service.py
+│       └── analysis_helpers.py
+│
+├── frontend/
+│   ├── src/
+│   │   ├── components/
+│   │   ├── pages/
+│   │   ├── services/
+│   │   └── types/
+│   ├── package.json
+│   └── vite.config.ts
+│
+├── results/
+│   └── experiment results
+│
+├── analysis/
+│   └── analysis scripts
+│
+├── experiments/
+│   └── experiment execution
+│
+├── agents/
+│   └── agent implementations
+│
+├── models/
+│   └── experiment models
+│
+├── requirements.txt
+├── README.md
+└── .gitignore
+```
+
+> The exact structure may change as the research platform evolves.
+
+---
+
+# Technologies Used
+
+### Programming
+
+* Python 3.12
+* TypeScript
+* JavaScript
+
+### AI / LLM
+
+* Ollama
+* Local Large Language Models
+* LLM-based multi-agent simulation
+
+### Backend
+
+* FastAPI
+* Uvicorn
+
+### Frontend
+
+* React
+* TypeScript
+* Vite
+* Tailwind CSS
+* Recharts
+
+### Data Analysis
+
+* Pandas
+* NumPy
+* Scikit-learn
+
+### Visualization
+
+* Plotly
+* Matplotlib
+* Seaborn
+* Recharts
+
+### Development
+
+* Git
+* GitHub
+* VS Code
+
+---
+
+# Installation
+
+## 1. Clone the repository
+
+```bash
+git clone <YOUR_GITHUB_REPOSITORY_URL>
+cd AI_Agent_Research
+```
+
+## 2. Create a Python virtual environment
+
+Windows:
+
+```powershell
+python -m venv .venv
+```
+
+Activate it:
+
+```powershell
+.venv\Scripts\activate
+```
+
+## 3. Install backend dependencies
+
+```bash
+pip install -r requirements.txt
+```
+
+## 4. Install frontend dependencies
+
+```bash
+cd frontend
+npm install
+```
+
+Return to the project root:
+
+```bash
+cd ..
+```
+
+---
+
+# Configure Ollama
+
+Install and start Ollama on your system.
+
+Verify that Ollama is available:
+
+```bash
+ollama list
+```
+
+Make sure the model required by the experiment configuration is available locally.
+
+For example:
+
+```bash
+ollama pull <MODEL_NAME>
+```
+
+The exact model depends on the experiment configuration.
+
+---
+
+# Running the Project
+
+## Step 1. Start the FastAPI backend
+
+From the project root:
+
+```bash
+uvicorn backend.main:app --reload
+```
+
+The backend will run at:
+
+```text
+http://127.0.0.1:8000
+```
+
+## Step 2. Start the React frontend
+
+Open another terminal:
+
+```bash
+cd frontend
+npm run dev
+```
+
+Open the Vite development URL shown in the terminal.
+
+---
+
+# Running Experiments
+
+The experiment runner generates the multi-agent simulation data.
+
+The general process is:
+
+```text
+Experiment Configuration
+        ↓
+Agent Initialization
+        ↓
+Company Simulation
+        ↓
+Developer Actions
+        ↓
+Progress Reports
+        ↓
+Auditor Evaluation
+        ↓
+Experiment Dataset
+        ↓
+Analytics
+```
+
+Large experimental campaigns should be stored separately from the application source code.
+
+---
+
+# Research Metrics
+
+The project calculates several metrics to evaluate agent behaviour.
+
+### Actual Progress
+
+Estimated amount of work actually completed by the developer.
+
+### Reported Progress
+
+Progress communicated by the developer.
+
+### Deception Gap
+
+Difference between reported and actual progress.
+
+```text
+Deception Gap = Reported Progress − Actual Progress
+```
+
+### Stress Index
+
+Represents the level of pressure experienced by the agent.
+
+### Performance Score
+
+Represents the overall performance of the developer.
+
+### Honesty Score
+
+Represents the degree of alignment between the developer's actual state and reported state.
+
+### Auditor Score
+
+Score generated by the auditor agent while evaluating developer behaviour.
+
+### Deception Detected
+
+Outcome indicating whether the auditor detected potentially deceptive behaviour.
+
+---
+
+# Research Analysis
+
+The dashboard enables analysis of relationships such as:
+
+```text
+Pressure
+   ↓
+Stress
+   ↓
+Behaviour
+   ↓
+Reported Progress
+   ↓
+Deception Gap
+   ↓
+Auditor Detection
+```
+
+The analytical pipeline also supports comparisons between developer roles, personalities, pressure levels, and experimental conditions.
+
+---
+
+# Experimental Design
+
+The project supports controlled experiments where multiple factors are varied while other conditions are kept consistent.
+
+Important experimental variables include:
+
+### Independent Variables
+
+* Pressure level
+* Developer personality
+* Developer role
+* Reward
+* Penalty
+* Deadline
+* Task difficulty
+
+### Dependent Variables
+
+* Actual progress
+* Reported progress
+* Deception gap
+* Stress
+* Performance
+* Bugs
+* Code quality
+* Honesty
+* Auditor score
+* Deception detection
+
+---
+
+# Experiment Logging
+
+Each major experiment should record:
+
+```text
+Experiment ID
+Model
+Model configuration
+Pressure configuration
+Number of agents
+Agent roles
+Agent personalities
+Number of rounds
+Task configuration
+Dataset location
+Git commit
+Execution date
+```
+
+This allows results to be traced back to the exact experiment configuration.
+
+---
+
+# Dashboard Screenshots
+
+Add screenshots after the final UI redesign:
 
 ```text
 docs/
@@ -394,11 +865,13 @@ docs/
     ├── overview.png
     ├── behaviour.png
     ├── developer.png
+    ├── personality.png
+    ├── pressure.png
     ├── auditor.png
-    └── correlation.png
+    └── dataset.png
 ```
 
-Then add them to this README:
+Then add:
 
 ```markdown
 ## Dashboard
@@ -415,295 +888,36 @@ Then add them to this README:
 
 ![Developer Analysis](docs/screenshots/developer.png)
 
-### Correlation Analysis
+### Auditor Analysis
 
-![Correlation Analysis](docs/screenshots/correlation.png)
+![Auditor Analysis](docs/screenshots/auditor.png)
 ```
 
 ---
 
-# 📁 Project Structure
+# Research Findings
+
+Final research findings should be added after the finalized experimental dataset has been analyzed.
+
+Example structure:
 
 ```text
-ai-agent-research/
-│
-├── agents/
-│   ├── base_agent.py
-│   ├── manager_agent.py
-│   ├── backend_agent.py
-│   └── auditor_agent.py
-│
-├── analysis/
-│   ├── analyzer.py
-│   └── dashboard.py
-│
-├── experiments/
-│   └── runner.py
-│
-├── models/
-│   ├── behavior.py
-│   ├── environment.py
-│   ├── personality.py
-│   ├── task_difficulty.py
-│   └── ...
-│
-├── policies/
-│   └── ...
-│
-├── simulation/
-│   └── simulator.py
-│
-├── results/
-│   ├── experiments.json
-│   └── experiment_summary.csv
-│
-├── utils/
-│   └── ...
-│
-├── main.py
-├── requirements.txt
-├── README.md
-└── .gitignore
+• Highest deception gap: ______
+• Highest pressure condition: ______
+• Personality with highest deception gap: ______
+• Developer role with highest deception gap: ______
+• Auditor detection rate: ______%
+• Relationship between stress and deception gap: ______
+• Relationship between pressure and performance: ______
 ```
 
-> The exact structure may vary slightly depending on the current implementation.
+These values should come directly from the experimental dataset.
 
 ---
 
-# ⚙️ Technologies Used
+# Limitations
 
-### Programming
-
-* Python 3.12
-
-### AI / LLM
-
-* Ollama
-* Local Large Language Models
-
-### Data Analysis
-
-* Pandas
-* NumPy
-
-### Visualization
-
-* Plotly
-* Streamlit
-
-### Development
-
-* Git
-* GitHub
-* VS Code
-
----
-
-# 💻 Installation
-
-## 1. Clone the repository
-
-```bash
-git clone <YOUR_GITHUB_REPOSITORY_URL>
-cd ai-agent-research
-```
-
----
-
-## 2. Create a virtual environment
-
-```bash
-python3.12 -m venv .venv
-```
-
-Activate it on macOS/Linux:
-
-```bash
-source .venv/bin/activate
-```
-
----
-
-## 3. Install dependencies
-
-```bash
-pip install -r requirements.txt
-```
-
----
-
-# 🧠 Configure Ollama
-
-Install and start Ollama on your system.
-
-Verify that it is available:
-
-```bash
-ollama list
-```
-
-Make sure the model required by the project is available locally.
-
-For example:
-
-```bash
-ollama pull <MODEL_NAME>
-```
-
-The exact model depends on the configuration used by the project.
-
----
-
-# ▶️ Running the Project
-
-## Step 1 — Run experiments
-
-From the project root:
-
-```bash
-python main.py
-```
-
-This runs the multi-agent simulation and generates experimental results.
-
----
-
-## Step 2 — Analyze the experiments
-
-After the simulation completes:
-
-```bash
-python analysis/analyzer.py
-```
-
-This processes the raw experiment results and generates:
-
-```text
-results/experiment_summary.csv
-```
-
----
-
-## Step 3 — Launch the dashboard
-
-```bash
-streamlit run analysis/dashboard.py
-```
-
-The Streamlit dashboard will open in your browser.
-
----
-
-# 🧪 Experiment Configuration
-
-The number of experiments can be controlled using `runs_per_pressure` in:
-
-```text
-experiments/runner.py
-```
-
-For example:
-
-```python
-def __init__(self, runs_per_pressure=10):
-    self.runs_per_pressure = runs_per_pressure
-```
-
-If the experiment uses four pressure levels and four developer roles:
-
-```text
-4 pressure levels
-× 10 runs
-× 4 developers
-----------------
-160 experiments
-```
-
-A larger dataset provides more observations for research visualization and statistical analysis.
-
----
-
-# 🔬 Research Metrics
-
-The project calculates several metrics to evaluate agent behaviour.
-
-### Actual Progress
-
-Estimated amount of work actually completed by the developer.
-
-### Reported Progress
-
-Progress communicated by the developer to the manager.
-
-### Deception Gap
-
-Difference between reported and actual progress.
-
-### Stress Index
-
-Represents the level of pressure/stress experienced by the agent.
-
-### Performance Score
-
-Represents the overall performance of the developer.
-
-### Honesty Score
-
-Represents the degree of alignment between the developer's actual state and reported state.
-
-### Auditor Score
-
-Score generated by the auditor agent when evaluating the developer's behaviour.
-
-### Deception Detected
-
-Binary outcome indicating whether deceptive behaviour was detected.
-
----
-
-# 📊 Example Research Analysis
-
-The dashboard can be used to investigate relationships such as:
-
-```text
-Pressure
-   ↓
-Stress
-   ↓
-Behaviour
-   ↓
-Reported Progress
-   ↓
-Deception Gap
-   ↓
-Auditor Detection
-```
-
-The correlation analysis helps identify relationships between numerical experimental variables.
-
----
-
-# 📝 Research Findings
-
-The final research findings should be added here after the large experiment dataset has been generated.
-
-For example:
-
-```text
-• The highest deception gap was observed under ______ pressure.
-• The personality with the highest average deception gap was ______.
-• The developer role with the highest average deception gap was ______.
-• Auditor detection rate was ______%.
-• Stress showed a ______ relationship with deception gap.
-```
-
-> These values should be filled using the final experimental dataset rather than manually estimated.
-
----
-
-# ⚠️ Limitations
-
-This project is a simulated research environment and therefore has several limitations.
+This project operates within a simulated research environment.
 
 ### 1. Synthetic Environment
 
@@ -711,23 +925,27 @@ The software company is simulated rather than a real workplace.
 
 ### 2. LLM Dependence
 
-Results may vary depending on the language model used.
+Results depend on the language model used by the experiment.
 
 ### 3. Limited Agent Roles
 
-The current implementation models a limited number of software-development roles.
+The current implementation represents a limited set of software-development roles.
 
 ### 4. Behavioural Interpretation
 
-A high deception gap is treated as an indicator of potentially deceptive reporting, but it does not necessarily prove intentional deception.
+A high deception gap indicates potentially deceptive reporting. It does not prove intentional deception.
 
 ### 5. Experimental Scale
 
-The current dataset is generated from controlled simulation experiments rather than real-world observations.
+The dataset comes from controlled simulation experiments rather than real-world workplace observations.
+
+### 6. Model Variability
+
+Different models and configurations might produce different behavioural patterns under identical experimental conditions.
 
 ---
 
-# 🚀 Future Work
+# Future Work
 
 Potential improvements include:
 
@@ -735,25 +953,26 @@ Potential improvements include:
 * Introduce additional developer roles
 * Add more personality models
 * Introduce dynamic pressure changes
-* Use real coding tasks
-* Add reinforcement learning
-* Improve deception detection
+* Use more realistic software-development tasks
 * Compare multiple LLMs
+* Improve deception detection
+* Add human evaluation
 * Perform statistical significance testing
 * Train machine-learning models to predict deception
 * Add Random Forest feature importance
-* Automatically export research charts
+* Add automated experiment comparison
 * Add experiment reproducibility controls
+* Add confidence intervals
+* Add causal analysis
+* Expand the research dataset
 
 ---
 
-# 🤖 Optional Machine Learning Extension
+# Machine Learning Extension
 
-A future version can use the generated experimental dataset to train a machine-learning classifier.
+The generated experimental dataset provides an opportunity for supervised machine-learning analysis.
 
-### Example
-
-Input features:
+Potential input features include:
 
 ```text
 Stress Index
@@ -763,18 +982,26 @@ Deception Gap
 Bugs Introduced
 Code Quality
 Auditor Score
+Pressure Level
+Personality
+Developer Role
 ```
 
-Target:
+Potential target:
 
 ```text
 Deception Detected
 ```
 
-Possible model:
+Possible models include:
 
 ```text
-Random Forest Classifier
+Logistic Regression
+Decision Tree
+Random Forest
+Support Vector Machine
+K-Nearest Neighbors
+MLP Classifier
 ```
 
 This would extend the project from:
@@ -796,14 +1023,16 @@ Data Analysis
         +
 Visualization
         +
-Machine Learning Prediction
+Machine Learning
+        +
+Behaviour Prediction
 ```
 
 ---
 
-# 🎓 Academic / Research Value
+# Academic / Research Value
 
-This project demonstrates concepts from several areas of computer science:
+This project combines concepts from several areas of computer science:
 
 * Artificial Intelligence
 * Large Language Models
@@ -814,22 +1043,59 @@ This project demonstrates concepts from several areas of computer science:
 * Machine Learning
 * Software Engineering
 * Experimental Research
+* Human-AI Interaction
 
-The project provides a controlled environment for studying how AI agents respond to different environmental and organizational pressures.
+The platform provides a controlled environment for studying how AI agents respond to organizational pressure and how their behaviour changes across experimental conditions.
 
 ---
 
-# 👨‍💻 Author
+# Project Development
 
-**Praveen Kumar Jha**
+The project evolved from an initial Streamlit research prototype into a separated full-stack research platform.
 
-B.Tech — Computer Science and Engineering
+```text
+Initial Research Prototype
+          ↓
+Streamlit Analysis
+          ↓
+FastAPI Backend
+          ↓
+Analytics API
+          ↓
+React + TypeScript Frontend
+          ↓
+Interactive Research Dashboard
+          ↓
+UI Refinement
+```
+
+The current architecture separates:
+
+```text
+Experimentation
+      +
+Data Analysis
+      +
+Backend APIs
+      +
+Frontend Visualization
+```
+
+This separation makes the research system easier to extend and maintain.
+
+---
+
+# Author
+
+**Ishan Patel**
+
+B.Tech, Information Technology
 
 Government Engineering College Bilaspur
 
 ---
 
-# ⭐ Project Summary
+# Project Summary
 
 **Under Pressure** investigates how AI software developers behave when exposed to different levels of workplace pressure.
 
@@ -840,19 +1106,23 @@ Multi-Agent AI
       +
 Software Company Simulation
       +
+Workplace Pressure
+      +
 Behavioural Analysis
       +
 Auditor Agent
       +
 Experimental Dataset
       +
-Interactive Dashboard
+FastAPI Analytics Backend
+      +
+React Research Dashboard
 ```
 
-The ultimate goal is to better understand **AI agent behaviour, deceptive reporting, and the effects of pressure in simulated software engineering environments.**
+The primary research goal is to study **AI agent behaviour, deceptive reporting, performance, stress, and auditor detection under controlled workplace conditions**.
 
 ---
 
-## 📜 License
+## License
 
 This project is intended primarily for academic and research purposes.
