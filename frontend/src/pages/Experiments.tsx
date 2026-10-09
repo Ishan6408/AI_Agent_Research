@@ -131,7 +131,7 @@ export default function Experiments() {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {/* Run Single */}
-            <div className="p-6 border border-border rounded-xl bg-surface flex flex-col justify-between hover:border-accent-blue/50 transition-colors shadow-sm relative overflow-hidden group">
+            <div className="p-6 border border-border rounded-xl bg-surface-alt flex flex-col justify-between hover:border-accent-blue/50 transition-colors shadow-sm relative overflow-hidden group">
               <div className="absolute top-0 right-0 w-12 h-12 bg-accent-blue/10 rounded-bl-full opacity-0 group-hover:opacity-100 transition-opacity"></div>
               <div>
                 <h3 className="text-sm font-bold text-brand-primary mb-4 flex items-center gap-2 uppercase tracking-wide font-mono">
@@ -139,12 +139,12 @@ export default function Experiments() {
                 </h3>
                 <form id="single-form" onSubmit={handleRunSingle} className="space-y-4 relative z-10">
                   <div>
-                    <label className="block text-[10px] font-bold text-text-muted mb-1 uppercase tracking-widest">Stress Level</label>
+                    <label className="block text-[10px] font-bold text-text-muted mb-1 uppercase tracking-widest">Environmental Stress</label>
                     <select
                       value={singlePressure}
                       onChange={(e) => setSinglePressure(e.target.value)}
                       disabled={runningAction !== null}
-                      className="w-full bg-surface-alt border border-border rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-accent-blue/50 outline-none disabled:opacity-50"
+                      className="w-full bg-surface border border-border rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-accent-blue/50 outline-none disabled:opacity-50"
                     >
                       <option value="LOW">Low</option>
                       <option value="MEDIUM">Medium</option>
@@ -159,12 +159,12 @@ export default function Experiments() {
                 disabled={runningAction !== null}
                 className="mt-6 w-full bg-accent-blue hover:bg-accent-blue/90 text-background font-bold py-2.5 px-4 text-sm rounded-lg transition-all disabled:opacity-50 flex items-center justify-center gap-2 shadow-sm relative z-10"
               >
-                {runningAction === 'single' ? <RefreshCw size={16} className="animate-spin" /> : 'Run Trace'}
+                {runningAction === 'single' ? <RefreshCw size={16} className="animate-spin" /> : 'Run Sprint'}
               </button>
             </div>
 
             {/* Run Pressure */}
-            <div className="p-6 border border-border rounded-xl bg-surface flex flex-col justify-between hover:border-brand-secondary/50 transition-colors shadow-sm relative overflow-hidden group">
+            <div className="p-6 border border-border rounded-xl bg-surface-alt flex flex-col justify-between hover:border-brand-secondary/50 transition-colors shadow-sm relative overflow-hidden group">
               <div className="absolute top-0 right-0 w-12 h-12 bg-brand-secondary/10 rounded-bl-full opacity-0 group-hover:opacity-100 transition-opacity"></div>
               <div>
                 <h3 className="text-sm font-bold text-brand-primary mb-4 flex items-center gap-2 uppercase tracking-wide font-mono">
@@ -173,12 +173,12 @@ export default function Experiments() {
                 <form id="batch-form" onSubmit={handleRunPressure} className="space-y-4 relative z-10">
                   <div className="grid grid-cols-2 gap-3">
                     <div>
-                      <label className="block text-[10px] font-bold text-text-muted mb-1 uppercase tracking-widest">Stress</label>
+                      <label className="block text-[10px] font-bold text-text-muted mb-1 uppercase tracking-widest">Env. Stress</label>
                       <select
                         value={pressureLevel}
                         onChange={(e) => setPressureLevel(e.target.value)}
                         disabled={runningAction !== null}
-                        className="w-full bg-surface-alt border border-border rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-brand-secondary/50 outline-none disabled:opacity-50"
+                        className="w-full bg-surface border border-border rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-brand-secondary/50 outline-none disabled:opacity-50"
                       >
                         <option value="LOW">Low</option>
                         <option value="MEDIUM">Medium</option>
@@ -194,7 +194,7 @@ export default function Experiments() {
                         value={pressureRuns}
                         onChange={(e) => setPressureRuns(parseInt(e.target.value, 10))}
                         disabled={runningAction !== null}
-                        className="w-full bg-surface-alt border border-border rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-brand-secondary/50 outline-none disabled:opacity-50"
+                        className="w-full bg-surface border border-border rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-brand-secondary/50 outline-none disabled:opacity-50"
                       />
                     </div>
                   </div>
@@ -211,7 +211,7 @@ export default function Experiments() {
             </div>
 
             {/* Run All */}
-            <div className="p-6 border border-border rounded-xl bg-surface flex flex-col justify-between hover:border-accent-red/50 transition-colors shadow-sm relative overflow-hidden group">
+            <div className="p-6 border border-border rounded-xl bg-surface-alt flex flex-col justify-between hover:border-accent-red/50 transition-colors shadow-sm relative overflow-hidden group">
               <div className="absolute top-0 right-0 w-12 h-12 bg-accent-red/10 rounded-bl-full opacity-0 group-hover:opacity-100 transition-opacity"></div>
               <div>
                 <h3 className="text-sm font-bold text-brand-primary mb-4 flex items-center gap-2 uppercase tracking-wide font-mono">
@@ -227,7 +227,7 @@ export default function Experiments() {
                       value={allRuns}
                       onChange={(e) => setAllRuns(parseInt(e.target.value, 10))}
                       disabled={runningAction !== null}
-                      className="w-full bg-surface-alt border border-border rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-accent-red/50 outline-none disabled:opacity-50"
+                      className="w-full bg-surface border border-border rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-accent-red/50 outline-none disabled:opacity-50"
                     />
                   </div>
                 </form>
@@ -288,7 +288,7 @@ export default function Experiments() {
               <thead>
                 <tr className="bg-surface-alt border-b border-border">
                   <th className="p-4 text-xs font-semibold text-text-muted tracking-wide whitespace-nowrap">ID / Task</th>
-                  <th className="p-4 text-xs font-semibold text-text-muted tracking-wide whitespace-nowrap">Stress</th>
+                  <th className="p-4 text-xs font-semibold text-text-muted tracking-wide whitespace-nowrap">Env. Stress</th>
                   <th className="p-4 text-xs font-semibold text-text-muted tracking-wide whitespace-nowrap">Node Role</th>
                   <th className="p-4 text-xs font-semibold text-text-muted tracking-wide whitespace-nowrap">Divergence</th>
                   <th className="p-4 text-xs font-semibold text-text-muted tracking-wide whitespace-nowrap">Perf.</th>

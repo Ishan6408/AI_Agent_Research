@@ -114,7 +114,7 @@ export default function ExperimentDetail() {
                 <span className="text-brand-primary font-medium">{experiment.task_name}</span>
               </div>
               <div className="flex flex-col">
-                <span className="text-text-muted text-xs mb-0.5">Pressure Condition</span>
+                <span className="text-text-muted text-xs mb-0.5">Environmental Stress</span>
                 <span className="text-brand-primary font-medium capitalize">{experiment.pressure?.toLowerCase()}</span>
               </div>
               <div className="flex flex-col">
