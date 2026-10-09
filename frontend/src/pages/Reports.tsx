@@ -136,7 +136,7 @@ export default function Reports() {
                 <tr>
                   <th className="px-4 py-3 whitespace-nowrap">Task Designation</th>
                   <th className="px-4 py-3 whitespace-nowrap">Developer Profile</th>
-                  <th className="px-4 py-3 whitespace-nowrap">Stress Level</th>
+                  <th className="px-4 py-3 whitespace-nowrap">Env. Stress</th>
                   <th className="px-4 py-3 whitespace-nowrap">Personality</th>
                   <th className="px-4 py-3 whitespace-nowrap text-right">Deception Variance</th>
                   <th className="px-4 py-3 whitespace-nowrap text-right">Auditor Assessment</th>
