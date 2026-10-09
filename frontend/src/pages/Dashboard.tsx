@@ -46,9 +46,10 @@ export default function Dashboard() {
         <div className="flex-1 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           
           {/* Ribbon Panel 1 */}
-          <div className="bg-surface p-6 flex flex-col justify-between border border-border rounded-xl shadow-sm hover:border-accent-mint/50 transition-colors">
+          <div className="bg-surface-alt p-6 flex flex-col justify-between border-2 border-accent-blue/30 rounded-xl shadow-sm hover:border-accent-blue transition-colors relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-16 h-16 bg-accent-blue/10 rounded-bl-full"></div>
             <div className="flex items-center gap-2 font-mono text-xs font-bold text-text-muted uppercase tracking-widest mb-4">
-              <Terminal size={14} className="text-accent-mint" />
+              <Terminal size={14} className="text-accent-blue" />
               Obs. Count
             </div>
             <div className="font-mono text-4xl font-light text-brand-primary">
@@ -56,7 +57,7 @@ export default function Dashboard() {
             </div>
             <div className="font-mono text-[10px] text-text-muted mt-4 border-t border-border/50 pt-3 flex justify-between uppercase">
               <span>Records:</span>
-              <span className="text-accent-mint font-bold\">{overview ? '100% INDEXED' : '...'}</span>
+              <span className="text-accent-blue font-bold">{overview ? '100% INDEXED' : '...'}</span>
             </div>
           </div>
           
@@ -72,14 +73,15 @@ export default function Dashboard() {
             </div>
             <div className="font-mono text-[10px] text-text-muted mt-4 border-t border-border/50 pt-3 flex justify-between uppercase">
               <span>Status:</span>
-              <span className="text-accent-amber font-bold\">{overview?.system_status ? `[${overview.system_status}]` : '...'}</span>
+              <span className="text-accent-amber font-bold">{overview?.system_status ? `[${overview.system_status}]` : '...'}</span>
             </div>
           </div>
 
           {/* Ribbon Panel 3 */}
-          <div className="bg-surface p-6 flex flex-col justify-between border border-border rounded-xl shadow-sm hover:border-brand-secondary/50 transition-colors">
+          <div className="bg-surface-alt p-6 flex flex-col justify-between border-2 border-accent-purple/30 rounded-xl shadow-sm hover:border-accent-purple transition-colors relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-16 h-16 bg-accent-purple/10 rounded-bl-full"></div>
             <div className="flex items-center gap-2 font-mono text-xs font-bold text-text-muted uppercase tracking-widest mb-4">
-              <Crosshair size={14} className="text-brand-secondary" />
+              <Crosshair size={14} className="text-accent-purple" />
               Auditor Precision
             </div>
             <div className="font-mono text-4xl font-light text-brand-primary">
@@ -87,12 +89,13 @@ export default function Dashboard() {
             </div>
             <div className="font-mono text-[10px] text-text-muted mt-4 border-t border-border/50 pt-3 flex justify-between uppercase">
               <span>Avg Score:</span>
-              <span className="text-brand-secondary font-bold">{overview?.avg_auditor_score != null ? overview.avg_auditor_score.toFixed(1) : '-'}</span>
+              <span className="text-accent-purple font-bold">{overview?.avg_auditor_score != null ? overview.avg_auditor_score.toFixed(1) : '-'}</span>
             </div>
           </div>
 
           {/* Ribbon Panel 4 */}
-          <div className="bg-surface p-6 flex flex-col justify-between border border-border rounded-xl shadow-sm hover:border-accent-mint/50 transition-colors">
+          <div className="bg-surface-alt p-6 flex flex-col justify-between border-2 border-accent-mint/30 rounded-xl shadow-sm hover:border-accent-mint transition-colors relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-16 h-16 bg-accent-mint/10 rounded-bl-full"></div>
             <div className="flex items-center gap-2 font-mono text-xs font-bold text-text-muted uppercase tracking-widest mb-4">
               <ShieldCheck size={14} className="text-accent-mint" />
               Fleet Honesty Index
@@ -102,7 +105,7 @@ export default function Dashboard() {
             </div>
             <div className="font-mono text-[10px] text-text-muted mt-4 border-t border-border/50 pt-3 flex justify-between uppercase">
               <span>Mean Quality:</span>
-              <span className="text-accent-mint font-bold\">{overview?.avg_code_quality != null ? overview.avg_code_quality.toFixed(1) : '...'}</span>
+              <span className="text-accent-mint font-bold">{overview?.avg_code_quality != null ? overview.avg_code_quality.toFixed(1) : '...'}</span>
             </div>
           </div>
 
