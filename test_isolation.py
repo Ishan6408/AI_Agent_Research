@@ -12,8 +12,15 @@ def test_test_data_isolation(mock_audit, mock_think, tmp_path):
     prod_results_dir = "results"
     initial_prod_files = set(os.listdir(prod_results_dir)) if os.path.exists(prod_results_dir) else set()
     
-    # Ensure there are no JSON files in the production directory, meaning it will load the 211 historical CSV records
-    assert not any(f.endswith(".json") for f in initial_prod_files), "Production results directory has JSON files"
+    # We no longer assume there are no JSON files or exactly 211 records in production.
+    # We simply capture the initial state.
+    client = TestClient(app)
+    
+    initial_exp_res = client.get("/api/experiments")
+    initial_exp_ids = [e.get("experiment_id") or e.get("id") for e in initial_exp_res.json()]
+    
+    initial_dataset_res = client.get("/api/dataset")
+    initial_dataset_ids = [e.get("experiment_id") or e.get("id") for e in initial_dataset_res.json()]
     
     simulator = SoftwareCompanySimulator(storage_dir=str(tmp_path))
     results = simulator.run(pressure=PressureLevel.LOW, seed=999)
@@ -30,16 +37,14 @@ def test_test_data_isolation(mock_audit, mock_think, tmp_path):
     current_prod_files = set(os.listdir(prod_results_dir)) if os.path.exists(prod_results_dir) else set()
     assert initial_prod_files == current_prod_files, "Production results directory was modified"
     
-    client = TestClient(app)
-    
     res = client.get("/api/experiments")
     assert res.status_code == 200
     exp_ids = [e.get("experiment_id") or e.get("id") for e in res.json()]
     assert exp_id not in exp_ids, "Test data leaked into GET /api/experiments"
+    assert len(exp_ids) == len(initial_exp_ids), "Total experiment count changed unexpectedly"
     
     res = client.get("/api/dataset")
     assert res.status_code == 200
     dataset_ids = [e.get("experiment_id") or e.get("id") for e in res.json()]
     assert exp_id not in dataset_ids, "Test data leaked into GET /api/dataset"
-    
-    assert len(dataset_ids) == 211, f"Expected 211 records in dataset, found {len(dataset_ids)}"
+    assert len(dataset_ids) == len(initial_dataset_ids), "Total dataset count changed unexpectedly"
