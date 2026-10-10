@@ -1,6 +1,8 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
+from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from backend.core.config import settings
+from config.settings import MODEL_NAME
 from backend.routes import experiments, agents, analytics, dataset, auditor
 
 app = FastAPI(
@@ -17,9 +19,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-from fastapi import Request
-from fastapi.responses import JSONResponse
-
 @app.exception_handler(Exception)
 async def global_exception_handler(request: Request, exc: Exception):
     origin = request.headers.get("origin")
@@ -35,8 +34,6 @@ async def global_exception_handler(request: Request, exc: Exception):
         content={"detail": "Internal Server Error: " + str(exc)},
         headers=headers
     )
-
-from config.settings import MODEL_NAME
 
 @app.get(f"{settings.API_V1_STR}/health")
 async def health_check():

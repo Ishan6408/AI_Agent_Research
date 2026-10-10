@@ -581,7 +581,7 @@ GET /api/dataset
 The backend also provides:
 
 ```text
-GET /health
+GET /api/health
 ```
 
 for checking whether the API is running.

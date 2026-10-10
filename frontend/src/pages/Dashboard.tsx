@@ -114,7 +114,7 @@ export default function Dashboard() {
 
       {/* Main Analysis Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        <section className="lg:col-span-8 border border-border bg-surface flex flex-col rounded-xl shadow-sm overflow-hidden">
+        <section className="lg:col-span-8 border border-border bg-surface flex flex-col rounded-xl shadow-sm">
           <div className="border-b border-border p-4 flex justify-between items-center bg-surface-alt/50">
             <h2 className="font-mono text-sm font-bold text-brand-primary uppercase tracking-widest flex items-center gap-2">
               <Activity size={16} /> Pressure v. Deception Correlation
@@ -146,9 +146,21 @@ export default function Dashboard() {
                   />
                   <Tooltip 
                     cursor={{ strokeDasharray: '3 3' }}
-                    contentStyle={{ backgroundColor: '#0f172a', border: '1px solid #1e293b', borderRadius: '8px', fontSize: '12px', fontFamily: 'monospace' }}
+                    content={({ active, payload }) => {
+                      if (active && payload && payload.length) {
+                        const data = payload[0].payload;
+                        return (
+                          <div className="bg-[#0f172a] border border-[#1e293b] rounded-lg p-3 text-xs font-mono shadow-xl">
+                            <p className="text-text-muted mb-1 uppercase">Experiment Point</p>
+                            <p className="text-brand-primary"><span className="text-text-muted">Stress Index:</span> {data.stress_index}</p>
+                            <p className="text-brand-primary"><span className="text-text-muted">Deception Gap:</span> <span className={data.deception_gap > 20 ? 'text-accent-amber' : 'text-accent-mint'}>{data.deception_gap}%</span></p>
+                          </div>
+                        );
+                      }
+                      return null;
+                    }}
                   />
-                  <Scatter name="Experiments" data={scatter} fill="#00F2A5">
+                  <Scatter name="Experiments" data={scatter} isAnimationActive={false} fill="#00F2A5">
                     {scatter.map((entry, index) => (
                       <Cell key={`cell-${index}`} fill={entry.deception_gap > 20 ? '#F5A623' : '#00F2A5'} />
                     ))}

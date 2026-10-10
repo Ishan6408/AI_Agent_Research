@@ -446,7 +446,7 @@ The FastAPI backend exposes analytical endpoints used by the React dashboard.
 Current endpoints include:
 
 ```text
-GET /health
+GET /api/health
 
 GET /api/analytics/overview
 GET /api/analytics/overview/scatter

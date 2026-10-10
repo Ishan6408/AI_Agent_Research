@@ -1,8 +1,9 @@
 from pydantic import BaseModel
 from typing import Optional, List, Any
+from models.environment import PressureLevel
 
 class RunPressureRequest(BaseModel):
-    pressure: str
+    pressure: PressureLevel
     runs: Optional[int] = 10
     base_seed: Optional[int] = None
 
@@ -11,7 +12,7 @@ class RunAllRequest(BaseModel):
     base_seed: Optional[int] = None
 
 class RunExperimentRequest(BaseModel):
-    pressure: str
+    pressure: PressureLevel
     base_seed: Optional[int] = None
 
 class RunExperimentResponse(BaseModel):
