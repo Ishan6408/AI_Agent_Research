@@ -9,6 +9,7 @@ import Auditor from './pages/Auditor';
 import Analytics from './pages/Analytics';
 import Dataset from './pages/Dataset';
 import Reports from './pages/Reports';
+import NotFound from './pages/NotFound';
 
 function App() {
   return (
@@ -25,6 +26,7 @@ function App() {
           <Route path="analytics" element={<Analytics />} />
           <Route path="dataset" element={<Dataset />} />
           <Route path="reports" element={<Reports />} />
+          <Route path="*" element={<NotFound />} />
         </Route>
       </Routes>
     </Router>

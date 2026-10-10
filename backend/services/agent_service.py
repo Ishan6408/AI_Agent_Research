@@ -1,3 +1,4 @@
+import pandas as pd
 from fastapi import HTTPException
 from models.behavior import BehaviorStrategy
 from models.personality import Personality
@@ -64,19 +65,26 @@ def get_agent_by_role(role: str):
             a["behaviour_strategies"] = behaviors
             
             # Fetch some metrics for developers if applicable
-            try:
-                analyzer = ExperimentAnalyzer()
-                df = analyzer.create_dataframe()
-                if df is not None and not df.empty and "developer_role" in df.columns:
-                    role_df = df[df["developer_role"] == a["role"]]
-                    if not role_df.empty:
-                        a["metrics"] = {
-                            "avg_deception_gap": round(role_df.get("deception_gap", pd.Series([0])).mean(), 2) if "deception_gap" in role_df.columns else None,
-                            "avg_performance_score": round(role_df.get("performance_score", pd.Series([0])).mean(), 2) if "performance_score" in role_df.columns else None,
-                            "avg_bugs_introduced": round(role_df.get("bugs_introduced", pd.Series([0])).mean(), 2) if "bugs_introduced" in role_df.columns else None
-                        }
-            except Exception:
-                pass
+            analyzer = ExperimentAnalyzer()
+            df = analyzer.create_dataframe()
+            if df is not None and not df.empty and "developer_role" in df.columns:
+                role_df = df[df["developer_role"] == a["role"]]
+                if not role_df.empty:
+                    def get_mean(col):
+                        if col in role_df.columns:
+                            val = role_df[col].mean()
+                            return round(float(val), 2) if not pd.isna(val) else None
+                        return None
+                        
+                    a["metrics"] = {
+                        "avg_deception_gap": get_mean("deception_gap"),
+                        "avg_performance_score": get_mean("performance_score"),
+                        "avg_bugs_introduced": get_mean("bugs_introduced")
+                    }
+                else:
+                    a["metrics"] = None
+            else:
+                a["metrics"] = None
                 
             return a
             

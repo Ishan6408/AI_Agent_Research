@@ -31,7 +31,7 @@ class ExperimentAnalyzer:
 
 
         json_files = sorted(
-            self.results_folder.glob("*.json")
+            [f for f in self.results_folder.rglob("*.json") if f.name.startswith("experiment_")]
         )
 
 

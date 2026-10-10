@@ -827,7 +827,7 @@ This provides a clear contract between the frontend and backend.
 The backend exposes:
 
 ```text
-GET /health
+GET /api/health
 ```
 
 The endpoint provides a lightweight way to verify that the FastAPI application is running.

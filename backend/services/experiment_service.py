@@ -42,27 +42,32 @@ def _load_json_file(filepath: str) -> dict | None:
 
 def get_all_experiments():
     """
-    Return all valid JSON experiment files from the results directory.
-    Malformed or unreadable files are skipped with a log warning, not a
-    crash.  An empty results directory returns [].
+    Return all valid JSON experiment files from the results directory,
+    scanning recursively. Malformed or unreadable files are skipped.
     """
     if not os.path.exists(RESULTS_DIR):
         return []
 
-    experiments = []
-    for filename in sorted(os.listdir(RESULTS_DIR)):
-        if not filename.endswith(".json"):
-            continue
-        filepath = os.path.join(RESULTS_DIR, filename)
-        data = _load_json_file(filepath)
-        if data is not None:
-            # Attach a stable id derived from the filename so React
-            # can use it as a table key and for detail navigation.
-            if "id" not in data:
-                data["id"] = os.path.splitext(filename)[0]
-            experiments.append(data)
+    experiments_dict = {}
+    for root, _, files in os.walk(RESULTS_DIR):
+        for filename in files:
+            if not filename.endswith(".json"):
+                continue
+            if not filename.startswith("experiment_"):
+                continue
+                
+            filepath = os.path.join(root, filename)
+            data = _load_json_file(filepath)
+            if data is not None:
+                exp_id = data.get("id", os.path.splitext(filename)[0])
+                if "id" not in data:
+                    data["id"] = exp_id
+                
+                # Avoid duplicates by keeping the first encountered
+                if exp_id not in experiments_dict:
+                    experiments_dict[exp_id] = data
 
-    return experiments
+    return sorted(experiments_dict.values(), key=lambda x: x["id"])
 
 
 def get_experiment_by_id(experiment_id: str):
@@ -70,17 +75,25 @@ def get_experiment_by_id(experiment_id: str):
     Look up a single experiment by the filename stem (without .json).
     Returns 404 if not found, 500 if the file exists but cannot be parsed.
     """
-    # Try exact filename stem
-    filepath = os.path.join(RESULTS_DIR, f"{experiment_id}.json")
-
-    if not os.path.exists(filepath):
+    target_filename = f"{experiment_id}.json"
+    target_filepath = None
+    
+    if os.path.exists(os.path.join(RESULTS_DIR, target_filename)):
+        target_filepath = os.path.join(RESULTS_DIR, target_filename)
+    else:
+        for root, _, files in os.walk(RESULTS_DIR):
+            if target_filename in files:
+                target_filepath = os.path.join(root, target_filename)
+                break
+                
+    if not target_filepath:
         raise HTTPException(status_code=404, detail="Experiment not found")
 
-    data = _load_json_file(filepath)
+    data = _load_json_file(target_filepath)
     if data is None:
         raise HTTPException(
             status_code=500,
-            detail=f"Failed to read or parse experiment file '{experiment_id}.json'",
+            detail=f"Failed to read or parse experiment file '{target_filename}'",
         )
 
     if "id" not in data:
@@ -88,17 +101,9 @@ def get_experiment_by_id(experiment_id: str):
     return data
 
 
-def run_experiment(pressure: str, base_seed: int | None = None):
-    try:
-        pressure_enum = PressureLevel(pressure)
-    except ValueError:
-        raise HTTPException(
-            status_code=400,
-            detail=f"Invalid pressure level '{pressure}'. "
-                   f"Valid values: {[p.value for p in PressureLevel]}",
-        )
+def run_experiment(pressure: PressureLevel, base_seed: int | None = None):
     runner = ExperimentRunner(runs_per_pressure=1, storage_dir=RESULTS_DIR)
-    results = runner.run_pressure(pressure_enum, base_seed=base_seed)
+    results = runner.run_pressure(pressure, base_seed=base_seed)
 
     return {
         "success": True,
@@ -108,17 +113,9 @@ def run_experiment(pressure: str, base_seed: int | None = None):
     }
 
 
-def run_pressure_experiments(pressure: str, runs: int = 10, base_seed: int | None = None):
-    try:
-        pressure_enum = PressureLevel(pressure)
-    except ValueError:
-        raise HTTPException(
-            status_code=400,
-            detail=f"Invalid pressure level '{pressure}'. "
-                   f"Valid values: {[p.value for p in PressureLevel]}",
-        )
+def run_pressure_experiments(pressure: PressureLevel, runs: int = 10, base_seed: int | None = None):
     runner = ExperimentRunner(runs_per_pressure=runs, storage_dir=RESULTS_DIR)
-    results = runner.run_pressure(pressure_enum, base_seed=base_seed)
+    results = runner.run_pressure(pressure, base_seed=base_seed)
     return {
         "success": True,
         "count": len(results),
