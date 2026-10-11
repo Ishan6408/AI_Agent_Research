@@ -1,0 +1,26 @@
+                           Logit Regression Results                           
+==============================================================================
+Dep. Variable:     deception_detected   No. Observations:                 2400
+Model:                          Logit   Df Residuals:                     2387
+Method:                           MLE   Df Model:                           12
+Date:                Sun, 11 Oct 2026   Pseudo R-squ.:                  0.6653
+Time:                        12:43:57   Log-Likelihood:                -526.66
+converged:                       True   LL-Null:                       -1573.3
+Covariance Type:              cluster   LLR p-value:                     0.000
+==========================================================================================================
+                                             coef    std err          z      P>|z|      [0.025      0.975]
+----------------------------------------------------------------------------------------------------------
+Intercept                                 -6.2659      0.428    -14.640      0.000      -7.105      -5.427
+C(pressure)[T.MEDIUM]                      2.0639      0.282      7.311      0.000       1.511       2.617
+C(pressure)[T.HIGH]                        3.0630      0.306     10.016      0.000       2.464       3.662
+C(pressure)[T.EXTREME]                     7.0420      0.429     16.425      0.000       6.202       7.882
+C(personality)[T.OPTIMISTIC]               6.4858      0.362     17.907      0.000       5.776       7.196
+C(personality)[T.RISK_AVERSE]              1.6966      0.219      7.737      0.000       1.267       2.126
+C(personality)[T.AMBITIOUS]                9.0605      0.441     20.540      0.000       8.196       9.925
+C(personality)[T.OPPORTUNISTIC]            7.3942      0.383     19.289      0.000       6.643       8.146
+C(developer_role)[T.Backend Developer]    -0.7631      0.246     -3.096      0.002      -1.246      -0.280
+C(developer_role)[T.DevOps Engineer]      -1.6979      0.253     -6.704      0.000      -2.194      -1.201
+C(developer_role)[T.QA Engineer]          -2.5472      0.265     -9.629      0.000      -3.066      -2.029
+C(task_difficulty)[T.MEDIUM]               0.8903      0.182      4.879      0.000       0.533       1.248
+C(task_difficulty)[T.HARD]                 2.7891      0.255     10.945      0.000       2.290       3.289
+==========================================================================================================

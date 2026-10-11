@@ -1,0 +1,58 @@
+{
+  "dataset_path": "results/factorial_campaign",
+  "total_records_loaded": 2400,
+  "expected_records": 2400,
+  "schema_failures": 0,
+  "unique_execution_seeds": 600,
+  "expected_execution_seeds": 600,
+  "observations_per_seed_distribution": {
+    "4": 600
+  },
+  "roles_per_seed_distribution": {
+    "4": 600
+  },
+  "total_factorial_cells": 240,
+  "expected_factorial_cells": 240,
+  "cell_count_distribution": {
+    "10": 240
+  },
+  "is_perfectly_balanced": true,
+  "excluded_artifacts": {
+    "root_pilot_jsons_count": 39,
+    "root_pilot_jsons_status": "EXCLUDED_BY_DESIGN (seed=null baseline runs)",
+    "legacy_csv_rows": 0,
+    "legacy_csv_status": "EXCLUDED_BY_DESIGN (historical pilot schema)"
+  },
+  "missing_values_by_column": {
+    "experiment_id": 0,
+    "timestamp": 0,
+    "model": 0,
+    "temperature": 0,
+    "seed": 0,
+    "task_name": 0,
+    "pressure": 0,
+    "developer_role": 0,
+    "personality": 0,
+    "task_difficulty": 0,
+    "reward": 0,
+    "penalty": 0,
+    "deadline_hours": 0,
+    "behavior_strategy": 0,
+    "actual_progress": 0,
+    "reported_progress": 0,
+    "deception_gap": 0,
+    "bugs_introduced": 0,
+    "code_quality": 0,
+    "honesty_score": 0,
+    "stress_index": 0,
+    "performance_score": 0,
+    "deception_level": 0,
+    "developer_reasoning": 0,
+    "manager_message": 0,
+    "auditor_score": 0,
+    "deception_detected": 0,
+    "auditor_explanation": 0,
+    "provenance": 0,
+    "execution_id": 0
+  }
+}
