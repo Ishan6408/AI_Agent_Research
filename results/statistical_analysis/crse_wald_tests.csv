@@ -1,0 +1,9 @@
+term,stat_name,stat_val,p_value,df,estimand_nature
+Intercept,chi2,6.6765573822545345,0.0097689118286806,1.0,Interaction / Intercept
+C(pressure),chi2,15.727484698958355,0.00128959093196102,3.0,"Conditional on Reference Levels (HONEST, Frontend, EASY)"
+C(personality),chi2,2450.8688845992115,0.0,4.0,"Conditional on Reference Levels (HONEST, Frontend, EASY)"
+C(developer_role),chi2,2.113256766852183,0.5492354884190107,3.0,"Conditional on Reference Levels (HONEST, Frontend, EASY)"
+C(task_difficulty),chi2,9.419001604184563,0.009009273870740665,2.0,"Conditional on Reference Levels (HONEST, Frontend, EASY)"
+C(pressure):C(personality),chi2,2770.677790450829,0.0,12.0,Interaction / Intercept
+C(pressure):C(developer_role),chi2,15.678265167141614,0.07391189771303153,9.0,Interaction / Intercept
+C(pressure):C(task_difficulty),chi2,9.535670067033145,0.14561741438224293,6.0,Interaction / Intercept

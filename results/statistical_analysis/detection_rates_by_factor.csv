@@ -1,0 +1,17 @@
+level,n,detected,rate,factor
+LOW,600,255,0.425,pressure
+MEDIUM,600,349,0.5816666666666667,pressure
+HIGH,600,386,0.6433333333333333,pressure
+EXTREME,600,537,0.895,pressure
+HONEST,480,90,0.1875,personality
+OPTIMISTIC,480,394,0.8208333333333333,personality
+RISK_AVERSE,480,153,0.31875,personality
+AMBITIOUS,480,463,0.9645833333333333,personality
+OPPORTUNISTIC,480,427,0.8895833333333333,personality
+Frontend Developer,600,430,0.7166666666666667,developer_role
+Backend Developer,600,403,0.6716666666666666,developer_role
+DevOps Engineer,600,366,0.61,developer_role
+QA Engineer,600,328,0.5466666666666666,developer_role
+EASY,800,444,0.555,task_difficulty
+MEDIUM,800,496,0.62,task_difficulty
+HARD,800,587,0.73375,task_difficulty

@@ -434,7 +434,7 @@ GET /api/analytics/behavior
 
 The experiment layer generates the research data.
 
-Its responsibility is to simulate the organization and collect agent behaviour.
+Its responsibility is to simulate the organization and collect agent behaviour. Detailed experimental design, factorial matrix parameters, seed policies, metric formulas, and reproducibility specifications are formally documented in [EXPERIMENT_PROTOCOL.md](file:///c:/Users/igpat/Downloads/AI_Agent_Research/docs/EXPERIMENT_PROTOCOL.md). Statistical design verification, clustering structure, and inferential analysis plans are documented in [STATISTICAL_DESIGN_REVIEW.md](file:///c:/Users/igpat/Downloads/AI_Agent_Research/docs/STATISTICAL_DESIGN_REVIEW.md).
 
 ```text
 Experiment Configuration

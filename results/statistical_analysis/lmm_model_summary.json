@@ -1,0 +1,14 @@
+{
+  "model_type": "Linear Mixed-Effects Model (LMM)",
+  "formula": "deception_gap ~ C(pressure) + C(personality) + C(developer_role) + C(task_difficulty) + C(pressure):C(personality) + C(pressure):C(developer_role) + C(pressure):C(task_difficulty)",
+  "grouping_variable": "execution_id (seed)",
+  "n_observations": 2400,
+  "n_clusters": 600,
+  "converged": true,
+  "method": "REML / ML (CG)",
+  "log_likelihood": -7044.066628510578,
+  "sigma_u2_cluster_variance": 0.42267494029034614,
+  "sigma_e2_residual_variance": 20.744599181637316,
+  "icc_intraclass_correlation": 0.01996832175251548,
+  "scale": 20.744599181637316
+}

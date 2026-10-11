@@ -1,0 +1,15 @@
+{
+  "residual_mean": 1.948071333875608e-14,
+  "residual_std": 4.563226640950976,
+  "residual_skewness": 0.20243383889817126,
+  "residual_kurtosis": 1.423941402750362,
+  "shapiro_wilk_sample_p": 4.9709689957524396e-11,
+  "r_squared_crse_ols": 0.7751406538903151,
+  "adj_r_squared_crse_ols": 0.7714247579164686,
+  "f_statistic": 383.04805099529364,
+  "f_pvalue": 0.0,
+  "singular_fit_detected": false,
+  "quasi_complete_separation_in_logit": true,
+  "zero_cell_combinations_count": 8,
+  "notes": "LMM and CRSE models evaluated with seed cluster grouping. Perfect collinearity avoided by excluding stress_index. Quasi-complete separation identified in logistic regression."
+}
