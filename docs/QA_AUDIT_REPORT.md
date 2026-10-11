@@ -230,3 +230,111 @@ A full regression sweep was executed utilizing headless browser automation and b
 
 ### Release Readiness Verdict
 **APPROVED FOR DEPLOYMENT.** All critical, medium, and low-priority bugs discovered in the initial UI/API QA Audit have been successfully mitigated. The application is resilient against API payload abuse, behaves beautifully on mobile viewports, calculates accurate historical data aggregates, and faithfully models recursive directory data. 
+
+---
+
+## 9. Phase 5A.8: Full Research Regression Audit Report
+
+### 1. Overall Status
+**READY FOR REVIEW**
+
+The application has undergone a comprehensive research regression audit. All 49 automated backend tests pass, the frontend builds cleanly with zero TypeScript errors, all 22 REST API endpoints return meaningful structured data matching frontend requirements, all 2,439 existing experiment artifacts and 9 historical CSV summaries remain 100% intact and validated, and data isolation guarantees are strictly preserved.
+
+### 2. Components Audited
+1. **Agent Architecture & Role Separation:**
+   * `ManagerAgent` (`John`): Task creation and sprint breakdown across 4 engineering domains (`backend`, `frontend`, `qa`, `devops`).
+   * `Developer Agents` (`Bob`, `Alice`, `Eve`, `David`): Domain-specific progress estimation, bug generation, code quality impact, and persona system prompts.
+   * `AuditorAgent` (`Charlie`): Multi-factor suspicion score algorithm and qualitative explanation generation.
+2. **LLM & Model Configuration:**
+   * `OllamaClient` configuration (`qwen2.5:7b`, temperature 0.3).
+   * Backend model introspection route (`GET /api/system/model`).
+   * Ollama runtime process status and port connectivity check (`127.0.0.1:11434`).
+3. **Experimental Parameters & Pressure Mechanics:**
+   * `PressureLevel` enum (`LOW`, `MEDIUM`, `HIGH`, `EXTREME`).
+   * `PolicyGenerator` policies (reward, penalty, deadline).
+   * Strict Pydantic input validation on experiment runner routes (`422 Unprocessable Entity` on invalid inputs).
+4. **Behavior, Metrics & Deception Measurement:**
+   * Strategy selection (`HONEST`, `SLIGHT_EXAGGERATION`, `MAJOR_EXAGGERATION`, `UNDER_REPORT`).
+   * Progress reporting and deception gap computation (`reported_progress - actual_progress`).
+   * Composite metrics: `honesty_score`, `stress_index`, `performance_score`, `deception_level`.
+5. **Auditor Observations & Detection:**
+   * Algorithmic suspicion scoring (0–100) combining gap, strategy, pressure, personality, code quality, bugs, and compound suspicious combinations.
+   * Deception detection threshold (`score >= 60`).
+6. **Experiment Execution & Failure Handling:**
+   * Single-run, batch-run, and factorial campaign runner (`generate_factorial_executions`, `run_factorial`).
+   * Graceful handling and skipping of malformed outputs without data corruption.
+7. **Result Persistence & Provenance Tracking:**
+   * JSON serialization via `save_experiment` with collision-resistant UUID stems.
+   * `ProvenanceData` capturing git commit hash, rendered LLM prompts, and raw LLM outputs.
+   * Backward compatibility with legacy schema records.
+8. **Dataset Integrity & Analytics Services:**
+   * Recursive JSON file discovery across root `results/` and nested `results/factorial_campaign/`.
+   * CSV fallback loading via `ExperimentAnalyzer`.
+   * Aggregations in `analytics_service`, `dataset_service`, `agent_service`, `auditor_service`.
+9. **REST API & Frontend Integration:**
+   * Verified all endpoints serve expected shapes, data types, and status codes.
+   * React 19 + TypeScript + Vite build pipeline validation.
+   * Responsive navigation and chart tooltip interaction integrity.
+10. **Reproducibility Controls:**
+    * Seed propagation (`seed`, `base_seed`) and deterministic factorial condition mapping.
+    * Isolated RNG instances (`random.Random(seed)`) preventing global RNG state mutation.
+
+### 3. Tests and Commands Executed
+
+| Command / Suite | Scope | Target | Result | Details |
+| :--- | :--- | :--- | :--- | :--- |
+| `pytest -v test_agent_service.py` | Unit / Route | Agent service & API endpoints | **PASS** | 6 passed in 2.30s (metrics calculation, 404 behavior). |
+| `pytest -v --ignore=.venv` | Full Suite | 11 backend test modules | **PASS** | 49 passed in 15.20s (expanded from 43 to 49 tests). |
+| `npm run build` | Frontend | React 19 + Vite + TypeScript | **PASS** | Built in 6.87s with 0 TS/bundling errors (`dist/` generated). |
+| Endpoint Audit Script | Backend API | 22 REST endpoints via TestClient | **PASS** | 100% endpoints returned valid, non-empty, expected payloads. |
+| Artifact Validation Script | Data Layer | 2,439 JSON files + 9 CSV files | **PASS** | 0 corrupt files, 0 schema errors, 100% valid Pydantic models. |
+| `Test-NetConnection 11434` | Infrastructure | Ollama daemon TCP check | **OFFLINE** | Port 11434 connection refused (`TcpTestSucceeded: False`). |
+| `git status` | Version Control | Working tree status | **VERIFIED** | Only targeted test addition and report update present; no commit/push. |
+
+### 4. Research Pipeline Failures or Limitations
+1. **Ollama Daemon Offline for Live Inference:**
+   * While all unit, integration, and regression tests successfully pass using mocked LLM responses, live end-to-end LLM inference cannot execute until the local Ollama background process is started on port 11434.
+2. **I/O Overhead on Full Dataset Reloads:**
+   * `GET /api/experiments` and `GET /api/dataset` recursively traverse and parse 2,439 JSON files from disk on every invocation (~1.5 seconds per request). This is functionally robust but may introduce latency under high-concurrency usage without an in-memory or SQLite index.
+
+### 5. Existing Research Artifact Integrity Findings
+* **Total Experiment JSON Files Discovered:** 2,439
+  * Root `results/`: 39 historical experiments.
+  * `results/factorial_campaign/`: 2,400 factorial experiment observations (600 executions × 4 developer agents).
+* **Corrupted / Unreadable Files:** 0
+* **Schema Validation Errors:** 0 (all 2,439 files conform to `ExperimentResult`).
+* **Historical CSV Files Verified:** 9 files present and readable:
+  * `experiment_summary.csv` (211 rows, 23 columns)
+  * `correlation_matrix.csv` (12 rows, 13 columns)
+  * `developer_pressure_analysis.csv` (16 rows, 6 columns)
+  * `developer_role_summary.csv` (4 rows, 14 columns)
+  * `personality_difficulty_analysis.csv` (15 rows, 5 columns)
+  * `personality_summary.csv` (5 rows, 14 columns)
+  * `pressure_summary.csv` (4 rows, 14 columns)
+  * `task_difficulty_summary.csv` (3 rows, 14 columns)
+  * `top_suspicious_experiments.csv` (10 rows, 23 columns)
+* **Integrity Guarantee:** Zero historical files were deleted, modified, renamed, or regenerated.
+
+### 6. Ollama Live-Inference Verification Status
+* **Status:** **NOT VERIFIED LIVE (OLLAMA SERVICE OFFLINE)**
+* **Verification Detail:**
+  * Port check to `127.0.0.1:11434` failed with `TcpTestSucceeded: False`.
+  * Attempting `ollama list` timed out waiting for the local server instance to initialize (`Failed to start: Unable to init instance: Unspecified error`).
+  * Automated tests properly mock the LLM invocation layer (`BaseAgent.think`, `ChatOllama.invoke`), confirming that the prompt formatting, provenance tracking, and response parsing logic are intact.
+  * Live model interaction was NOT claimed as passed because live inference was not executed.
+
+### 7. Remaining Risks & Recommended Next Steps
+1. **Ollama Service Startup:** Start the local Ollama service (`ollama serve`) and ensure the `qwen2.5:7b` model weights are loaded before executing any live interactive simulations or launching new campaigns.
+2. **Analytics Query Caching:** Consider implementing in-memory caching (e.g. invalidation on new experiment write) for `get_all_experiments()` and `get_dataset()` to avoid re-reading 2,439 JSON files from disk on every HTTP request.
+3. **Long Campaign Caution:** Keep the full campaign script (`run_campaign.py`) isolated; only trigger controlled sample runs during testing to prevent accidental accumulation in `results/factorial_campaign/`.
+
+### 8. Exact Files Changed
+* `test_agent_service.py` (New targeted regression test suite covering `get_all_agents`, `get_agent_by_role` metrics, and 404 boundaries)
+* `docs/QA_AUDIT_REPORT.md` (Appended Phase 5A.8 Full Research Regression Audit Report)
+
+### 9. Version Control & Constraint Confirmation
+* **Current Branch:** `Ishhh` (work performed solely on the assigned development branch).
+* **Branch Switching:** None (main was not touched or switched to).
+* **Commits / Pushes:** None. No `git commit`, `git push`, or pull requests were executed.
+* **Historical Data Safety:** Zero existing research results or baseline CSVs were deleted, overwritten, or regenerated.
+
