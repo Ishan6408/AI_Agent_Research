@@ -5,8 +5,8 @@ from backend.schemas.experiment import RunPressureRequest, RunAllRequest, RunExp
 router = APIRouter()
 
 @router.get("/")
-def list_experiments():
-    return experiment_service.get_all_experiments()
+def list_experiments(limit: int | None = None, offset: int = 0):
+    return experiment_service.get_all_experiments(limit=limit, offset=offset)
 
 @router.get("/{experiment_id}")
 def get_experiment(experiment_id: str):

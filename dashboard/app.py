@@ -49,11 +49,14 @@ st.markdown("""
 
 # --- Auto-refresh settings (UI only) ---
 st.sidebar.title("⚙️ Settings")
-auto_refresh = st.sidebar.checkbox("Auto-Refresh", value=True)
-refresh_rate = st.sidebar.slider("Refresh Rate (seconds)", 2, 30, 5)
+if st.sidebar.button("🔄 Refresh Data"):
+    st.cache_data.clear()
+    st.rerun()
+auto_refresh = st.sidebar.checkbox("Auto-Refresh", value=False)
+refresh_rate = st.sidebar.slider("Refresh Rate (seconds)", 5, 60, 10)
 
 # --- Data Loading ---
-@st.cache_data(ttl=1)
+@st.cache_data(ttl=60)
 def load_data():
     results_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'results')
     if not os.path.exists(results_dir):

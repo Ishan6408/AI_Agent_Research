@@ -40,13 +40,47 @@ def _load_json_file(filepath: str) -> dict | None:
         return None
 
 
-def get_all_experiments():
+import time
+
+_file_cache: dict[str, tuple[float, dict]] = {}
+_cached_experiments: list[dict] | None = None
+_cache_dir: str | None = None
+_cache_time: float = 0.0
+
+
+def clear_cache():
+    """Clear in-memory experiments cache."""
+    global _cached_experiments, _cache_dir, _cache_time
+    _cached_experiments = None
+    _cache_dir = None
+    _cache_time = 0.0
+    _file_cache.clear()
+
+
+def get_all_experiments(limit: int | None = None, offset: int = 0):
     """
-    Return all valid JSON experiment files from the results directory,
-    scanning recursively. Malformed or unreadable files are skipped.
+    Return valid JSON experiment files from the results directory,
+    scanning recursively. Employs mtime caching so repeated calls/reloads
+    do not re-read thousands of files from disk.
+    Optional limit and offset for pagination.
     """
+    global _cached_experiments, _cache_dir, _cache_time
+
     if not os.path.exists(RESULTS_DIR):
         return []
+
+    # Reset cache if directory has changed (e.g. during test fixtures)
+    if _cache_dir != RESULTS_DIR:
+        _cached_experiments = None
+        _file_cache.clear()
+        _cache_dir = RESULTS_DIR
+
+    # Return cached results if fresh (within 5 seconds)
+    now = time.time()
+    if _cached_experiments is not None and (now - _cache_time) < 5.0:
+        if limit is not None:
+            return _cached_experiments[offset:offset + limit]
+        return _cached_experiments
 
     experiments_dict = {}
     for root, _, files in os.walk(RESULTS_DIR):
@@ -57,7 +91,19 @@ def get_all_experiments():
                 continue
                 
             filepath = os.path.join(root, filename)
-            data = _load_json_file(filepath)
+            try:
+                mtime = os.path.getmtime(filepath)
+            except OSError:
+                mtime = 0.0
+
+            cached_entry = _file_cache.get(filepath)
+            if cached_entry is not None and cached_entry[0] == mtime:
+                data = cached_entry[1]
+            else:
+                data = _load_json_file(filepath)
+                if data is not None:
+                    _file_cache[filepath] = (mtime, data)
+
             if data is not None:
                 exp_id = data.get("id", os.path.splitext(filename)[0])
                 if "id" not in data:
@@ -67,7 +113,12 @@ def get_all_experiments():
                 if exp_id not in experiments_dict:
                     experiments_dict[exp_id] = data
 
-    return sorted(experiments_dict.values(), key=lambda x: x["id"])
+    _cached_experiments = sorted(experiments_dict.values(), key=lambda x: x["id"])
+    _cache_time = now
+
+    if limit is not None:
+        return _cached_experiments[offset:offset + limit]
+    return _cached_experiments
 
 
 def get_experiment_by_id(experiment_id: str):
@@ -102,6 +153,7 @@ def get_experiment_by_id(experiment_id: str):
 
 
 def run_experiment(pressure: PressureLevel, base_seed: int | None = None):
+    clear_cache()
     runner = ExperimentRunner(runs_per_pressure=1, storage_dir=RESULTS_DIR)
     results = runner.run_pressure(pressure, base_seed=base_seed)
 
@@ -114,6 +166,7 @@ def run_experiment(pressure: PressureLevel, base_seed: int | None = None):
 
 
 def run_pressure_experiments(pressure: PressureLevel, runs: int = 10, base_seed: int | None = None):
+    clear_cache()
     runner = ExperimentRunner(runs_per_pressure=runs, storage_dir=RESULTS_DIR)
     results = runner.run_pressure(pressure, base_seed=base_seed)
     return {
@@ -124,6 +177,7 @@ def run_pressure_experiments(pressure: PressureLevel, runs: int = 10, base_seed:
 
 
 def run_all_experiments(runs: int = 10, base_seed: int | None = None):
+    clear_cache()
     runner = ExperimentRunner(runs_per_pressure=runs, storage_dir=RESULTS_DIR)
     results = runner.run_all(base_seed=base_seed)
     return {

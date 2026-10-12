@@ -16,6 +16,8 @@ class ExperimentAnalyzer:
     # Load Experiments
     # -------------------------------------------------------
 
+    _FILE_CACHE = {}
+
     def load_experiments(self):
         """Load experiments from JSON files, falling back to CSV if none exist."""
 
@@ -38,6 +40,12 @@ class ExperimentAnalyzer:
         for file in json_files:
 
             try:
+                file_str = str(file)
+                mtime = file.stat().st_mtime
+                cached = ExperimentAnalyzer._FILE_CACHE.get(file_str)
+                if cached is not None and cached[0] == mtime:
+                    experiments.append(cached[1])
+                    continue
 
                 with open(
                     file,
@@ -52,10 +60,9 @@ class ExperimentAnalyzer:
 
                         continue
 
-
-                    experiments.append(
-                        json.loads(content)
-                    )
+                    data = json.loads(content)
+                    ExperimentAnalyzer._FILE_CACHE[file_str] = (mtime, data)
+                    experiments.append(data)
 
 
             except Exception as e:

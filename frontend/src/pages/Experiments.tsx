@@ -2,12 +2,18 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { api } from '../services/api';
 import type { Experiment } from '../types/api';
-import { Play, Settings, Beaker, CheckCircle, AlertTriangle, RefreshCw, FileText } from 'lucide-react';
+import { Play, Settings, Beaker, CheckCircle, AlertTriangle, RefreshCw, FileText, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, Search } from 'lucide-react';
 
 export default function Experiments() {
   const [experiments, setExperiments] = useState<Experiment[]>([]);
   const [loadingList, setLoadingList] = useState(true);
   const [listError, setListError] = useState<string | null>(null);
+
+  // Pagination & Filtering state
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(25);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [filterPressure, setFilterPressure] = useState('ALL');
 
   // Execution states
   const [runningAction, setRunningAction] = useState<string | null>(null);
@@ -246,115 +252,254 @@ export default function Experiments() {
       </section>
 
       {/* Telemetry Log Section */}
-      <section className="bg-surface border border-border rounded-xl shadow-sm overflow-hidden flex flex-col shrink-0">
-        <div className="bg-surface-alt border-b border-border px-6 py-4 flex justify-between items-center">
-          <div className="flex items-center gap-2 text-brand-primary font-semibold text-sm">
-            <FileText size={18} className="text-text-muted" />
-            Experimental Log
-          </div>
-          <button 
-            onClick={fetchExperiments}
-            disabled={loadingList}
-            className="text-xs font-medium text-text-muted hover:text-brand-primary disabled:opacity-50 transition-colors flex items-center gap-2"
-          >
-            {loadingList ? <RefreshCw size={14} className="animate-spin" /> : <RefreshCw size={14} />}
-            Refresh
-          </button>
-        </div>
+      {(() => {
+        const filteredExperiments = experiments.filter((exp) => {
+          if (filterPressure !== 'ALL' && exp.pressure?.toUpperCase() !== filterPressure) {
+            return false;
+          }
+          if (!searchTerm) return true;
+          const term = searchTerm.toLowerCase();
+          return (
+            exp.id?.toLowerCase().includes(term) ||
+            exp.task_name?.toLowerCase().includes(term) ||
+            exp.developer_role?.toLowerCase().includes(term)
+          );
+        });
 
-        {loadingList ? (
-          <div className="p-12 flex justify-center items-center flex-col gap-4">
-            <RefreshCw size={24} className="text-text-muted animate-spin" />
-            <p className="text-sm text-text-muted">Loading experiment records...</p>
-          </div>
-        ) : listError ? (
-          <div className="p-12 text-center">
-            <AlertTriangle size={32} className="text-accent-red mx-auto mb-4" />
-            <p className="text-accent-red mb-4 text-sm">{listError}</p>
-            <button
-              onClick={fetchExperiments}
-              className="px-4 py-2 bg-surface-alt hover:bg-secondary border border-border text-brand-primary rounded-md text-sm transition-colors"
-            >
-              Retry Connection
-            </button>
-          </div>
-        ) : experiments.length === 0 ? (
-          <div className="p-12 text-center text-text-muted text-sm">
-            No experiment records found in the database.
-          </div>
-        ) : (
-          <div className="overflow-x-auto w-full">
-            <table className="w-full text-left border-collapse text-sm">
-              <thead>
-                <tr className="bg-surface-alt border-b border-border">
-                  <th className="p-4 text-xs font-semibold text-text-muted tracking-wide whitespace-nowrap">ID / Task</th>
-                  <th className="p-4 text-xs font-semibold text-text-muted tracking-wide whitespace-nowrap">Env. Stress</th>
-                  <th className="p-4 text-xs font-semibold text-text-muted tracking-wide whitespace-nowrap">Node Role</th>
-                  <th className="p-4 text-xs font-semibold text-text-muted tracking-wide whitespace-nowrap">Divergence</th>
-                  <th className="p-4 text-xs font-semibold text-text-muted tracking-wide whitespace-nowrap">Perf.</th>
-                  <th className="p-4 text-xs font-semibold text-text-muted tracking-wide whitespace-nowrap">Truth</th>
-                  <th className="p-4 text-xs font-semibold text-text-muted tracking-wide whitespace-nowrap">Auditor</th>
-                  <th className="p-4 text-xs font-semibold text-text-muted tracking-wide whitespace-nowrap text-right">Action</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-border">
-                {experiments.map((exp) => (
-                  <tr key={exp.id} className="hover:bg-secondary transition-colors group">
-                    <td className="p-4">
-                      <div className="font-mono text-xs text-brand-primary mb-1">
-                        {exp.id?.split('-')[0]}
-                      </div>
-                      <div className="text-xs text-text-muted truncate max-w-[150px]" title={exp.task_name}>
-                        {exp.task_name}
-                      </div>
-                    </td>
-                    <td className="p-4">
-                      <span className={`inline-flex px-2 py-1 text-[10px] font-bold rounded-full ${
-                        exp.pressure?.toUpperCase() === 'HIGH' ? 'bg-accent-red/10 text-accent-red' :
-                        exp.pressure?.toUpperCase() === 'MEDIUM' ? 'bg-accent-amber/10 text-accent-amber' :
-                        'bg-accent-green/10 text-accent-green'
-                      }`}>
-                        {exp.pressure?.toUpperCase()}
-                      </span>
-                    </td>
-                    <td className="p-4 text-xs text-brand-secondary">{exp.developer_role}</td>
-                    <td className="p-4 text-xs font-medium">
-                      {exp.deception_gap > 0 ? (
-                        <span className="text-accent-amber">{exp.deception_gap.toFixed(1)}%</span>
-                      ) : (
-                        <span className="text-text-muted">{exp.deception_gap.toFixed(1)}%</span>
-                      )}
-                    </td>
-                    <td className="p-4 text-xs text-brand-secondary">
-                      {exp.performance_score.toFixed(2)}
-                    </td>
-                    <td className="p-4 text-xs text-brand-secondary">
-                      {exp.honesty_score.toFixed(2)}
-                    </td>
-                    <td className="p-4">
-                      {exp.deception_detected ? (
-                        <span className="inline-flex items-center gap-1 text-xs font-medium text-accent-red">
-                          <AlertTriangle size={12} /> {exp.auditor_score.toFixed(2)}
-                        </span>
-                      ) : (
-                        <span className="text-xs text-text-muted">{exp.auditor_score.toFixed(2)}</span>
-                      )}
-                    </td>
-                    <td className="p-4 text-right">
-                      <Link 
-                        to={`/experiments/${exp.id}`}
-                        className="text-xs font-medium text-accent-blue hover:underline opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap"
-                      >
-                        View Details
-                      </Link>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
-      </section>
+        const totalPages = Math.max(1, Math.ceil(filteredExperiments.length / pageSize));
+        const validCurrentPage = Math.min(Math.max(1, currentPage), totalPages);
+        const paginatedExperiments = filteredExperiments.slice(
+          (validCurrentPage - 1) * pageSize,
+          validCurrentPage * pageSize
+        );
+
+        return (
+          <section className="bg-surface border border-border rounded-xl shadow-sm overflow-hidden flex flex-col shrink-0">
+            <div className="bg-surface-alt border-b border-border px-6 py-4 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+              <div className="flex items-center gap-2 text-brand-primary font-semibold text-sm">
+                <FileText size={18} className="text-text-muted" />
+                Experimental Log
+                <span className="text-xs font-normal text-text-muted ml-1">
+                  ({experiments.length.toLocaleString()} records)
+                </span>
+              </div>
+
+              {/* Controls: Search, Pressure, Page Size, Refresh */}
+              <div className="flex flex-wrap items-center gap-2 w-full md:w-auto">
+                <div className="relative flex-1 md:flex-initial">
+                  <Search size={14} className="absolute left-2.5 top-2.5 text-text-muted" />
+                  <input
+                    type="text"
+                    placeholder="Search logs..."
+                    value={searchTerm}
+                    onChange={(e) => {
+                      setSearchTerm(e.target.value);
+                      setCurrentPage(1);
+                    }}
+                    className="pl-8 pr-3 py-1.5 bg-surface border border-border text-xs rounded-md text-text-main focus:outline-none focus:border-brand-primary w-full md:w-44"
+                  />
+                </div>
+
+                <select
+                  value={filterPressure}
+                  onChange={(e) => {
+                    setFilterPressure(e.target.value);
+                    setCurrentPage(1);
+                  }}
+                  className="px-2 py-1.5 bg-surface border border-border text-xs rounded-md text-text-main focus:outline-none focus:border-brand-primary"
+                >
+                  <option value="ALL">All Stress</option>
+                  <option value="LOW">Low</option>
+                  <option value="MEDIUM">Medium</option>
+                  <option value="HIGH">High</option>
+                  <option value="IMPOSSIBLE">Impossible</option>
+                </select>
+
+                <select
+                  value={pageSize}
+                  onChange={(e) => {
+                    setPageSize(Number(e.target.value));
+                    setCurrentPage(1);
+                  }}
+                  className="px-2 py-1.5 bg-surface border border-border text-xs rounded-md text-text-main focus:outline-none focus:border-brand-primary"
+                >
+                  <option value={25}>25 / page</option>
+                  <option value={50}>50 / page</option>
+                  <option value={100}>100 / page</option>
+                  <option value={250}>250 / page</option>
+                </select>
+
+                <button 
+                  onClick={fetchExperiments}
+                  disabled={loadingList}
+                  className="text-xs font-medium text-text-muted hover:text-brand-primary disabled:opacity-50 transition-colors flex items-center gap-1.5 px-2.5 py-1.5 bg-surface border border-border rounded-md"
+                  title="Reload experimental logs"
+                >
+                  {loadingList ? <RefreshCw size={14} className="animate-spin" /> : <RefreshCw size={14} />}
+                  Refresh
+                </button>
+              </div>
+            </div>
+
+            {loadingList ? (
+              <div className="p-12 flex justify-center items-center flex-col gap-4">
+                <RefreshCw size={24} className="text-text-muted animate-spin" />
+                <p className="text-sm text-text-muted">Loading experiment records...</p>
+              </div>
+            ) : listError ? (
+              <div className="p-12 text-center">
+                <AlertTriangle size={32} className="text-accent-red mx-auto mb-4" />
+                <p className="text-accent-red mb-4 text-sm">{listError}</p>
+                <button
+                  onClick={fetchExperiments}
+                  className="px-4 py-2 bg-surface-alt hover:bg-secondary border border-border text-brand-primary rounded-md text-sm transition-colors"
+                >
+                  Retry Connection
+                </button>
+              </div>
+            ) : filteredExperiments.length === 0 ? (
+              <div className="p-12 text-center text-text-muted text-sm">
+                {experiments.length === 0 
+                  ? 'No experiment records found in the database.' 
+                  : 'No experiment logs match the current search filters.'}
+              </div>
+            ) : (
+              <>
+                <div className="overflow-x-auto w-full">
+                  <table className="w-full text-left border-collapse text-sm">
+                    <thead>
+                      <tr className="bg-surface-alt border-b border-border">
+                        <th className="p-4 text-xs font-semibold text-text-muted tracking-wide whitespace-nowrap">ID / Task</th>
+                        <th className="p-4 text-xs font-semibold text-text-muted tracking-wide whitespace-nowrap">Env. Stress</th>
+                        <th className="p-4 text-xs font-semibold text-text-muted tracking-wide whitespace-nowrap">Node Role</th>
+                        <th className="p-4 text-xs font-semibold text-text-muted tracking-wide whitespace-nowrap">Divergence</th>
+                        <th className="p-4 text-xs font-semibold text-text-muted tracking-wide whitespace-nowrap">Perf.</th>
+                        <th className="p-4 text-xs font-semibold text-text-muted tracking-wide whitespace-nowrap">Truth</th>
+                        <th className="p-4 text-xs font-semibold text-text-muted tracking-wide whitespace-nowrap">Auditor</th>
+                        <th className="p-4 text-xs font-semibold text-text-muted tracking-wide whitespace-nowrap text-right">Action</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-border">
+                      {paginatedExperiments.map((exp) => (
+                        <tr key={exp.id} className="hover:bg-secondary transition-colors group">
+                          <td className="p-4">
+                            <div className="font-mono text-xs text-brand-primary mb-1">
+                              {exp.id?.split('-')[0]}
+                            </div>
+                            <div className="text-xs text-text-muted truncate max-w-[150px]" title={exp.task_name}>
+                              {exp.task_name}
+                            </div>
+                          </td>
+                          <td className="p-4">
+                            <span className={`inline-flex px-2 py-1 text-[10px] font-bold rounded-full ${
+                              exp.pressure?.toUpperCase() === 'HIGH' ? 'bg-accent-red/10 text-accent-red' :
+                              exp.pressure?.toUpperCase() === 'MEDIUM' ? 'bg-accent-amber/10 text-accent-amber' :
+                              'bg-accent-green/10 text-accent-green'
+                            }`}>
+                              {exp.pressure?.toUpperCase()}
+                            </span>
+                          </td>
+                          <td className="p-4 text-xs text-brand-secondary">{exp.developer_role}</td>
+                          <td className="p-4 text-xs font-medium">
+                            {exp.deception_gap > 0 ? (
+                              <span className="text-accent-amber">{exp.deception_gap.toFixed(1)}%</span>
+                            ) : (
+                              <span className="text-text-muted">{exp.deception_gap.toFixed(1)}%</span>
+                            )}
+                          </td>
+                          <td className="p-4 text-xs text-brand-secondary">
+                            {exp.performance_score.toFixed(2)}
+                          </td>
+                          <td className="p-4 text-xs text-brand-secondary">
+                            {exp.honesty_score.toFixed(2)}
+                          </td>
+                          <td className="p-4">
+                            {exp.deception_detected ? (
+                              <span className="inline-flex items-center gap-1 text-xs font-medium text-accent-red">
+                                <AlertTriangle size={12} /> {exp.auditor_score.toFixed(2)}
+                              </span>
+                            ) : (
+                              <span className="text-xs text-text-muted">{exp.auditor_score.toFixed(2)}</span>
+                            )}
+                          </td>
+                          <td className="p-4 text-right">
+                            <Link 
+                              to={`/experiments/${exp.id}`}
+                              className="text-xs font-medium text-accent-blue hover:underline opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap"
+                            >
+                              View Details
+                            </Link>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+
+                {/* Pagination Footer */}
+                <div className="bg-surface-alt border-t border-border px-6 py-3 flex flex-col sm:flex-row justify-between items-center gap-3">
+                  <div className="text-xs text-text-muted">
+                    Showing{' '}
+                    <span className="font-semibold text-text-main">
+                      {(validCurrentPage - 1) * pageSize + 1}
+                    </span>{' '}
+                    to{' '}
+                    <span className="font-semibold text-text-main">
+                      {Math.min(validCurrentPage * pageSize, filteredExperiments.length)}
+                    </span>{' '}
+                    of{' '}
+                    <span className="font-semibold text-text-main">
+                      {filteredExperiments.length.toLocaleString()}
+                    </span>{' '}
+                    logs
+                  </div>
+
+                  <div className="flex items-center gap-1.5">
+                    <button
+                      onClick={() => setCurrentPage(1)}
+                      disabled={validCurrentPage <= 1}
+                      className="p-1.5 rounded border border-border bg-surface text-text-muted hover:text-text-main disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                      title="First page"
+                    >
+                      <ChevronsLeft size={14} />
+                    </button>
+                    <button
+                      onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                      disabled={validCurrentPage <= 1}
+                      className="p-1.5 rounded border border-border bg-surface text-text-muted hover:text-text-main disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                      title="Previous page"
+                    >
+                      <ChevronLeft size={14} />
+                    </button>
+
+                    <span className="text-xs px-3 py-1 font-mono text-text-muted">
+                      Page <strong className="text-text-main">{validCurrentPage}</strong> of{' '}
+                      <strong className="text-text-main">{totalPages}</strong>
+                    </span>
+
+                    <button
+                      onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+                      disabled={validCurrentPage >= totalPages}
+                      className="p-1.5 rounded border border-border bg-surface text-text-muted hover:text-text-main disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                      title="Next page"
+                    >
+                      <ChevronRight size={14} />
+                    </button>
+                    <button
+                      onClick={() => setCurrentPage(totalPages)}
+                      disabled={validCurrentPage >= totalPages}
+                      className="p-1.5 rounded border border-border bg-surface text-text-muted hover:text-text-main disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                      title="Last page"
+                    >
+                      <ChevronsRight size={14} />
+                    </button>
+                  </div>
+                </div>
+              </>
+            )}
+          </section>
+        );
+      })()}
     </div>
   );
 }
