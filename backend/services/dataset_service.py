@@ -49,16 +49,29 @@ def _replace_nan(obj):
     return obj
 
 
+import time
+
+_cached_df: pd.DataFrame | None = None
+_cached_df_time: float = 0.0
+
+
 def _get_df() -> pd.DataFrame:
     """
     Load the full dataset.  Returns an empty DataFrame (not raises) when
     the dataset is empty — callers decide whether that is an error.
     """
+    global _cached_df, _cached_df_time
+    now = time.time()
+    if _cached_df is not None and (now - _cached_df_time) < 10.0:
+        return _cached_df
+
     analyzer = ExperimentAnalyzer()
     df = analyzer.create_dataframe()
     if df is None:
         return pd.DataFrame()
-    return df
+    _cached_df = df
+    _cached_df_time = now
+    return _cached_df
 
 
 # -----------------------------------------------------------------------

@@ -51,13 +51,26 @@ def _replace_nan(obj):
     return obj
 
 
+import time
+
+_cached_df: pd.DataFrame | None = None
+_cached_df_time: float = 0.0
+
+
 def _get_df() -> pd.DataFrame:
     """Load the full dataset, raising 404 when empty."""
+    global _cached_df, _cached_df_time
+    now = time.time()
+    if _cached_df is not None and (now - _cached_df_time) < 10.0:
+        return _cached_df
+
     analyzer = ExperimentAnalyzer()
     df = analyzer.create_dataframe()
     if df is None or df.empty:
         raise HTTPException(status_code=404, detail="Dataset not found or empty")
-    return df
+    _cached_df = df
+    _cached_df_time = now
+    return _cached_df
 
 
 def _bool_to_numeric(series: pd.Series) -> pd.Series:

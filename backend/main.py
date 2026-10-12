@@ -59,4 +59,11 @@ app.include_router(auditor.router, prefix=f"{settings.API_V1_STR}/auditor", tags
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run("backend.main:app", host="0.0.0.0", port=8000, reload=True)
+    uvicorn.run(
+        "backend.main:app",
+        host="0.0.0.0",
+        port=8000,
+        reload=True,
+        reload_dirs=["backend"],
+        reload_excludes=["results", "results/**", "test_results", "test_results/**", ".venv", ".venv/**", "__pycache__"]
+    )
