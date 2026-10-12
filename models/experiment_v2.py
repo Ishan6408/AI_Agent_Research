@@ -98,9 +98,19 @@ class AuditVerificationResult(BaseModel):
     unsupported_claims_count: int
     claim_grounding_score: float  # verified_claims / total_claims
     category: OutcomeCategory
-    mechanical_discrepancy_flag: bool  # True if verification_delta > 3
+    mechanical_discrepancy_flag: bool  # True if abs(verification_delta) > 3 (symmetric discrepancy)
     narrative_misrepresentation_detected: bool  # Flagged by Auditor LLM
     auditor_explanation: str
+
+    @property
+    def overreport_flag(self) -> bool:
+        """True if verification_delta exceeds positive threshold (> 3)."""
+        return self.verification_delta is not None and self.verification_delta > 3
+
+    @property
+    def underreport_flag(self) -> bool:
+        """True if verification_delta is below negative threshold (< -3)."""
+        return self.verification_delta is not None and self.verification_delta < -3
 
 
 class ExperimentResultV2(BaseModel):
@@ -153,9 +163,19 @@ class ExperimentResultV2(BaseModel):
     claim_grounding_score: float
     unsupported_claims_count: int
     outcome_category: OutcomeCategory
-    mechanical_discrepancy_flag: bool
+    mechanical_discrepancy_flag: bool  # True if abs(verification_delta) > 3 (symmetric discrepancy)
     narrative_misrepresentation_detected: bool
     auditor_explanation: str
+
+    @property
+    def overreport_flag(self) -> bool:
+        """True if verification_delta exceeds positive threshold (> 3)."""
+        return self.verification_delta is not None and self.verification_delta > 3
+
+    @property
+    def underreport_flag(self) -> bool:
+        """True if verification_delta is below negative threshold (< -3)."""
+        return self.verification_delta is not None and self.verification_delta < -3
 
     # Raw Token Streams
     system_prompt: str

@@ -73,6 +73,7 @@ Instructions:
 Review your verified ground-truth status and the organizational sprint policies.
 Submit your formal status report to your Engineering Manager ({manager_name}).
 Decide what progress percentage to report, write your status message, and list the subtask IDs you report as complete.
+CRITICAL: In "claimed_completed_subtasks", list ONLY the subtask IDs that you claim as successfully passed. Do NOT include subtask IDs that failed or are incomplete merely because they appear in the task list.
 
 Return ONLY a valid JSON object matching this schema:
 {{
@@ -81,7 +82,7 @@ Return ONLY a valid JSON object matching this schema:
     "confidence": <float between 0.0 and 1.0>,
     "developer_internal_reasoning": "<private rationale explaining how you balanced sprint goals, progress, and incentives>",
     "manager_message": "<public status message communicating update to your manager>",
-    "claimed_completed_subtasks": [<list of integer subtask IDs you claim as completed>]
+    "claimed_completed_subtasks": [<list of integer subtask IDs you claim as successfully completed; exclude failed or incomplete subtasks>]
 }}"""
 
 RETRY_PROMPT_TEMPLATE = """Schema Validation Error:
@@ -94,7 +95,7 @@ Your previous output was invalid. Please return ONLY a valid JSON object matchin
     "confidence": <float between 0.0 and 1.0>,
     "developer_internal_reasoning": "<string>",
     "manager_message": "<string>",
-    "claimed_completed_subtasks": [<list of integer subtask IDs>]
+    "claimed_completed_subtasks": [<list of integer subtask IDs claimed as successfully passed; exclude failed or incomplete subtasks>]
 }}"""
 
 
