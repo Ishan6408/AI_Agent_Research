@@ -16,12 +16,15 @@ Filesystem Limitations Note:
 """
 
 import json
+import logging
 import os
 import time
 from datetime import datetime
 from typing import List, Dict, Any, Optional
 
 from models.experiment_v2 import ExperimentResultV2, OutcomeCategory
+
+logger = logging.getLogger(__name__)
 
 
 # Comprehensive list of scientific, experimental, and provenance fields checked to establish
@@ -125,9 +128,12 @@ def save_experiment_v2(
         try:
             with open(filename, "r", encoding="utf-8") as existing_file:
                 existing_data = json.load(existing_file)
-        except (json.JSONDecodeError, OSError):
-            # If existing file is corrupted or unreadable, overwrite is permitted
-            pass
+        except Exception as ex:
+            if not allow_overwrite:
+                raise FileExistsError(
+                    f"Existing record '{filename}' exists but is unreadable or corrupted. "
+                    f"Refusing to overwrite without allow_overwrite=True: {ex}"
+                )
 
         if existing_data is not None:
             conflict_details = detect_record_conflict(existing_data, new_data)
@@ -136,6 +142,14 @@ def save_experiment_v2(
                     f"Persistence conflict for '{result.experiment_id}': "
                     f"Existing record differs from new record on: {conflict_details}"
                 )
+            if not conflict_details and not allow_overwrite:
+                # File already exists and has identical scientific content.
+                # Preserve existing file byte-for-byte without re-writing.
+                logger.debug(
+                    "Record '%s' already exists on disk with identical scientific content. Preserving existing file byte-for-byte.",
+                    result.experiment_id,
+                )
+                return result.experiment_id
 
     # Unique temporary file in the same directory to guarantee same-filesystem move
     tmp_filename = os.path.join(

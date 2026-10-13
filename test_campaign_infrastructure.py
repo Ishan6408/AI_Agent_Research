@@ -18,6 +18,7 @@ Verifies offline without live LLM calls:
    - Machine-readable JSON and human-readable Markdown report generation.
 """
 
+import hashlib
 import json
 import os
 import tempfile
@@ -29,6 +30,7 @@ import pandas as pd
 import pytest
 
 from analysis.run_phase_5b_analysis import (
+    apply_multiplicity_corrections,
     compute_descriptive_metrics,
     evaluate_control_arms,
     fit_primary_factorial_lmm,
@@ -39,6 +41,7 @@ from analysis.run_phase_5b_analysis import (
 from experiments.run_phase_5b_campaign import (
     DEFAULT_CAMPAIGN_STORAGE_DIR,
     Phase5BCampaignRunner,
+    verify_checkpoint_consistency,
 )
 from models.environment import PressureLevel
 from models.experiment_v2 import (
@@ -74,7 +77,11 @@ from simulation.campaign_matrix import (
     validate_campaign_matrix,
 )
 from simulation.policy_generator import PolicyGenerator
-from utils.autonomous_storage import save_experiment_v2
+from utils.autonomous_storage import (
+    detect_record_conflict,
+    save_checkpoint,
+    save_experiment_v2,
+)
 
 
 # =====================================================================
@@ -342,8 +349,8 @@ def test_runner_conflict_detection_prevents_corruption(mock_developer_json_strin
         with open(target_path, "w", encoding="utf-8") as f:
             json.dump(data, f, indent=4)
 
-        # Re-run Sprint 1 with resume=False, allow_overwrite=False
-        with pytest.raises(FileExistsError, match="Persistence conflict"):
+        # Re-run Sprint 1 with resume=False, allow_overwrite=False halts with integrity or persistence error
+        with pytest.raises((FileExistsError, RuntimeError), match="(Persistence conflict|Integrity Violation)"):
             runner.run_campaign(
                 resume=False,
                 allow_overwrite=False,
@@ -453,7 +460,7 @@ def _create_mock_experiment_record(
     return ExperimentResultV2(
         experiment_id=f"exp_5b_{seed}_{role.lower().replace(' ', '_')}",
         execution_id=seed,
-        cluster_id=f"cluster_{seed}",
+        cluster_id=f"exec_5b_{seed}",
         seed=seed,
         timestamp="2026-10-13T12:00:00Z",
         git_commit="55f85e9",
@@ -611,33 +618,35 @@ def test_analysis_control_arms_evaluation_tost_and_contrast():
 
 
 def test_analysis_primary_factorial_lmm_fitting():
-    """Verify Linear Mixed-Effects Model fits and estimates cluster-aware coefficients."""
+    """Verify Linear Mixed-Effects Model fits cleanly with full rank and non-zero cluster variance without warnings."""
     records = []
     roles = ["Frontend Developer", "Backend Developer", "DevOps Engineer", "QA Engineer"]
     pressures = ["LOW", "MEDIUM", "HIGH", "EXTREME"]
     personas = ["NEUTRAL_PROFESSIONAL", "AMBITIOUS", "RISK_AVERSE", "OPPORTUNISTIC"]
+    difficulties = ["EASY", "MEDIUM", "HARD"]
 
-    # Generate 16 clusters (seeds) with 4 observations each = 64 observations
+    # Generate all 48 condition cells (4 x 4 x 3) with non-zero cluster random effect
     seed = 1001
     for p in pressures:
         for pers in personas:
-            base_delta = 2.0 if p in ["HIGH", "EXTREME"] else 0.0
-            if pers == "OPPORTUNISTIC":
-                base_delta += 4.0
+            for d in difficulties:
+                cluster_re = (seed % 5 - 2) * 1.5
+                p_effect = {"LOW": 0.0, "MEDIUM": 2.0, "HIGH": 5.0, "EXTREME": 5.5}[p]
+                pers_effect = {"NEUTRAL_PROFESSIONAL": 0.0, "AMBITIOUS": 2.0, "RISK_AVERSE": -1.0, "OPPORTUNISTIC": 3.0}[pers]
 
-            for role_idx, role in enumerate(roles):
-                delta = int(base_delta + (role_idx % 2))
-                records.append(_create_mock_experiment_record(
-                    seed=seed,
-                    role=role,
-                    actual=50,
-                    reported=50 + delta,
-                    pressure=p,
-                    persona=pers,
-                    difficulty=["EASY", "MEDIUM", "HARD"][seed % 3],
-                    uncoupled_arm=None,
-                ))
-            seed += 1
+                for role_idx, role in enumerate(roles):
+                    delta = int(p_effect + pers_effect + cluster_re + role_idx * 0.2 + 0.1 * (seed % 3))
+                    records.append(_create_mock_experiment_record(
+                        seed=seed,
+                        role=role,
+                        actual=50,
+                        reported=50 + delta,
+                        pressure=p,
+                        persona=pers,
+                        difficulty=d,
+                        uncoupled_arm=None,
+                    ))
+                seed += 1
 
     with tempfile.TemporaryDirectory() as tmp_dir:
         for rec in records:
@@ -646,10 +655,305 @@ def test_analysis_primary_factorial_lmm_fitting():
         df, _ = load_and_validate_campaign_data(tmp_dir)
         lmm_res = fit_primary_factorial_lmm(df)
 
-        assert lmm_res["n_observations"] == 64
-        assert lmm_res["clusters"] == 16
-        assert "coefficients" in lmm_res
-        assert len(lmm_res["coefficients"]) > 0
+        assert lmm_res["n_observations"] == 192
+        assert lmm_res["clusters"] == 48
+        assert lmm_res["estimator"] == "LINEAR_MIXED_EFFECTS"
+        assert lmm_res["converged"] is True
+        assert lmm_res["fallback_triggered"] is False
+        assert lmm_res["random_intercept_var"] > 0
+        assert len(lmm_res["coefficients"]) == 21
+        assert len(lmm_res["pairwise_pressure_contrasts"]) == 6
+        assert len(lmm_res["persona_simple_contrasts"]) == 6
+
+
+def test_analysis_lmm_zero_random_effect_triggers_crse_fallback():
+    """Verify that zero random-effect variance / boundary condition reliably triggers Cluster-Robust OLS fallback."""
+    records = []
+    roles = ["Frontend Developer", "Backend Developer", "DevOps Engineer", "QA Engineer"]
+    pressures = ["LOW", "MEDIUM", "HIGH", "EXTREME"]
+    personas = ["NEUTRAL_PROFESSIONAL", "AMBITIOUS", "RISK_AVERSE", "OPPORTUNISTIC"]
+    difficulties = ["EASY", "MEDIUM", "HARD"]
+
+    # 48 cells with strictly ZERO cluster-level variance (cluster_re = 0.0)
+    seed = 1001
+    for p in pressures:
+        for pers in personas:
+            for d in difficulties:
+                p_effect = {"LOW": 0.0, "MEDIUM": 2.0, "HIGH": 5.0, "EXTREME": 5.5}[p]
+                pers_effect = {"NEUTRAL_PROFESSIONAL": 0.0, "AMBITIOUS": 2.0, "RISK_AVERSE": -1.0, "OPPORTUNISTIC": 3.0}[pers]
+
+                for role_idx, role in enumerate(roles):
+                    delta = int(p_effect + pers_effect + role_idx * 0.2)
+                    records.append(_create_mock_experiment_record(
+                        seed=seed,
+                        role=role,
+                        actual=50,
+                        reported=50 + delta,
+                        pressure=p,
+                        persona=pers,
+                        difficulty=d,
+                        uncoupled_arm=None,
+                    ))
+                seed += 1
+
+    with tempfile.TemporaryDirectory() as tmp_dir:
+        for rec in records:
+            save_experiment_v2(rec, storage_dir=tmp_dir)
+
+        df, _ = load_and_validate_campaign_data(tmp_dir)
+        res = fit_primary_factorial_lmm(df)
+
+        assert res["fallback_triggered"] is True
+        assert res["fallback_succeeded"] is True
+        assert res["estimator"] == "CLUSTER_ROBUST_OLS"
+        assert res["model_type"] == "CLUSTER_ROBUST_OLS_FALLBACK"
+        assert res["converged"] is True
+        assert len(res["coefficients"]) == 21
+        assert len(res["pairwise_pressure_contrasts"]) == 6
+
+
+def test_analysis_lmm_rank_deficient_handling():
+    """Verify that a structurally rank-deficient design is caught and handled gracefully."""
+    records = []
+    roles = ["Frontend Developer", "Backend Developer", "DevOps Engineer", "QA Engineer"]
+    # 6 clusters * 4 = 24 observations (>= 20) with collinear pressure and persona
+    for seed in range(1001, 1007):
+        p = "LOW" if seed % 2 == 0 else "HIGH"
+        pers = "NEUTRAL_PROFESSIONAL" if seed % 2 == 0 else "AMBITIOUS"
+        for role_idx, role in enumerate(roles):
+            records.append(_create_mock_experiment_record(
+                seed=seed,
+                role=role,
+                actual=50,
+                reported=50 + (seed % 3) + role_idx + 1,
+                pressure=p,
+                persona=pers,
+                difficulty="EASY",
+                uncoupled_arm=None,
+            ))
+
+    with tempfile.TemporaryDirectory() as tmp_dir:
+        for rec in records:
+            save_experiment_v2(rec, storage_dir=tmp_dir)
+
+        df, _ = load_and_validate_campaign_data(tmp_dir)
+        res = fit_primary_factorial_lmm(df)
+
+        assert res["model_type"] == "MODEL_FIT_FAILURE"
+        assert res["estimator"] == "NONE"
+        assert res["converged"] is False
+        assert "rank-deficient" in res["failure_reason"].lower()
+        assert len(res["coefficients"]) == 0
+
+
+def test_analysis_both_estimators_failing():
+    """Verify that when both LMM and CRSE OLS cannot fit, descriptive results are returned without error."""
+    records = []
+    roles = ["Frontend Developer", "Backend Developer"]
+    # Single cluster with only 2 observations
+    for role in roles:
+        records.append(_create_mock_experiment_record(
+            seed=1001,
+            role=role,
+            actual=50,
+            reported=50,
+            pressure="LOW",
+            persona="NEUTRAL_PROFESSIONAL",
+            difficulty="EASY",
+            uncoupled_arm=None,
+        ))
+
+    with tempfile.TemporaryDirectory() as tmp_dir:
+        for rec in records:
+            save_experiment_v2(rec, storage_dir=tmp_dir)
+
+        df, _ = load_and_validate_campaign_data(tmp_dir)
+        res = fit_primary_factorial_lmm(df)
+
+        assert res["model_type"] in ["MODEL_FIT_FAILURE", "INSUFFICIENT_OBSERVATIONS"]
+        assert res["converged"] is False
+        assert res.get("coefficients", []) == []
+
+
+def test_multiplicity_corrections_holm_and_benjamini_hochberg():
+    """Verify multiplicity correction helper against analytically known Holm and BH adjusted p-values."""
+    tests = [
+        {"contrast": "T1", "p_value_raw": 0.01},
+        {"contrast": "T2", "p_value_raw": 0.04},
+        {"contrast": "T3", "p_value_raw": 0.03},
+    ]
+
+    # Holm-Bonferroni:
+    # Sorted: 0.01 (x3=0.03), 0.03 (x2=0.06), 0.04 (x1=0.04 -> max=0.06)
+    holm = apply_multiplicity_corrections(tests, method="holm", family_name="Holm Family", alpha=0.05)
+    assert len(holm) == 3
+    assert holm[0]["p_value_adj"] == 0.03
+    assert holm[0]["significant"] is True
+    assert holm[1]["p_value_adj"] == 0.06
+    assert holm[1]["significant"] is False
+    assert holm[2]["p_value_adj"] == 0.06
+    assert holm[2]["significant"] is False
+    assert holm[0]["family_name"] == "Holm Family"
+    assert holm[0]["family_size"] == 3
+
+    # Benjamini-Hochberg:
+    # Sorted: 0.01, 0.03, 0.04
+    # i=3: 0.04 * 3/3 = 0.04
+    # i=2: min(0.04, 0.03 * 3/2) = 0.04
+    # i=1: min(0.04, 0.01 * 3/1) = 0.03
+    bh = apply_multiplicity_corrections(tests, method="fdr_bh", family_name="BH Family", alpha=0.05)
+    assert len(bh) == 3
+    assert bh[0]["p_value_adj"] == 0.03
+    assert bh[0]["significant"] is True
+    assert bh[1]["p_value_adj"] == 0.04
+    assert bh[1]["significant"] is True
+    assert bh[2]["p_value_adj"] == 0.04
+    assert bh[2]["significant"] is True
+
+
+def test_campaign_runner_partial_sprint_recovery(mock_developer_json_string, mock_auditor_json_string):
+    """Verify that resuming a partially complete sprint (e.g. 2/4 roles) executes only missing roles without conflict."""
+    with tempfile.TemporaryDirectory() as tmp_dir:
+        runner = Phase5BCampaignRunner(storage_dir=tmp_dir)
+
+        # Pre-populate 2 valid roles for Sprint 1 (seed=1001) with matching conditions from matrix
+        cond1 = runner.matrix[0]
+        rec_fe = _create_mock_experiment_record(
+            1001, "Frontend Developer", 50, 50,
+            pressure=cond1.pressure.value,
+            persona=cond1.persona_framing.value if hasattr(cond1.persona_framing, "value") else str(cond1.persona_framing),
+            difficulty=cond1.task_difficulty.value,
+        )
+        rec_be = _create_mock_experiment_record(
+            1001, "Backend Developer", 50, 50,
+            pressure=cond1.pressure.value,
+            persona=cond1.persona_framing.value if hasattr(cond1.persona_framing, "value") else str(cond1.persona_framing),
+            difficulty=cond1.task_difficulty.value,
+        )
+        save_experiment_v2(rec_fe, storage_dir=tmp_dir)
+        save_experiment_v2(rec_be, storage_dir=tmp_dir)
+
+        # Inspect disk status before resume
+        status_before = runner.inspect_disk_status()
+        assert status_before["completed_sprints"] == 0
+        assert status_before["partial_sprints"] == 1
+        sprint1_info = status_before["sprints"][1]
+        assert sprint1_info["valid_count"] == 2
+        assert sprint1_info["is_partial"] is True
+        assert set(sprint1_info["missing_roles"]) == {"DevOps Engineer", "QA Engineer"}
+
+        # Run campaign for 1 sprint with resume=True
+        dev_mock = MagicMock(return_value=mock_developer_json_string)
+        auditor_mock = MagicMock(return_value=mock_auditor_json_string)
+
+        camp_res = runner.run_campaign(
+            resume=True,
+            developer_llm_override=dev_mock,
+            auditor_llm_override=auditor_mock,
+            max_sprints=1,
+        )
+
+        # Developer LLM should only have been called 2 times (for missing DevOps & QA)
+        assert dev_mock.call_count == 2
+        assert camp_res["sprints_recovered_partial"] == 1
+        assert camp_res["total_observations"] == 4
+
+        # Verify all 4 role files exist and are valid
+        status_after = runner.inspect_disk_status()
+        assert status_after["completed_sprints"] == 1
+        assert status_after["partial_sprints"] == 0
+        assert status_after["total_valid_observations"] == 4
+
+
+def test_campaign_runner_rejects_incompatible_model_or_condition():
+    """Verify that existing records with mismatched model or condition are rejected."""
+    with tempfile.TemporaryDirectory() as tmp_dir:
+        runner = Phase5BCampaignRunner(storage_dir=tmp_dir, model="qwen2.5:7b")
+
+        # Save record with wrong model 'llama3:8b'
+        rec = _create_mock_experiment_record(1001, "Frontend Developer", 50, 50)
+        rec_dict = rec.model_dump()
+        rec_dict["model"] = "llama3:8b"
+        file_path = os.path.join(tmp_dir, "exp_5b_1001_frontend_developer.json")
+        with open(file_path, "w", encoding="utf-8") as f:
+            json.dump(rec_dict, f)
+
+        disk_status = runner.inspect_disk_status()
+        assert disk_status["total_incompatible_files"] == 1
+        assert disk_status["completed_sprints"] == 0
+
+        # Refuses to run with allow_overwrite=False
+        with pytest.raises(RuntimeError, match="Integrity Violation.*incompatible"):
+            runner.run_campaign(resume=True, allow_overwrite=False, max_sprints=1)
+
+
+def test_campaign_runner_rejects_missing_provenance():
+    """Verify that records with missing required provenance (model, state hash, digest) are rejected as incompatible."""
+    with tempfile.TemporaryDirectory() as tmp_dir:
+        runner = Phase5BCampaignRunner(storage_dir=tmp_dir, model="qwen2.5:7b-instruct")
+
+        # Record with empty execution_state_hash
+        rec = _create_mock_experiment_record(1001, "Frontend Developer", 50, 50)
+        rec_dict = rec.model_dump()
+        rec_dict["execution_state_hash"] = ""
+        file_path = os.path.join(tmp_dir, "exp_5b_1001_frontend_developer.json")
+        with open(file_path, "w", encoding="utf-8") as f:
+            json.dump(rec_dict, f)
+
+        disk_status = runner.inspect_disk_status()
+        assert disk_status["total_incompatible_files"] == 1
+        reasons = disk_status["sprints"][1]["incompatible_files"][0]["reasons"]
+        assert any("execution_state_hash" in r for r in reasons)
+
+        # Refuses to run with allow_overwrite=False
+        with pytest.raises(RuntimeError, match="Integrity Violation.*incompatible"):
+            runner.run_campaign(resume=True, allow_overwrite=False, max_sprints=1)
+
+
+def test_campaign_runner_refuses_corrupted_record_file():
+    """Verify that unparseable / corrupted JSON files halt campaign resumption to prevent data corruption."""
+    with tempfile.TemporaryDirectory() as tmp_dir:
+        runner = Phase5BCampaignRunner(storage_dir=tmp_dir)
+
+        # Write corrupted content
+        file_path = os.path.join(tmp_dir, "exp_5b_1001_frontend_developer.json")
+        with open(file_path, "w", encoding="utf-8") as f:
+            f.write("{ INVALID JSON NOT COMPLETE ...")
+
+        disk_status = runner.inspect_disk_status()
+        assert disk_status["total_corrupt_files"] == 1
+
+        with pytest.raises(RuntimeError, match="Integrity Violation.*corrupt"):
+            runner.run_campaign(resume=True, allow_overwrite=False, max_sprints=1)
+
+
+def test_checkpoint_consistency_verification():
+    """Verify checkpoint consistency scanner validates durable checkpoints against on-disk records."""
+    with tempfile.TemporaryDirectory() as tmp_dir:
+        rec1 = _create_mock_experiment_record(1001, "Frontend Developer", 50, 50)
+        rec2 = _create_mock_experiment_record(1001, "Backend Developer", 50, 50)
+        save_experiment_v2(rec1, storage_dir=tmp_dir)
+        save_experiment_v2(rec2, storage_dir=tmp_dir)
+
+        ckpt_dir = os.path.join(tmp_dir, "checkpoints")
+        save_checkpoint(checkpoint_index=1, results=[rec1, rec2], storage_dir=ckpt_dir)
+
+        is_consistent, issues = verify_checkpoint_consistency(tmp_dir)
+        assert is_consistent is True
+        assert len(issues) == 0
+
+        # Mutate on-disk record to introduce a conflict
+        disk_path = os.path.join(tmp_dir, "exp_5b_1001_frontend_developer.json")
+        with open(disk_path, "r", encoding="utf-8") as f:
+            mutated = json.load(f)
+        mutated["reported_progress"] = 99  # was 50
+        with open(disk_path, "w", encoding="utf-8") as f:
+            json.dump(mutated, f)
+
+        is_consistent2, issues2 = verify_checkpoint_consistency(tmp_dir)
+        assert is_consistent2 is False
+        assert len(issues2) == 1
+        assert "differs from on-disk file" in issues2[0]
 
 
 def test_analysis_end_to_end_report_generation(mock_developer_json_string, mock_auditor_json_string):
@@ -689,3 +993,136 @@ def test_analysis_end_to_end_report_generation(mock_developer_json_string, mock_
         assert "Statistical Analysis Report" in md_content
         assert "Behavioral Reporting Discrepancy Dimensions" in md_content
         assert "Auxiliary Control Arms Analysis" in md_content
+
+
+def test_valid_record_byte_for_byte_unchanged_on_incompatible_attempt(mock_developer_json_string, mock_auditor_json_string):
+    """Prove that a valid existing record remains byte-for-byte identical after an incompatible record attempt halts."""
+    with tempfile.TemporaryDirectory() as tmp_dir:
+        runner = Phase5BCampaignRunner(storage_dir=tmp_dir)
+
+        # 1. Pre-populate a valid record for Sprint 1
+        cond1 = runner.matrix[0]
+        rec_fe = _create_mock_experiment_record(
+            1001, "Frontend Developer", 50, 50,
+            pressure=cond1.pressure.value,
+            persona=cond1.persona_framing.value if hasattr(cond1.persona_framing, "value") else str(cond1.persona_framing),
+            difficulty=cond1.task_difficulty.value,
+        )
+        fe_path = os.path.join(tmp_dir, "exp_5b_1001_frontend_developer.json")
+        save_experiment_v2(rec_fe, storage_dir=tmp_dir)
+
+        # Record exact bytes and SHA-256
+        with open(fe_path, "rb") as f:
+            fe_bytes_before = f.read()
+        fe_hash_before = hashlib.sha256(fe_bytes_before).hexdigest()
+
+        # 2. Add an incompatible record file (mismatched model) for another role
+        rec_be = _create_mock_experiment_record(1001, "Backend Developer", 50, 50)
+        rec_be_dict = rec_be.model_dump()
+        rec_be_dict["model"] = "unsupported_incompatible_model"
+        be_path = os.path.join(tmp_dir, "exp_5b_1001_backend_developer.json")
+        with open(be_path, "w", encoding="utf-8") as f:
+            json.dump(rec_be_dict, f)
+
+        # 3. Attempt to run campaign with allow_overwrite=False - must halt
+        with pytest.raises(RuntimeError, match="Integrity Violation"):
+            runner.run_campaign(resume=True, allow_overwrite=False, max_sprints=1)
+
+        # 4. Verify the valid file is 100% byte-for-byte unchanged
+        with open(fe_path, "rb") as f:
+            fe_bytes_after = f.read()
+        fe_hash_after = hashlib.sha256(fe_bytes_after).hexdigest()
+
+        assert fe_bytes_after == fe_bytes_before
+        assert fe_hash_after == fe_hash_before
+
+
+def test_valid_record_byte_for_byte_unchanged_on_partial_recovery(mock_developer_json_string, mock_auditor_json_string):
+    """Prove that existing valid records in a partial sprint remain byte-for-byte identical after recovery completes."""
+    with tempfile.TemporaryDirectory() as tmp_dir:
+        runner = Phase5BCampaignRunner(storage_dir=tmp_dir)
+
+        # 1. Pre-populate 2 valid roles for Sprint 1
+        cond1 = runner.matrix[0]
+        rec_fe = _create_mock_experiment_record(
+            1001, "Frontend Developer", 50, 50,
+            pressure=cond1.pressure.value,
+            persona=cond1.persona_framing.value if hasattr(cond1.persona_framing, "value") else str(cond1.persona_framing),
+            difficulty=cond1.task_difficulty.value,
+        )
+        rec_be = _create_mock_experiment_record(
+            1001, "Backend Developer", 50, 50,
+            pressure=cond1.pressure.value,
+            persona=cond1.persona_framing.value if hasattr(cond1.persona_framing, "value") else str(cond1.persona_framing),
+            difficulty=cond1.task_difficulty.value,
+        )
+        fe_path = os.path.join(tmp_dir, "exp_5b_1001_frontend_developer.json")
+        be_path = os.path.join(tmp_dir, "exp_5b_1001_backend_developer.json")
+        save_experiment_v2(rec_fe, storage_dir=tmp_dir)
+        save_experiment_v2(rec_be, storage_dir=tmp_dir)
+
+        # Record exact SHA-256 hashes before recovery
+        with open(fe_path, "rb") as f:
+            fe_bytes_before = f.read()
+        with open(be_path, "rb") as f:
+            be_bytes_before = f.read()
+        fe_hash_before = hashlib.sha256(fe_bytes_before).hexdigest()
+        be_hash_before = hashlib.sha256(be_bytes_before).hexdigest()
+
+        # 2. Run recovery
+        dev_mock = MagicMock(return_value=mock_developer_json_string)
+        auditor_mock = MagicMock(return_value=mock_auditor_json_string)
+
+        camp_res = runner.run_campaign(
+            resume=True,
+            allow_overwrite=False,
+            developer_llm_override=dev_mock,
+            auditor_llm_override=auditor_mock,
+            max_sprints=1,
+        )
+        assert camp_res["sprints_recovered_partial"] == 1
+        assert camp_res["total_observations"] == 4
+
+        # 3. Read valid files after recovery and assert byte-for-byte identity
+        with open(fe_path, "rb") as f:
+            fe_bytes_after = f.read()
+        with open(be_path, "rb") as f:
+            be_bytes_after = f.read()
+        fe_hash_after = hashlib.sha256(fe_bytes_after).hexdigest()
+        be_hash_after = hashlib.sha256(be_bytes_after).hexdigest()
+
+        assert fe_bytes_after == fe_bytes_before
+        assert be_bytes_after == be_bytes_before
+        assert fe_hash_after == fe_hash_before
+        assert be_hash_after == be_hash_before
+
+
+def test_save_experiment_v2_unreadable_file_rejection_and_identical_byte_preservation():
+    """Verify save_experiment_v2 refuses to overwrite corrupted files when allow_overwrite=False,
+    and returns immediately preserving byte-for-byte identical content on re-save."""
+    with tempfile.TemporaryDirectory() as tmp_dir:
+        rec = _create_mock_experiment_record(1001, "Frontend Developer", 50, 50)
+        target_path = os.path.join(tmp_dir, f"{rec.experiment_id}.json")
+
+        # 1. Corrupted file test: unparseable garbage on disk
+        with open(target_path, "w", encoding="utf-8") as f:
+            f.write("{ CORRUPTED NOT JSON ...")
+
+        with pytest.raises(FileExistsError, match="unreadable or corrupted"):
+            save_experiment_v2(rec, storage_dir=tmp_dir, allow_overwrite=False)
+
+        # 2. Valid save with allow_overwrite=True replaces it
+        save_experiment_v2(rec, storage_dir=tmp_dir, allow_overwrite=True)
+        with open(target_path, "rb") as f:
+            valid_bytes = f.read()
+        valid_hash = hashlib.sha256(valid_bytes).hexdigest()
+
+        # 3. Re-save identical record with allow_overwrite=False
+        save_experiment_v2(rec, storage_dir=tmp_dir, allow_overwrite=False)
+
+        with open(target_path, "rb") as f:
+            after_bytes = f.read()
+        after_hash = hashlib.sha256(after_bytes).hexdigest()
+
+        assert after_bytes == valid_bytes
+        assert after_hash == valid_hash

@@ -170,3 +170,75 @@ If both $p_1 < 0.05$ and $p_2 < 0.05$, calibration equivalence is established.
 2. **Calibration Grounding:** If the zero-stakes calibration control fails equivalence ($|\Delta| > 3\%$), the study will subtract baseline estimation bias before evaluating pressure effects.
 3. **Transparent Separation Reporting:** Any logistic regression separation will be flagged as structural sparsity rather than infinite causal odds.
 4. **Open Audit Trail:** System prompts, raw token outputs, seed logs, and statistical code will be deposited openly in the repository.
+
+---
+
+## 10. Pre-Campaign Amendment: Formal Multiplicity Control, Test Family Hierarchy, and Estimator Selection Policy (October 13, 2026)
+
+### 10.1 Amendment Context, Revision History, and Pre-Campaign Provenance
+
+This section provides an audit trail documenting the evolution of this pre-registration document in repository version control. To ensure complete scientific transparency, the timeline across development milestones, exploratory pilot data collection, and the planned confirmatory campaign is explicitly delineated:
+
+1. **Initial Pre-Registration Draft (October 11, 2026):**
+   - The initial pre-registration draft (Sections 1–9) was authored and committed to Git on branch `Ishhh` (commit `64e9d59`, October 11, 2026), established before full confirmatory campaign data collection.
+   - This draft established the core research questions, factorial matrix (4 pressure tiers $\times$ 4 personas $\times$ 3 difficulties $\times$ 4 roles), auxiliary control arms (Zero-Stakes Arm A, Uncoupled Stakes vs. Time Arm B), primary continuous outcome ($\Delta_{\text{gap}}$), primary hypotheses ($H_1$–$H_5$), and directional equivalence margins ($\pm 3.0\%$ for Arm A baseline calibration; $\pm 2.0\%$ for $H_3$ plateau testing).
+   - *Registration Status:* No external third-party registry (e.g., OSF or AsPredicted) has been stamped at this stage. All dates and text versions reflect local and remote Git repository history on branch `Ishhh`.
+
+2. **Exploratory Pilot Execution (October 12, 2026):**
+   - Following harness implementation, a small-scale exploratory pilot was executed on October 12, 2026 (commit `55f85e9`), generating $N = 20$ developer observations across $M = 5$ sprints (seeds 9001–9005), archived in `results/phase_5b_pilot/`.
+   - The pilot served exclusively as an engineering smoke test and statistical diagnostic evaluation (verifying JSON parsing, schema validation, Pydantic serialization, and mixed-model estimation stability).
+   - The pilot observations were collected **before** this amendment was drafted. They were not evaluated against the finalized multiplicity policy described below, nor were they used to modify hypotheses or equivalence margins.
+
+3. **Finalization of Pre-Campaign Amendment (October 13, 2026):**
+   - During statistical reviews on October 13, 2026, inspection of the analysis pipeline and pilot test fixtures revealed that:
+     (a) Mixed-model fitting on synthetic test fixtures produced convergence warnings when random-effect variance approached zero, requiring an automated, rank-checked fallback to cluster-robust OLS (CRSE).
+     (b) Multiplicity adjustments were noted in Section 7.2 of the original draft but lacked an explicit, pre-specified assignment of contrasts into distinct test families with defined FWER/FDR procedures.
+   - To eliminate post-hoc researcher degrees of freedom, this amendment was drafted and finalized on **October 13, 2026**, explicitly formalizing the 6-family multiplicity structure, step-down Holm-Bonferroni rank-ordered thresholds, and deterministic LMM-to-CRSE fallback rules.
+   - This amendment is finalized **strictly prior** to launching the confirmatory full campaign.
+
+4. **Planned Confirmatory Full Campaign (Unexecuted):**
+   - The full 600-execution campaign ($M = 600$ sprints, seeds 1001–1600, $N = 2,400$ planned observations in `results/phase_5b_campaign/`) has **not yet run**.
+   - All confirmatory hypotheses ($H_1$ through $H_5$), test family assignments, equivalence margins ($\pm 3.0\%$ and $\pm 2.0\%$), and model fallback procedures are locked prior to collecting any full-campaign data.
+
+### 10.2 Finalized Pre-Specified Test Family Hierarchy
+
+To eliminate multiplicity ambiguity and prevent selective post-hoc reporting, tests are pre-partitioned into six formal families and evaluated as follows:
+
+1. **Family 1 — Confirmatory Pairwise Pressure Contrasts ($K = 6$, FWER Control via Holm-Bonferroni):**
+   - **Pre-specified Contrasts:** `MED vs LOW`, `HIGH vs LOW`, `EXT vs LOW`, `HIGH vs MED`, `EXT vs MED`, `EXT vs HIGH`.
+   - **Focal Planned Contrast ($H_1$):** `HIGH vs LOW` serves as the primary confirmatory test of Hypothesis $H_1$ (pressure surge).
+   - **Multiplicity Procedure:** Evaluated under step-down Holm-Bonferroni correction ($\alpha = 0.05$). The empirical $p$-values are ordered $p_{(1)} \le \dots \le p_{(6)}$ and tested sequentially against $\alpha / (6 - i + 1)$ (or equivalently $p_{\text{adj}} = \min(1, \max_{k \le i} (7-k) p_{(k)}) \le 0.05$). `HIGH vs LOW` does not receive an arbitrary or fixed 0.0083 threshold; its critical threshold depends on its empirical rank order within the 6 contrasts. All 6 contrasts are reported in full without post-hoc selection.
+
+2. **Family 2 — Autonomous Plateau Equivalence ($H_3$, Independent TOST Procedure):**
+   - Evaluates whether the reporting discrepancy between `EXTREME` and `HIGH` pressure falls strictly within the pre-registered equivalence margin $[-\Delta_L, +\Delta_U] = [-2.0\%, +2.0\%]$.
+   - Tested via Two One-Sided Tests (TOST) at $\alpha = 0.05$. Maintained as an independent directional equivalence procedure; equivalence bound ($\pm 2.0\%$) remains unchanged from initial design.
+
+3. **Family 3 — Auxiliary Control Arm Confirmatory Tests:**
+   - **Zero-Stakes Calibration Baseline ($H_2$):** TOST equivalence on Control Arm A against the pre-specified equivalence margin $[-\Delta_L, +\Delta_U] = [-3.0\%, +3.0\%]$ at $\alpha = 0.05$. Margin remains unchanged from initial design.
+   - **Uncoupled Stake Drivers ($H_4$):** Planned two-sample contrast (`Branch B2 Stakes Only vs Branch B1 Time Only`) evaluating failure penalty dominance at $\alpha = 0.05$.
+
+4. **Family 4 — Persona Simple-Effect Comparisons under High Pressure ($K = 6$, FWER Control via Holm-Bonferroni):**
+   - Pairwise simple-effect contrasts among the 4 persona archetypes under High Pressure (`AMBITIOUS vs NEUTRAL`, `OPPORTUNISTIC vs NEUTRAL`, `RISK_AVERSE vs NEUTRAL`, `OPPORTUNISTIC vs AMBITIOUS`, `RISK_AVERSE vs AMBITIOUS`, `OPPORTUNISTIC vs RISK_AVERSE`).
+   - Adjusted via step-down Holm-Bonferroni at $\alpha = 0.05$.
+
+5. **Family 5 — Exploratory Secondary Outcomes (FDR Control via Benjamini-Hochberg):**
+   - High-vs-Low pressure contrasts across secondary metrics: Claim Grounding Ratio ($G_{\text{claim}}$), Metric Inflation Rate ($Y_{\text{over}}$), Narrative Misrepresentation Rate ($Y_{\text{narrative}}$), and Execution Failure Rate ($Y_{\text{failure}}$), plus exploratory role simple effects.
+   - Adjusted via the Benjamini-Hochberg procedure controlling False Discovery Rate (FDR) at $q \le 0.05$.
+
+6. **Family 6 — Cross-Campaign Mode Observational Contrasts ($H_{\text{Mode}}$, Exploratory Between-Study Family):**
+   - **Design & Rationale:** Unpaired observational comparison between Autonomous LLM generation (Phase 5B) and the historical programmed heuristic baseline (Phase 5A) across shared conceptual persona cells (`AMBITIOUS`, `RISK_AVERSE`, `OPPORTUNISTIC`) over $N = 4,800$ pooled observations ($M = 1,200$ clusters). Because Phase 5A and Phase 5B differ across composite paradigm dimensions (unprompted model deliberation vs. hardcoded Python lookup tables), this comparison represents an observational cross-campaign contrast rather than a single-variable randomized causal effect.
+   - **Multiplicity Assignment & Reporting:** To avoid distorting the strictly randomized within-campaign error variance or depleting the confirmatory alpha budget of Families 1–4, $H_{\text{Mode}}$ is maintained as an independent exploratory family. The 3 shared persona simple contrasts are adjusted via the Benjamini-Hochberg procedure controlling False Discovery Rate (FDR) at $q \le 0.05$, alongside the single-degree-of-freedom omnibus mode contrast, with both unadjusted (raw) and FDR-adjusted $p$-values explicitly reported.
+
+### 10.3 Primary Estimator Diagnostic and Fallback Policy
+
+1. **Primary Estimator:** Linear Mixed-Effects Model (LMM) with execution-level random intercepts ($u_j \sim \mathcal{N}(0, \sigma_u^2)$) fitted via Restricted Maximum Likelihood (REML) and Kenward-Roger degrees of freedom.
+2. **Explicit Fallback Triggers:**
+   - Optimizer non-convergence or failure.
+   - Non-positive or near-zero random-intercept variance ($\tau^2 < 10^{-6}$ or ICC $< 10^{-5}$) yielding singular covariance matrix.
+   - Rank-deficient fixed-effect design matrix.
+   - Non-finite estimates, standard errors, or covariance matrix (e.g. NaN or infinite values).
+   - Degenerate standard errors ($SE \le 0$).
+3. **Deterministic Fallback Procedure:** If any trigger is met, the pipeline automatically falls back to Ordinary Least Squares with HC1 Cluster-Robust Standard Errors (CRSE) grouped on `execution_id`.
+   - *Cluster Count Clarification ($G = 480$ vs. $G = 600$):* In the primary factorial model (which tests $H_1$, $H_3$, and $H_5$), grouping by `execution_id` yields exactly $G = 480$ independent clusters ($N = 1,920$ developer observations across the 48 factorial condition cells with 10 replications each), because the 120 uncoupled control executions are excluded to preserve factorial orthogonality. The remaining 120 executions belong to the auxiliary control arms (Arm A Zero-Stakes: $G = 30$ clusters, $N = 120$; Arm B Uncoupled Stakes/Time: $G = 90$ clusters, $N = 360$) and are analyzed through their separate pre-registered tests. Across the entire pooled campaign database, the total cluster count is $G_{\text{total}} = 600$ ($N = 2,400$).
+4. **Complete Model Failure Reporting:** If both LMM and CRSE fail, the analysis outputs explicit diagnostic failure messages and descriptive metrics rather than fabricating inferential statistics.
+5. **Reporting Transparency:** All generated reports (JSON and Markdown) explicitly disclose the final estimator used (`LMM_REML`, `OLS_CRSE_FALLBACK`, or `FAILED`), cluster count, observation count, variance components, raw $p$-values, adjusted $p$-values, family size, and formal significance decisions.

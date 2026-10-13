@@ -209,7 +209,10 @@ Where:
 - $u_i \sim \mathcal{N}(0, \sigma_u^2)$ is the execution-level random intercept.
 - $\epsilon_{ij} \sim \mathcal{N}(0, \sigma_\epsilon^2)$ is the observation-level residual error.
 - Reference baselines: `Pressure=LOW`, `Persona=NEUTRAL_PROFESSIONAL`, `Difficulty=EASY`, `Role=Frontend Developer`.
-- Fallback: Cluster-Robust Standard Errors (CRSE / HC1 OLS) if REML convergence is challenged.
+- **Diagnostic Rules & Estimator Selection:**
+  - The LMM fit is checked for: (1) optimizer convergence (`result.converged`), (2) finite parameter estimates and valid positive standard errors ($SE > 0$), (3) full design matrix rank ($\text{rank}(X) = p$), (4) non-singular covariance structure ($\text{Cov} \succ 0$), and (5) random-intercept variance boundary conditions ($\sigma_u^2 \ge 10^{-6}$).
+  - If the optimizer reports non-convergence, singular fit, invalid standard errors, or boundary variance ($\sigma_u^2 < 10^{-6}$), the pipeline records the explicit diagnostic reason and triggers the **Cluster-Robust OLS (CRSE)** fallback with HC1 standard errors clustered on `execution_id` ($G = 480$ clusters).
+  - If CRSE also fails or the design matrix is structurally rank-deficient, the pipeline reports `MODEL_FIT_FAILURE` and falls back to descriptive non-parametric statistics rather than fabricating inferential estimates.
 
 ### 7.2 Auxiliary Control Arm Hypotheses
 
@@ -224,10 +227,13 @@ Where:
 - **Hypothesis:** Evaluates the relative potency of time urgency (Arm B1) versus economic stakes (Arm B2) in inducing reporting discrepancy.
 - **Test:** Independent Welch's $t$-test and Mann-Whitney $U$ test on `verification_delta` between Arm B1 and Arm B2, reporting Cohen's $d$ with 95% confidence intervals.
 
-### 7.3 Multiplicity Control
-Planned contrasts and secondary hypothesis tests are adjusted using:
-- **Holm-Bonferroni step-down procedure** for family-wise error rate control on primary contrasts.
-- **Benjamini-Hochberg procedure** for False Discovery Rate (FDR) control across exploratory subtask breakdowns.
+### 7.3 Multiplicity Control Policy
+Planned contrasts and secondary hypothesis tests are adjusted using pre-specified test families:
+- **Family 1 (Confirmatory Pairwise Pressure Contrasts, $K = 6$):** Step-down Holm-Bonferroni procedure ($\alpha = 0.05$). `HIGH vs LOW` serves as the primary focal contrast for Hypothesis $H_1$.
+- **Family 2 (Autonomous Plateau Equivalence, $H_3$):** Two One-Sided Tests (TOST) against the pre-specified bound $\pm 2.0\%$ at $\alpha = 0.05$.
+- **Family 3 (Auxiliary Control Arms):** Arm A Zero-Stakes TOST ($\pm 3.0\%$ margin) and Arm B Stakes vs Time Welch's contrast.
+- **Family 4 (Persona Simple Effects under High Pressure, $K = 6$):** Step-down Holm-Bonferroni procedure ($\alpha = 0.05$) across pairwise archetype contrasts.
+- **Family 5 (Exploratory Secondary Outcomes):** Benjamini-Hochberg procedure controlling False Discovery Rate (FDR $q \le 0.05$) across secondary metrics (Claim Grounding Ratio, Metric Inflation Rate, Narrative Misrepresentation Rate, Failure/Refusal Rate).
 
 ### 7.4 Cross-Campaign Observational Comparison
 Comparisons between Phase 5A (programmed heuristic) and Phase 5B (autonomous LLM) represent a composite paradigm shift. The pipeline treats this strictly as an **observational cross-campaign contrast**, not a single-variable causal estimate.
