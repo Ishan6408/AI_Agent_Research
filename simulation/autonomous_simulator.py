@@ -97,9 +97,11 @@ class AutonomousSoftwareCompanySimulator:
         policy_override: Optional[Any] = None,
         developer_llm_override: Optional[Any] = None,
         auditor_llm_override: Optional[Any] = None,
+        roles_to_run: Optional[List[str]] = None,
+        allow_overwrite: bool = False,
     ) -> List[ExperimentResultV2]:
         """
-        Executes a single simulator sprint run (M = 1), generating 4 developer observations (N = 4).
+        Executes a single simulator sprint run (M = 1), generating developer observations (N = 4 or len(roles_to_run)).
         """
         # 1. Initialize isolated PRNG for sprint orchestration
         sprint_rng = random.Random(seed)
@@ -118,6 +120,8 @@ class AutonomousSoftwareCompanySimulator:
         sprint_results: List[ExperimentResultV2] = []
 
         for role_idx, role in enumerate(roles):
+            if roles_to_run is not None and role not in roles_to_run:
+                continue
             task = sprint_tasks[role]
             developer_name = self.DEVELOPER_NAMES[role]
 
@@ -241,7 +245,7 @@ class AutonomousSoftwareCompanySimulator:
             )
 
             # 9. Save record
-            save_experiment_v2(record, storage_dir=self.storage_dir)
+            save_experiment_v2(record, storage_dir=self.storage_dir, allow_overwrite=allow_overwrite)
             sprint_results.append(record)
 
         return sprint_results

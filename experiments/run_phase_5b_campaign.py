@@ -69,6 +69,53 @@ FORBIDDEN_STORAGE_SUBSTRINGS = [
 ]
 
 
+def verify_checkpoint_consistency(storage_dir: str) -> Tuple[bool, List[str]]:
+    """
+    Scans checkpoints in storage_dir/checkpoints/ and ensures all serialized records
+    match their corresponding individual on-disk files.
+    """
+    checkpoint_dir = os.path.join(storage_dir, "checkpoints")
+    if not os.path.exists(checkpoint_dir):
+        return True, []
+
+    ckpt_files = sorted(glob.glob(os.path.join(checkpoint_dir, "checkpoint_sprint_*.json")))
+    if not ckpt_files:
+        return True, []
+
+    inconsistencies: List[str] = []
+
+    for ckpt_path in ckpt_files:
+        try:
+            with open(ckpt_path, "r", encoding="utf-8") as f:
+                data = json.load(f)
+            records = data.get("records", [])
+            for rec_dict in records:
+                exp_id = rec_dict.get("experiment_id")
+                if not exp_id:
+                    inconsistencies.append(f"Missing experiment_id in checkpoint {os.path.basename(ckpt_path)}")
+                    continue
+                disk_path = os.path.join(storage_dir, f"{exp_id}.json")
+                if not os.path.exists(disk_path):
+                    inconsistencies.append(
+                        f"Checkpoint record {exp_id} in {os.path.basename(ckpt_path)} missing from disk at {disk_path}"
+                    )
+                    continue
+                try:
+                    with open(disk_path, "r", encoding="utf-8") as df:
+                        disk_dict = json.load(df)
+                    conflict = detect_record_conflict(disk_dict, rec_dict)
+                    if conflict:
+                        inconsistencies.append(
+                            f"Checkpoint record {exp_id} differs from on-disk file: {conflict}"
+                        )
+                except Exception as ex:
+                    inconsistencies.append(f"Cannot read on-disk file {disk_path}: {str(ex)}")
+        except Exception as ex:
+            inconsistencies.append(f"Cannot parse checkpoint {ckpt_path}: {str(ex)}")
+
+    return (len(inconsistencies) == 0), inconsistencies
+
+
 class Phase5BCampaignRunner:
     """
     Dedicated orchestration runner for the Phase 5B 600-execution full campaign.
@@ -155,61 +202,119 @@ class Phase5BCampaignRunner:
         sprint_status: Dict[int, Dict[str, Any]] = {}
         total_valid = 0
         total_corrupt = 0
+        total_incompatible = 0
         total_missing = 0
         completed_sprints = 0
+        partial_sprints = 0
 
         for cond in self.matrix:
             seed = cond.seed
             sprint_num = cond.sprint_number
             expected_files = [
-                os.path.join(self.storage_dir, f"exp_5b_{seed}_{slug}.json")
-                for _, slug in self.ROLES
+                (role_name, slug, os.path.join(self.storage_dir, f"exp_5b_{seed}_{slug}.json"))
+                for role_name, slug in self.ROLES
             ]
             existing_valid: List[str] = []
+            existing_valid_records: List[ExperimentResultV2] = []
             existing_corrupt: List[str] = []
-            missing: List[str] = []
+            existing_incompatible: List[Dict[str, Any]] = []
+            missing_roles: List[str] = []
+            valid_roles: List[str] = []
 
-            for path in expected_files:
+            for role_name, slug, path in expected_files:
                 if not os.path.exists(path):
-                    missing.append(path)
+                    missing_roles.append(role_name)
                     continue
                 try:
                     with open(path, "r", encoding="utf-8") as f:
                         record_dict = json.load(f)
-                    # Verify model and seed consistency
                     rec = ExperimentResultV2.model_validate(record_dict)
+
+                    reasons = []
                     if rec.seed != seed:
-                        existing_corrupt.append(path)
+                        reasons.append(f"Seed mismatch: expected {seed}, found {rec.seed}")
+                    if rec.developer_role != role_name:
+                        reasons.append(f"Role mismatch: expected '{role_name}', found '{rec.developer_role}'")
+                    if not rec.model or rec.model != self.model:
+                        reasons.append(f"Model mismatch: expected '{self.model}', found '{rec.model}'")
+                    if rec.pressure_tier != cond.pressure.value:
+                        reasons.append(f"Pressure mismatch: expected '{cond.pressure.value}', found '{rec.pressure_tier}'")
+                    if rec.persona_framing != cond.persona_framing:
+                        reasons.append(f"Persona mismatch: expected '{cond.persona_framing}', found '{rec.persona_framing}'")
+                    if rec.task_difficulty != cond.task_difficulty.value:
+                        reasons.append(f"Difficulty mismatch: expected '{cond.task_difficulty.value}', found '{rec.task_difficulty}'")
+                    if rec.uncoupled_control_arm != cond.uncoupled_control_arm:
+                        reasons.append(f"Control arm mismatch: expected '{cond.uncoupled_control_arm}', found '{rec.uncoupled_control_arm}'")
+                    if not rec.execution_state_hash:
+                        reasons.append("Missing provenance: execution_state_hash is missing or empty")
+                    if self.simulator.model_digest:
+                        if not rec.ollama_model_digest:
+                            reasons.append(f"Missing provenance: expected model digest '{self.simulator.model_digest}', but record has no digest")
+                        elif rec.ollama_model_digest != self.simulator.model_digest:
+                            reasons.append(f"Digest mismatch: expected '{self.simulator.model_digest}', found '{rec.ollama_model_digest}'")
+
+                    if reasons:
+                        existing_incompatible.append({"path": path, "role": role_name, "reasons": reasons})
+                        missing_roles.append(role_name)
                     else:
                         existing_valid.append(path)
-                except Exception:
+                        existing_valid_records.append(rec)
+                        valid_roles.append(role_name)
+                except Exception as ex:
                     existing_corrupt.append(path)
+                    missing_roles.append(role_name)
 
-            is_complete = len(existing_valid) == 4
+            # Execution run consistency across valid records in this sprint
+            if len(existing_valid_records) > 1:
+                cluster_ids = {r.cluster_id for r in existing_valid_records}
+                if len(cluster_ids) > 1:
+                    existing_incompatible.append({
+                        "path": self.storage_dir,
+                        "role": "sprint_cluster",
+                        "reasons": [f"Multiple cluster IDs within sprint: {cluster_ids}"],
+                    })
+
+            is_complete = (len(existing_valid) == 4 and len(existing_corrupt) == 0 and len(existing_incompatible) == 0)
+            is_partial = (0 < len(existing_valid) < 4 and len(existing_corrupt) == 0 and len(existing_incompatible) == 0)
+
             if is_complete:
                 completed_sprints += 1
+            elif is_partial:
+                partial_sprints += 1
+
             total_valid += len(existing_valid)
             total_corrupt += len(existing_corrupt)
-            total_missing += len(missing)
+            total_incompatible += len(existing_incompatible)
+            total_missing += len(missing_roles)
 
             sprint_status[sprint_num] = {
                 "seed": seed,
                 "arm": cond.experimental_arm,
                 "is_complete": is_complete,
+                "is_partial": is_partial,
                 "valid_count": len(existing_valid),
                 "corrupt_count": len(existing_corrupt),
-                "missing_count": len(missing),
+                "incompatible_count": len(existing_incompatible),
+                "missing_count": len(missing_roles),
                 "valid_files": existing_valid,
+                "valid_roles": valid_roles,
+                "missing_roles": missing_roles,
                 "corrupt_files": existing_corrupt,
-                "missing_files": missing,
+                "incompatible_files": existing_incompatible,
             }
+
+        ckpt_consistent, ckpt_inconsistencies = verify_checkpoint_consistency(self.storage_dir)
 
         return {
             "completed_sprints": completed_sprints,
-            "pending_sprints": TOTAL_CAMPAIGN_EXECUTIONS - completed_sprints,
+            "partial_sprints": partial_sprints,
+            "pending_sprints": TOTAL_CAMPAIGN_EXECUTIONS - completed_sprints - partial_sprints,
             "total_valid_observations": total_valid,
             "total_corrupt_files": total_corrupt,
+            "total_incompatible_files": total_incompatible,
             "total_missing_observations": total_missing,
+            "checkpoints_consistent": ckpt_consistent,
+            "checkpoint_inconsistencies": ckpt_inconsistencies,
             "sprints": sprint_status,
         }
 
@@ -226,7 +331,7 @@ class Phase5BCampaignRunner:
         disk_status = self.inspect_disk_status()
 
         preflight_summary = {
-            "status": "PASS" if (daemon_ok and model_installed) else "WARN_OFFLINE",
+            "status": "PASS" if (daemon_ok and model_installed and disk_status["total_corrupt_files"] == 0 and disk_status["total_incompatible_files"] == 0) else "WARN_OFFLINE",
             "ollama_daemon_reachable": daemon_ok,
             "ollama_daemon_message": daemon_msg,
             "configured_model": self.model,
@@ -241,10 +346,13 @@ class Phase5BCampaignRunner:
             "matrix_validation": self.matrix_summary,
             "disk_status": {
                 "completed_sprints": disk_status["completed_sprints"],
+                "partial_sprints": disk_status["partial_sprints"],
                 "pending_sprints": disk_status["pending_sprints"],
                 "valid_observations": disk_status["total_valid_observations"],
                 "missing_observations": disk_status["total_missing_observations"],
                 "corrupt_files": disk_status["total_corrupt_files"],
+                "incompatible_files": disk_status["total_incompatible_files"],
+                "checkpoints_consistent": disk_status["checkpoints_consistent"],
             },
         }
         return preflight_summary
@@ -278,10 +386,28 @@ class Phase5BCampaignRunner:
         disk_status = self.inspect_disk_status()
         sprints_info = disk_status["sprints"]
 
+        # Integrity guard: Refuse to proceed if there are corrupt, incompatible, or inconsistent records on disk
+        if not allow_overwrite:
+            corrupt_count = disk_status["total_corrupt_files"]
+            incompatible_count = disk_status["total_incompatible_files"]
+            if corrupt_count > 0 or incompatible_count > 0:
+                raise RuntimeError(
+                    f"Integrity Violation: Found {corrupt_count} corrupt and {incompatible_count} "
+                    f"incompatible record files in '{self.storage_dir}'. Refusing to proceed without "
+                    f"explicit resolution or --allow-overwrite flag."
+                )
+            if not disk_status.get("checkpoints_consistent", True):
+                raise RuntimeError(
+                    f"Integrity Violation: Inconsistent checkpoint records detected in '{self.storage_dir}': "
+                    f"{disk_status.get('checkpoint_inconsistencies', [])[:3]}. Refusing to proceed without "
+                    f"explicit resolution or --allow-overwrite flag."
+                )
+
         all_results: List[ExperimentResultV2] = []
         recent_sprint_records: List[ExperimentResultV2] = []
         sprints_executed = 0
         sprints_skipped = 0
+        sprints_recovered = 0
 
         target_matrix = self.matrix[:max_sprints] if max_sprints is not None else self.matrix
 
@@ -300,17 +426,38 @@ class Phase5BCampaignRunner:
                 sprints_skipped += 1
                 continue
 
-            # Execute sprint
+            # Partial sprint recovery: resume missing roles without re-executing valid roles
+            roles_to_run = None
+            if resume and sprint_stat.get("is_partial") and not allow_overwrite:
+                missing_roles = sprint_stat.get("missing_roles", [])
+                valid_files = sprint_stat.get("valid_files", [])
+                logger.info(
+                    "Sprint %d (Seed %d) partially complete (%d/4 roles found). Resuming missing roles: %s",
+                    sprint_num,
+                    seed,
+                    len(valid_files),
+                    missing_roles,
+                )
+                existing_records = []
+                for path in valid_files:
+                    with open(path, "r", encoding="utf-8") as f:
+                        existing_records.append(ExperimentResultV2.model_validate(json.load(f)))
+                all_results.extend(existing_records)
+                roles_to_run = missing_roles
+                sprints_recovered += 1
+
+            # Execute sprint (either full sprint or missing roles only)
             logger.info(
-                "Executing Sprint %d/%d (Seed %d | %s | %s)...",
+                "Executing Sprint %d/%d (Seed %d | %s | %s) [Roles: %s]...",
                 sprint_num,
                 len(target_matrix),
                 seed,
                 cond.experimental_arm,
                 cond.pressure.value,
+                roles_to_run if roles_to_run else "ALL",
             )
 
-            sprint_records = self.simulator.run_sprint(
+            new_records = self.simulator.run_sprint(
                 pressure=cond.pressure,
                 persona_framing=cond.persona_framing,
                 task_difficulty=cond.task_difficulty,
@@ -319,10 +466,12 @@ class Phase5BCampaignRunner:
                 policy_override=cond.policy,
                 developer_llm_override=developer_llm_override,
                 auditor_llm_override=auditor_llm_override,
+                roles_to_run=roles_to_run,
+                allow_overwrite=allow_overwrite,
             )
 
-            all_results.extend(sprint_records)
-            recent_sprint_records.extend(sprint_records)
+            all_results.extend(new_records)
+            recent_sprint_records.extend(new_records)
             sprints_executed += 1
 
             # Checkpoint cadence: every checkpoint_interval sprints OR at the final sprint
@@ -347,6 +496,7 @@ class Phase5BCampaignRunner:
             "sprints_executed": sprints_executed,
             "sprints_skipped_resume": sprints_skipped,
             "sprints_skipped": sprints_skipped,
+            "sprints_recovered_partial": sprints_recovered,
             "total_observations": len(all_results),
             "valid_substantive_observations": len(substantive),
             "valid_observations": len(substantive),
@@ -480,9 +630,13 @@ def main() -> None:
         print("\nOn-Disk Storage Status:")
         disk = report["disk_status"]
         print(f"  Completed Sprints      : {disk['completed_sprints']}/600")
+        print(f"  Partial Sprints        : {disk['partial_sprints']}/600")
         print(f"  Pending Sprints        : {disk['pending_sprints']}/600")
         print(f"  Valid Observations     : {disk['valid_observations']}/2,400")
+        print(f"  Missing Observations   : {disk['missing_observations']}/2,400")
         print(f"  Corrupt Files          : {disk['corrupt_files']}")
+        print(f"  Incompatible Files     : {disk['incompatible_files']}")
+        print(f"  Checkpoints Consistent : {disk['checkpoints_consistent']}")
         print("=" * 75)
 
         if not args.live and not args.mock and not args.dry_run:
