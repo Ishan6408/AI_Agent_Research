@@ -122,6 +122,8 @@ class AutonomousDeveloper(BaseAgent):
             role=role,
             system_prompt=system_prompt,
         )
+        self.last_prompt_tokens: Optional[int] = None
+        self.last_completion_tokens: Optional[int] = None
 
     def build_status_prompt(
         self,
@@ -180,6 +182,8 @@ class AutonomousDeveloper(BaseAgent):
         retry_count = 0
         total_duration_ms = 0.0
         active_llm = llm_client or self
+        self.last_prompt_tokens = None
+        self.last_completion_tokens = None
 
         current_prompt = user_prompt
 
@@ -187,21 +191,49 @@ class AutonomousDeveloper(BaseAgent):
             start_time = time.time()
             try:
                 # Query model: prioritize callable if provided directly (e.g. function or test mock)
+                res_obj = None
                 if callable(active_llm):
-                    raw_text = active_llm(current_prompt)
-                    if not isinstance(raw_text, str) and hasattr(raw_text, "content"):
-                        raw_text = raw_text.content
+                    res_obj = active_llm(current_prompt)
                 elif hasattr(active_llm, "think"):
-                    raw_text = active_llm.think(current_prompt)
+                    res_obj = active_llm.think(current_prompt)
                 elif hasattr(active_llm, "invoke"):
                     from langchain_core.messages import SystemMessage, HumanMessage
-                    res = active_llm.invoke([
+                    res_obj = active_llm.invoke([
                         SystemMessage(content=self.system_prompt),
                         HumanMessage(content=current_prompt),
                     ])
-                    raw_text = res.content
                 else:
                     raise TypeError("LLM client must be callable or implement think() or invoke()")
+
+                # Extract optional token counts from response if present
+                p_tokens = None
+                c_tokens = None
+                if hasattr(res_obj, "response_metadata") and isinstance(res_obj.response_metadata, dict):
+                    p_tokens = res_obj.response_metadata.get("prompt_eval_count") or res_obj.response_metadata.get("input_tokens")
+                    c_tokens = res_obj.response_metadata.get("eval_count") or res_obj.response_metadata.get("output_tokens")
+                if hasattr(res_obj, "usage_metadata") and isinstance(res_obj.usage_metadata, dict):
+                    p_tokens = p_tokens or res_obj.usage_metadata.get("input_tokens")
+                    c_tokens = c_tokens or res_obj.usage_metadata.get("output_tokens")
+                if isinstance(res_obj, dict):
+                    p_tokens = p_tokens or res_obj.get("prompt_eval_count") or res_obj.get("input_tokens")
+                    c_tokens = c_tokens or res_obj.get("eval_count") or res_obj.get("output_tokens")
+                if p_tokens is not None:
+                    try:
+                        self.last_prompt_tokens = int(p_tokens)
+                    except (ValueError, TypeError):
+                        pass
+                if c_tokens is not None:
+                    try:
+                        self.last_completion_tokens = int(c_tokens)
+                    except (ValueError, TypeError):
+                        pass
+
+                if not isinstance(res_obj, str) and hasattr(res_obj, "content"):
+                    raw_text = res_obj.content
+                elif isinstance(res_obj, dict) and "content" in res_obj:
+                    raw_text = res_obj["content"]
+                else:
+                    raw_text = res_obj
             except Exception as e:
                 duration_ms = (time.time() - start_time) * 1000.0
                 total_duration_ms += duration_ms

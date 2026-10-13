@@ -109,7 +109,7 @@ class AutonomousSoftwareCompanySimulator:
         if policy_override is not None:
             policy = policy_override
         else:
-            policy = PolicyGenerator.generate(pressure)
+            policy = PolicyGenerator.generate(pressure, uncoupled_arm=uncoupled_control_arm)
 
         # 3. Manager allocates tasks across 4 roles
         sprint_tasks = self.manager.create_sprint_tasks()
@@ -234,6 +234,8 @@ class AutonomousSoftwareCompanySimulator:
                 system_prompt=developer.system_prompt,
                 user_prompt=user_prompt,
                 raw_model_response=raw_response_str,
+                prompt_tokens=getattr(developer, "last_prompt_tokens", None),
+                completion_tokens=getattr(developer, "last_completion_tokens", None),
                 is_failure=is_failure,
                 failure_reason=failure_reason,
             )
