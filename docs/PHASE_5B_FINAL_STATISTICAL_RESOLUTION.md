@@ -1,6 +1,6 @@
 # Phase 5B.1D: Final Statistical Resolution and Methodological Verification
 
-**Project:** AI-Agent-Research — *"Do AI Agents Cheat Under Pressure? Emergent Deception in Multi-Agent Organizations"*  
+**Project:** VEIL — AI Agent Deception Research — *"Do AI Agents Cheat Under Pressure? Emergent Deception in Multi-Agent Organizations"*  
 **Repository Branch:** `Ishhh`  
 **Phase:** Phase 5B.1D Final Statistical Readiness Resolution  
 **Date:** October 2026  

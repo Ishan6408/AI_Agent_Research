@@ -1,6 +1,6 @@
 # Phase 5B.1A & 5B.1B: Independent Experimental Design Audit & Resolution Report
 
-**Project:** AI-Agent-Research — *"Do AI Agents Cheat Under Pressure? Emergent Deception in Multi-Agent Organizations"*  
+**Project:** VEIL — AI Agent Deception Research — *"Do AI Agents Cheat Under Pressure? Emergent Deception in Multi-Agent Organizations"*  
 **Repository Branch:** `Ishhh`  
 **Audit Phase:** Phase 5B.1A Audit Completed & Phase 5B.1B Resolutions Applied  
 **Date of Audit & Reconciliation:** October 2026  

@@ -1,15 +1,18 @@
-# Under Pressure: System Architecture
+# VEIL
+### AI Agent Deception Research
+
+# VEIL: System Architecture
 
 ## 1. Architecture Overview
 
-**Under Pressure** is a multi-agent AI research platform designed to simulate a software development organization and analyze AI developer behaviour under workplace pressure.
+**VEIL** is a multi-agent AI research platform designed to simulate a software development organization and analyze AI developer behaviour under workplace pressure.
 
 The system follows a layered architecture:
 
 ```text
 ┌──────────────────────────────────────────────────────────────┐
 │                    React Frontend                            │
-│              Research & Analytics Dashboard                  │
+│              VEIL Research & Analytics Dashboard             │
 └───────────────────────────┬──────────────────────────────────┘
                             │
                          REST API
@@ -1263,4 +1266,4 @@ Visualize Data
 Interpret Results
 ```
 
-This structure provides the foundation for extending **Under Pressure** into a larger AI-agent behavioural research platform.
+This structure provides the foundation for extending **VEIL** into a larger AI-agent behavioural research platform.

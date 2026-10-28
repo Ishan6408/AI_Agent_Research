@@ -1,0 +1,305 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "VEIL Development and Experiment Cycle",
+    "subtitle": "Iterative Engineering & Experimentation Lifecycle for AI Agent Deception Research",
+    "output": "docs/figures/figure_3_1_development_experiment_cycle.html",
+    "quality_profile": "showcase",
+    "repository": {
+      "url": "https://github.com/Ishan6408/AI_Agent_Research.git",
+      "provider": "github",
+      "revision": "3352921b657e9d5d373cae3977bb7853d268df28"
+    }
+  },
+  "components": [
+    {
+      "id": "requirements",
+      "type": "backend",
+      "label": "1. Requirements",
+      "sublabel": "Objectives & Criteria",
+      "tag": "RQ1–RQ5 · H1–H5",
+      "icon": "flag",
+      "pos": [40, 120],
+      "size": [135, 64],
+      "sources": [
+        {
+          "path": "docs/EXPERIMENT_PROTOCOL.md",
+          "line": 1,
+          "label": "Protocol & RQs"
+        }
+      ]
+    },
+    {
+      "id": "design",
+      "type": "backend",
+      "label": "2. Design",
+      "sublabel": "Scenarios & Policies",
+      "tag": "57 Cells · 4 Tiers",
+      "icon": "backend",
+      "pos": [230, 120],
+      "size": [140, 64],
+      "sources": [
+        {
+          "path": "docs/PHASE_5B_CAMPAIGN_SPECIFICATION.md",
+          "line": 1,
+          "label": "Factorial Matrix"
+        }
+      ]
+    },
+    {
+      "id": "prototype",
+      "type": "frontend",
+      "label": "3. Prototype",
+      "sublabel": "Harness & Services",
+      "tag": "FastAPI · Agents · UI",
+      "icon": "frontend",
+      "pos": [425, 120],
+      "size": [135, 64],
+      "sources": [
+        {
+          "path": "test_autonomous_harness.py",
+          "line": 1,
+          "label": "Autonomous Harness"
+        }
+      ]
+    },
+    {
+      "id": "small_test",
+      "type": "backend",
+      "label": "4. Small Test",
+      "sublabel": "Pilot & Availability",
+      "tag": "Seeds 9001–9005",
+      "icon": "clock",
+      "pos": [615, 120],
+      "size": [135, 64],
+      "sources": [
+        {
+          "path": "test_pilot_runner.py",
+          "line": 1,
+          "label": "Pilot Runner"
+        }
+      ]
+    },
+    {
+      "id": "validation",
+      "type": "security",
+      "label": "5. Validation",
+      "sublabel": "Integrity & Pre-flight",
+      "tag": "Logs · Schema · Seeds",
+      "icon": "security",
+      "pos": [810, 120],
+      "size": [135, 64],
+      "sources": [
+        {
+          "path": "docs/QA_AUDIT_REPORT.md",
+          "line": 1,
+          "label": "Pre-flight Audit"
+        }
+      ]
+    },
+    {
+      "id": "decision",
+      "type": "security",
+      "label": "Validation Passed?",
+      "sublabel": "Pre-flight Quality Gate",
+      "tag": "Gate Decision",
+      "icon": "decision",
+      "pos": [1000, 120],
+      "size": [145, 64],
+      "sources": [
+        {
+          "path": "test_integrity.py",
+          "line": 1,
+          "label": "Integrity Gate"
+        }
+      ]
+    },
+    {
+      "id": "campaign",
+      "type": "cloud",
+      "label": "6. Campaign Execution",
+      "sublabel": "Autonomous Factorial",
+      "tag": "600 Runs · 2400 Obs",
+      "icon": "cloud",
+      "pos": [1000, 290],
+      "size": [145, 64],
+      "sources": [
+        {
+          "path": "run_campaign.py",
+          "line": 1,
+          "label": "Campaign Runner"
+        }
+      ]
+    },
+    {
+      "id": "analysis",
+      "type": "database",
+      "label": "7. Analysis",
+      "sublabel": "Statistical Synthesis",
+      "tag": "Cluster OLS · ANOVA",
+      "icon": "database",
+      "pos": [615, 290],
+      "size": [145, 64],
+      "sources": [
+        {
+          "path": "run_analysis.py",
+          "line": 1,
+          "label": "Statistical Pipeline"
+        }
+      ]
+    },
+    {
+      "id": "refinement",
+      "type": "backend",
+      "label": "8. Refinement",
+      "sublabel": "Limitations & Next Cycle",
+      "tag": "Phase 5A → 5B Update",
+      "icon": "active",
+      "pos": [230, 290],
+      "size": [140, 64],
+      "sources": [
+        {
+          "path": "docs/RESEARCH_FINDINGS_SYNTHESIS.md",
+          "line": 1,
+          "label": "Findings Synthesis"
+        }
+      ]
+    }
+  ],
+  "connections": [
+    {
+      "id": "req-to-des",
+      "from": "requirements",
+      "to": "design",
+      "label": "specifies",
+      "variant": "emphasis"
+    },
+    {
+      "id": "des-to-proto",
+      "from": "design",
+      "to": "prototype",
+      "label": "guides",
+      "variant": "emphasis"
+    },
+    {
+      "id": "proto-to-test",
+      "from": "prototype",
+      "to": "small_test",
+      "label": "deploys",
+      "variant": "emphasis"
+    },
+    {
+      "id": "test-to-val",
+      "from": "small_test",
+      "to": "validation",
+      "label": "yields",
+      "variant": "emphasis",
+      "fromSide": "right",
+      "toSide": "left",
+      "route": "straight"
+    },
+    {
+      "id": "val-to-dec",
+      "from": "validation",
+      "to": "decision",
+      "label": "evaluates",
+      "variant": "security",
+      "fromSide": "right",
+      "toSide": "left",
+      "route": "straight"
+    },
+    {
+      "id": "dec-yes-camp",
+      "from": "decision",
+      "to": "campaign",
+      "label": "Yes: Passed",
+      "variant": "emphasis",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "dec-no-proto",
+      "from": "decision",
+      "to": "prototype",
+      "label": "No: Runtime Bug",
+      "variant": "dashed",
+      "fromSide": "top",
+      "toSide": "top",
+      "via": [
+        [1072.5, 65],
+        [492.5, 65]
+      ]
+    },
+    {
+      "id": "dec-no-des",
+      "from": "decision",
+      "to": "design",
+      "label": "No: Config Defect",
+      "variant": "dashed",
+      "fromSide": "top",
+      "toSide": "top",
+      "via": [
+        [1072.5, 40],
+        [300, 40]
+      ]
+    },
+    {
+      "id": "camp-to-anal",
+      "from": "campaign",
+      "to": "analysis",
+      "label": "execution traces",
+      "variant": "emphasis",
+      "fromSide": "left",
+      "toSide": "right"
+    },
+    {
+      "id": "anal-to-refine",
+      "from": "analysis",
+      "to": "refinement",
+      "label": "synthesized metrics",
+      "variant": "emphasis",
+      "fromSide": "left",
+      "toSide": "right"
+    },
+    {
+      "id": "refine-to-des",
+      "from": "refinement",
+      "to": "design",
+      "label": "iterative feedback",
+      "variant": "dashed",
+      "fromSide": "top",
+      "toSide": "bottom"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "cyan",
+      "title": "Pre-flight Verification (Stages 1–5)",
+      "items": [
+        "Pre-registers hypotheses (H1–H5), statistical power, and seed ranges prior to execution",
+        "Implements multi-agent simulation harness, manager/developer/auditor agents, and dashboard",
+        "Pilot runner executes seeds 9001–9005 to verify Ollama daemon availability and response schemas"
+      ]
+    },
+    {
+      "dot": "rose",
+      "title": "Validation Decision Gate",
+      "items": [
+        "Inspects execution logs, deterministic subtask ground truth, and output data contracts",
+        "No (Config Defect): Returns to Stage 2 to re-tune parameter cells, prompt text, or seed sets",
+        "No (Runtime Bug): Returns to Stage 3 to remediate simulation code, agent logic, or API models",
+        "Yes (Validated): Authorizes execution of the 600-run full factorial campaign"
+      ]
+    },
+    {
+      "dot": "emerald",
+      "title": "Campaign Execution & Synthesis (Stages 6–8)",
+      "items": [
+        "Executes 600 sprint simulations generating 2,400 agent observations across 57 condition cells",
+        "Applies cluster-robust regression, ANOVA, and detection rate metrics to test deception dynamics",
+        "Identifies model and protocol limitations to refine architecture in subsequent research phases"
+      ]
+    }
+  ]
+}

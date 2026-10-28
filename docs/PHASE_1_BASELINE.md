@@ -1,7 +1,7 @@
 # Phase 1 Baseline Audit
 
 ## 1. Project Overview
-"Under Pressure — AI Agent Deception Research" is a research project and multi-agent simulation aimed at studying how AI developer agents behave under varying levels of pressure and incentives. It evaluates deceptive behaviors like overreporting progress and hiding bugs. The system uses a mix of rule-based logic and Ollama-based LLMs to simulate a software development lifecycle and measure metrics like Deception Gap and Auditor Score.
+"VEIL — AI Agent Deception Research" is a research project and multi-agent simulation aimed at studying how AI developer agents behave under varying levels of pressure and incentives. It evaluates deceptive behaviors like overreporting progress and hiding bugs. The system uses a mix of rule-based logic and Ollama-based LLMs to simulate a software development lifecycle and measure metrics like Deception Gap and Auditor Score.
 
 ## 2. Current Architecture
 ```text

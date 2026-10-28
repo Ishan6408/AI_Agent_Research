@@ -1,0 +1,390 @@
+{
+  "schemaVersion": 1,
+  "ok": false,
+  "command": "finalize",
+  "status": "fail",
+  "type": "architecture",
+  "quality": "showcase",
+  "startedAt": "2026-10-26T15:24:13.891Z",
+  "specification": {
+    "path": "C:\\Users\\igpat\\Downloads\\AI_Agent_Research\\docs\\figures\\figure_3_1_development_experiment_cycle.json",
+    "sha256": "ba1a1b57c601b86d9e6a292c48ac88a25fb4467a48113d4a5d2738db491940a4",
+    "bytes": 7812
+  },
+  "artifact": {
+    "path": "C:\\Users\\igpat\\Downloads\\AI_Agent_Research\\docs\\figures\\figure_3_1_development_experiment_cycle.html",
+    "sha256": "b248d4273a267d6964267caf0c9696fc51f0d04fcc36a713614c5ac6f120a566",
+    "bytes": 851235
+  },
+  "stages": {
+    "validate": {
+      "status": "pass",
+      "exitCode": 0,
+      "durationMs": null,
+      "execution": "embedded-in-deliver",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "C:\\Users\\igpat\\.agents\\skills\\archify\\bin\\archify.mjs",
+        "deliver",
+        "architecture",
+        "C:\\Users\\igpat\\Downloads\\AI_Agent_Research\\docs\\figures\\figure_3_1_development_experiment_cycle.json",
+        "C:\\Users\\igpat\\Downloads\\AI_Agent_Research\\docs\\figures\\figure_3_1_development_experiment_cycle.html",
+        "--quality",
+        "showcase",
+        "--repo-root",
+        "C:\\Users\\igpat\\Downloads\\AI_Agent_Research",
+        "--json"
+      ],
+      "receipt": {
+        "schemaVersion": 1,
+        "ok": true,
+        "command": "validate",
+        "specification": {
+          "sha256": "ba1a1b57c601b86d9e6a292c48ac88a25fb4467a48113d4a5d2738db491940a4",
+          "bytes": 7812
+        },
+        "validation": {
+          "checksPassed": 9,
+          "checkCount": 9,
+          "compositionProfile": "showcase",
+          "compositionStatus": "pass",
+          "errors": 0,
+          "warnings": 0
+        }
+      }
+    },
+    "deliver": {
+      "status": "pass",
+      "exitCode": 0,
+      "durationMs": 882,
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "C:\\Users\\igpat\\.agents\\skills\\archify\\bin\\archify.mjs",
+        "deliver",
+        "architecture",
+        "C:\\Users\\igpat\\Downloads\\AI_Agent_Research\\docs\\figures\\figure_3_1_development_experiment_cycle.json",
+        "C:\\Users\\igpat\\Downloads\\AI_Agent_Research\\docs\\figures\\figure_3_1_development_experiment_cycle.html",
+        "--quality",
+        "showcase",
+        "--repo-root",
+        "C:\\Users\\igpat\\Downloads\\AI_Agent_Research",
+        "--json"
+      ],
+      "receipt": {
+        "schemaVersion": 1,
+        "receiptId": "79316f8b-ac95-4d16-a916-cdfde69b6c72",
+        "ok": true,
+        "command": "deliver",
+        "type": "architecture",
+        "input": "C:\\Users\\igpat\\Downloads\\AI_Agent_Research\\docs\\figures\\figure_3_1_development_experiment_cycle.json",
+        "output": "C:\\Users\\igpat\\Downloads\\AI_Agent_Research\\docs\\figures\\figure_3_1_development_experiment_cycle.html",
+        "specification": {
+          "sha256": "ba1a1b57c601b86d9e6a292c48ac88a25fb4467a48113d4a5d2738db491940a4",
+          "bytes": 7812
+        },
+        "artifact": {
+          "sha256": "b248d4273a267d6964267caf0c9696fc51f0d04fcc36a713614c5ac6f120a566",
+          "bytes": 851235
+        },
+        "validation": {
+          "checksPassed": 9,
+          "checkCount": 9,
+          "compositionProfile": "showcase",
+          "compositionStatus": "pass",
+          "errors": 0,
+          "warnings": 0
+        },
+        "evidence": {
+          "verified": true,
+          "repository": "https://github.com/Ishan6408/AI_Agent_Research",
+          "revision": "3352921b657e9d5d373cae3977bb7853d268df28",
+          "references": 9
+        },
+        "update": {
+          "status": "unavailable",
+          "installedVersion": null,
+          "availableVersion": null,
+          "releaseNotes": null,
+          "checkedAt": null,
+          "source": null,
+          "noticeRequired": false,
+          "noticeText": null,
+          "reason": "disabled"
+        }
+      }
+    },
+    "check": {
+      "status": "pass",
+      "exitCode": 0,
+      "durationMs": 248,
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "C:\\Users\\igpat\\.agents\\skills\\archify\\bin\\archify.mjs",
+        "check",
+        "C:\\Users\\igpat\\Downloads\\AI_Agent_Research\\docs\\figures\\figure_3_1_development_experiment_cycle.html",
+        "--require-provenance"
+      ],
+      "receipt": {
+        "ok": true,
+        "file": "C:\\Users\\igpat\\Downloads\\AI_Agent_Research\\docs\\figures\\figure_3_1_development_experiment_cycle.html",
+        "artifact": {
+          "sha256": "b248d4273a267d6964267caf0c9696fc51f0d04fcc36a713614c5ac6f120a566",
+          "bytes": 851235
+        },
+        "checks": [
+          {
+            "name": "single_svg",
+            "ok": true,
+            "details": [
+              "found 1 <svg> block(s)"
+            ]
+          },
+          {
+            "name": "finite_svg",
+            "ok": true,
+            "details": []
+          },
+          {
+            "name": "orthogonal_arrows",
+            "ok": true,
+            "details": []
+          },
+          {
+            "name": "label_route_clearance",
+            "ok": true,
+            "details": []
+          },
+          {
+            "name": "relationship_crossings",
+            "ok": true,
+            "details": []
+          },
+          {
+            "name": "relationship_corridors",
+            "ok": true,
+            "details": []
+          },
+          {
+            "name": "container_border_runs",
+            "ok": true,
+            "details": []
+          },
+          {
+            "name": "route_rhythm",
+            "ok": true,
+            "details": []
+          },
+          {
+            "name": "legend_clearance",
+            "ok": true,
+            "details": []
+          }
+        ],
+        "composition": {
+          "schemaVersion": 1,
+          "profile": "showcase",
+          "status": "pass",
+          "summary": {
+            "errors": 0,
+            "warnings": 0
+          },
+          "metrics": {
+            "properCrossings": 0,
+            "resolvedCrossovers": 0,
+            "ambiguousCorridors": 0,
+            "arrowheadCollisions": 0,
+            "containerBorderRuns": 0,
+            "labelRouteClearanceIssues": 0,
+            "labelCanvasOverflowIssues": 0,
+            "minLabelRouteClearance": 5,
+            "desktopReadabilityIssues": 0,
+            "viewportHeightIssues": 0,
+            "minProjectedNodeTextPx": 7.5,
+            "maxBends": 2,
+            "routesOverSuggestedBends": 0,
+            "maxStretch": 1.207,
+            "routesOverSuggestedStretch": 0,
+            "minSegmentPx": 55,
+            "minInteriorSegmentPx": 580,
+            "shortSegmentCount": 0,
+            "shortEndpointSegmentCount": 0,
+            "shortInteriorSegmentCount": 0,
+            "microSegmentCount": 0
+          },
+          "suggestedLimits": {
+            "bendsPerRelationship": 2,
+            "stretch": 1.35,
+            "segmentPx": 16,
+            "microSegmentPx": 8
+          },
+          "routeReview": {
+            "crossings": [],
+            "detours": []
+          },
+          "leadingSpace": {
+            "measured": true,
+            "emptyTopPx": 20,
+            "emptyTopRatio": 0.047,
+            "occupiedTop": 20,
+            "viewBoxTop": 0,
+            "canvasHeight": 422,
+            "typicalNodeHeight": 64,
+            "reviewSuggested": false
+          },
+          "desktopReadability": {
+            "budgetBasis": "recognized-declared-wide",
+            "readerContract": "declared-wide-v1",
+            "availableDiagramWidth": 1110.9375,
+            "actualBudgetPx": 1110.9375,
+            "actualReaderWidth": 1140.9375,
+            "desiredReaderWidth": 1140.9375,
+            "viewportCap": 1376,
+            "limit": "source-size",
+            "requestedTargetPx": 7.5,
+            "requestedTargetMet": true,
+            "hardFloorPx": 6,
+            "hardFloorMet": true,
+            "minimumOwner": {
+              "kind": "edge",
+              "id": "req-to-des",
+              "from": "requirements",
+              "to": "design"
+            },
+            "minimumSourceTextPx": 8,
+            "minimumProjectedTextPx": 7.5,
+            "semanticTextCount": 29
+          },
+          "issues": []
+        },
+        "provenance": "current",
+        "deliveryReceiptId": "79316f8b-ac95-4d16-a916-cdfde69b6c72"
+      }
+    },
+    "browser-check": {
+      "status": "fail",
+      "exitCode": 1,
+      "durationMs": 39,
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "C:\\Users\\igpat\\.agents\\skills\\archify\\bin\\archify.mjs",
+        "browser-check",
+        "C:\\Users\\igpat\\Downloads\\AI_Agent_Research\\docs\\figures\\figure_3_1_development_experiment_cycle.html",
+        "--json",
+        "--require-provenance"
+      ],
+      "execution": "in-process",
+      "receipt": {
+        "schemaVersion": 1,
+        "ok": false,
+        "command": "browser-check",
+        "evidenceKind": "automated-browser",
+        "status": "fail",
+        "visualReview": "not-requested",
+        "provenance": "current",
+        "deliveryReceiptId": "79316f8b-ac95-4d16-a916-cdfde69b6c72",
+        "artifact": {
+          "path": "C:\\Users\\igpat\\Downloads\\AI_Agent_Research\\docs\\figures\\figure_3_1_development_experiment_cycle.html",
+          "sha256": "b248d4273a267d6964267caf0c9696fc51f0d04fcc36a713614c5ac6f120a566",
+          "bytes": 851235
+        },
+        "state": {
+          "detail": "read",
+          "motion": "still"
+        },
+        "chrome": {
+          "status": "not-checked",
+          "executable": null
+        },
+        "diagnostics": [
+          {
+            "code": "viewer/evidence-path-conflict",
+            "severity": "error",
+            "message": "browser-check will not replace the existing unowned evidence path \"C:\\Users\\igpat\\Downloads\\AI_Agent_Research\\docs\\figures\\figure_3_1_development_experiment_cycle.browser-check.json\".",
+            "subject": {
+              "artifact": "C:\\Users\\igpat\\Downloads\\AI_Agent_Research\\docs\\figures\\figure_3_1_development_experiment_cycle.html",
+              "evidencePath": "C:\\Users\\igpat\\Downloads\\AI_Agent_Research\\docs\\figures\\figure_3_1_development_experiment_cycle.browser-check.json"
+            },
+            "evidence": {
+              "reason": {
+                "code": "ownership-artifact-mismatch"
+              }
+            },
+            "supportedFixes": [
+              "move the conflicting file aside, or choose a separate --out-dir, then rerun browser-check"
+            ]
+          }
+        ],
+        "containment": {
+          "status": "fail",
+          "policy": "fit-or-reader-declared-readable-vertical-scroll",
+          "viewports": []
+        },
+        "themeStates": {
+          "status": "fail",
+          "viewports": []
+        },
+        "readability": {
+          "status": "fail",
+          "minimumProjectedNodeTextPx": 6,
+          "viewports": []
+        },
+        "viewerChrome": {
+          "status": "fail",
+          "viewports": []
+        },
+        "captures": {
+          "status": "not-requested",
+          "screenshots": [],
+          "contactSheet": null
+        },
+        "sidecars": {
+          "receipt": "figure_3_1_development_experiment_cycle.browser-check.json",
+          "files": []
+        },
+        "error": "browser-check will not replace the existing unowned evidence path \"C:\\Users\\igpat\\Downloads\\AI_Agent_Research\\docs\\figures\\figure_3_1_development_experiment_cycle.browser-check.json\"."
+      }
+    }
+  },
+  "browserCheck": {
+    "requested": true,
+    "ran": false
+  },
+  "diagnostics": [
+    {
+      "code": "viewer/evidence-path-conflict",
+      "severity": "error",
+      "message": "browser-check will not replace the existing unowned evidence path \"C:\\Users\\igpat\\Downloads\\AI_Agent_Research\\docs\\figures\\figure_3_1_development_experiment_cycle.browser-check.json\".",
+      "subject": {
+        "artifact": "C:\\Users\\igpat\\Downloads\\AI_Agent_Research\\docs\\figures\\figure_3_1_development_experiment_cycle.html",
+        "evidencePath": "C:\\Users\\igpat\\Downloads\\AI_Agent_Research\\docs\\figures\\figure_3_1_development_experiment_cycle.browser-check.json"
+      },
+      "evidence": {
+        "reason": {
+          "code": "ownership-artifact-mismatch"
+        }
+      },
+      "supportedFixes": [
+        "move the conflicting file aside, or choose a separate --out-dir, then rerun browser-check"
+      ]
+    }
+  ],
+  "evidence": {
+    "receipt": "C:\\Users\\igpat\\Downloads\\AI_Agent_Research\\docs\\figures\\figure_3_1_development_experiment_cycle.finalize.json",
+    "summaryReceipt": "C:\\Users\\igpat\\Downloads\\AI_Agent_Research\\docs\\figures\\figure_3_1_development_experiment_cycle.finalize-summary.json",
+    "browserCheckReceipt": "C:\\Users\\igpat\\Downloads\\AI_Agent_Research\\docs\\figures\\figure_3_1_development_experiment_cycle.browser-check.json"
+  },
+  "visualReview": "not-requested",
+  "failedStage": "browser-check",
+  "finishedAt": "2026-10-26T15:24:15.498Z",
+  "durationMs": 1607,
+  "update": {
+    "status": "current",
+    "installedVersion": "3.2.0",
+    "availableVersion": "3.2.0",
+    "releaseNotes": null,
+    "checkedAt": "2026-10-26T15:21:58.220Z",
+    "source": "cache",
+    "noticeRequired": false,
+    "noticeText": null
+  }
+}

@@ -1,0 +1,202 @@
+{
+  "schemaVersion": 1,
+  "ok": true,
+  "command": "finalize",
+  "status": "pass",
+  "type": "explainer",
+  "quality": "showcase",
+  "startedAt": "2026-10-27T18:13:09.150Z",
+  "specification": {
+    "path": "C:\\Users\\igpat\\Downloads\\AI_Agent_Research\\docs\\figures\\auditor_detection_by_pressure\\candidate.archify.md",
+    "sha256": "45cf594689a4d4867e011f46e8c6055a38205a2d02f488059a8e4568ac36f032",
+    "bytes": 3997
+  },
+  "artifact": {
+    "path": "C:\\Users\\igpat\\Downloads\\AI_Agent_Research\\docs\\figures\\auditor_detection_by_pressure\\auditor_detection_by_pressure.html",
+    "sha256": "e68a47c7385b12fe6fc7eeb5b903d5b5e8a123ea4c7171cf3f7b974f0a578faf",
+    "bytes": 172579
+  },
+  "stages": {
+    "browser-check": {
+      "status": "not-run",
+      "execution": "not-requested"
+    },
+    "validate": {
+      "status": "pass",
+      "exitCode": 0,
+      "durationMs": null,
+      "execution": "embedded-in-deliver",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "C:\\Users\\igpat\\.agents\\skills\\archify\\bin\\archify.mjs",
+        "deliver",
+        "explainer",
+        "C:\\Users\\igpat\\Downloads\\AI_Agent_Research\\docs\\figures\\auditor_detection_by_pressure\\candidate.archify.md",
+        "C:\\Users\\igpat\\Downloads\\AI_Agent_Research\\docs\\figures\\auditor_detection_by_pressure\\auditor_detection_by_pressure.html",
+        "--quality",
+        "showcase",
+        "--repo-root",
+        "C:\\Users\\igpat\\Downloads\\AI_Agent_Research",
+        "--json"
+      ],
+      "receipt": {
+        "schemaVersion": 1,
+        "ok": true,
+        "command": "validate",
+        "specification": {
+          "sha256": "45cf594689a4d4867e011f46e8c6055a38205a2d02f488059a8e4568ac36f032",
+          "bytes": 3997
+        },
+        "validation": {
+          "checksPassed": 4,
+          "checkCount": 4,
+          "compositionProfile": "showcase",
+          "compositionStatus": "pass",
+          "errors": 0,
+          "warnings": 0
+        }
+      }
+    },
+    "deliver": {
+      "status": "pass",
+      "exitCode": 0,
+      "durationMs": 666,
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "C:\\Users\\igpat\\.agents\\skills\\archify\\bin\\archify.mjs",
+        "deliver",
+        "explainer",
+        "C:\\Users\\igpat\\Downloads\\AI_Agent_Research\\docs\\figures\\auditor_detection_by_pressure\\candidate.archify.md",
+        "C:\\Users\\igpat\\Downloads\\AI_Agent_Research\\docs\\figures\\auditor_detection_by_pressure\\auditor_detection_by_pressure.html",
+        "--quality",
+        "showcase",
+        "--repo-root",
+        "C:\\Users\\igpat\\Downloads\\AI_Agent_Research",
+        "--json"
+      ],
+      "receipt": {
+        "schemaVersion": 1,
+        "receiptId": "d68ec292-744c-4ebf-a356-fcd0a86f0a37",
+        "ok": true,
+        "command": "deliver",
+        "type": "explainer",
+        "input": "C:\\Users\\igpat\\Downloads\\AI_Agent_Research\\docs\\figures\\auditor_detection_by_pressure\\candidate.archify.md",
+        "output": "C:\\Users\\igpat\\Downloads\\AI_Agent_Research\\docs\\figures\\auditor_detection_by_pressure\\auditor_detection_by_pressure.html",
+        "explainer": {
+          "preparedSha256": "6e7cccc01c294012b348f010858eddee62d57376fb8403b58459cc1816a39958",
+          "dependencies": []
+        },
+        "specification": {
+          "sha256": "45cf594689a4d4867e011f46e8c6055a38205a2d02f488059a8e4568ac36f032",
+          "bytes": 3997
+        },
+        "artifact": {
+          "sha256": "e68a47c7385b12fe6fc7eeb5b903d5b5e8a123ea4c7171cf3f7b974f0a578faf",
+          "bytes": 172579
+        },
+        "validation": {
+          "checksPassed": 4,
+          "checkCount": 4,
+          "compositionProfile": "showcase",
+          "compositionStatus": "pass",
+          "errors": 0,
+          "warnings": 0
+        },
+        "update": {
+          "status": "unavailable",
+          "installedVersion": null,
+          "availableVersion": null,
+          "releaseNotes": null,
+          "checkedAt": null,
+          "source": null,
+          "noticeRequired": false,
+          "noticeText": null,
+          "reason": "disabled"
+        }
+      }
+    },
+    "check": {
+      "status": "pass",
+      "exitCode": 0,
+      "durationMs": 216,
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "C:\\Users\\igpat\\.agents\\skills\\archify\\bin\\archify.mjs",
+        "check",
+        "C:\\Users\\igpat\\Downloads\\AI_Agent_Research\\docs\\figures\\auditor_detection_by_pressure\\auditor_detection_by_pressure.html",
+        "--require-provenance"
+      ],
+      "receipt": {
+        "ok": true,
+        "file": "C:\\Users\\igpat\\Downloads\\AI_Agent_Research\\docs\\figures\\auditor_detection_by_pressure\\auditor_detection_by_pressure.html",
+        "family": "explainer",
+        "artifact": {
+          "sha256": "e68a47c7385b12fe6fc7eeb5b903d5b5e8a123ea4c7171cf3f7b974f0a578faf",
+          "bytes": 172579
+        },
+        "checks": [
+          {
+            "name": "explainer_structure",
+            "ok": true,
+            "details": [
+              "27 unique DOM IDs"
+            ]
+          },
+          {
+            "name": "explainer_payload_identity",
+            "ok": true,
+            "details": []
+          },
+          {
+            "name": "explainer_dependencies",
+            "ok": true,
+            "details": [
+              "0 frozen dependencies"
+            ]
+          },
+          {
+            "name": "explainer_native_diagrams",
+            "ok": true,
+            "details": []
+          }
+        ],
+        "composition": {
+          "schemaVersion": 1,
+          "profile": "showcase",
+          "status": "pass",
+          "summary": {
+            "errors": 0,
+            "warnings": 0
+          },
+          "issues": [],
+          "nativeDiagrams": []
+        },
+        "diagnostics": [],
+        "provenance": "current",
+        "deliveryReceiptId": "d68ec292-744c-4ebf-a356-fcd0a86f0a37"
+      }
+    }
+  },
+  "browserCheck": {
+    "requested": false,
+    "ran": false
+  },
+  "diagnostics": [],
+  "evidence": {
+    "receipt": "C:\\Users\\igpat\\Downloads\\AI_Agent_Research\\docs\\figures\\auditor_detection_by_pressure\\auditor_detection_by_pressure.finalize.json",
+    "summaryReceipt": "C:\\Users\\igpat\\Downloads\\AI_Agent_Research\\docs\\figures\\auditor_detection_by_pressure\\auditor_detection_by_pressure.finalize-summary.json"
+  },
+  "visualReview": "not-requested",
+  "finishedAt": "2026-10-27T18:13:10.474Z",
+  "durationMs": 1324,
+  "update": {
+    "status": "current",
+    "installedVersion": "3.2.0",
+    "availableVersion": "3.2.0",
+    "releaseNotes": null,
+    "checkedAt": "2026-10-27T17:20:07.483Z",
+    "source": "cache",
+    "noticeRequired": false,
+    "noticeText": null
+  }
+}

@@ -22,11 +22,14 @@ export default function Dashboard() {
         <div>
           <div className="flex items-center gap-2 text-accent-mint font-mono text-xs mb-2 tracking-widest uppercase">
             <span className="w-1.5 h-1.5 rounded-none bg-accent-mint animate-pulse"></span>
-            SYS.MONITOR.ACTIVE
+            VEIL // SYS.MONITOR.ACTIVE
           </div>
           <h1 className="font-sans text-3xl font-bold text-brand-primary tracking-tight uppercase">
             STRESS-DECEPTION TELEMETRY
           </h1>
+          <p className="text-text-muted text-xs font-mono mt-1">
+            VEIL: AI Agent Deception Research &mdash; Investigating deceptive behavior in autonomous AI agents
+          </p>
         </div>
         
         {/* Research metadata block */}

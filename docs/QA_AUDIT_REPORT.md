@@ -1,8 +1,9 @@
-# AI-Agent-Research: Complete End-to-End QA Audit Report
+# VEIL: Complete End-to-End QA Audit Report
+### AI Agent Deception Research
 
 ## 1. Executive Summary
 
-This report documents the findings of a comprehensive end-to-end quality assurance audit of the AI-Agent-Research application. The audit examined the frontend UI, backend API endpoints, configuration, data persistence, and application stability.
+This report documents the findings of a comprehensive end-to-end quality assurance audit of the VEIL application. The audit examined the frontend UI, backend API endpoints, configuration, data persistence, and application stability.
 
 Overall, the application demonstrates functional completeness across its core feature set. The backend serves valid analytics derived from experimental simulation data, and the React frontend accurately binds to this data in most places.
 

@@ -512,7 +512,7 @@ class Phase5BCampaignRunner:
 def build_arg_parser() -> argparse.ArgumentParser:
     """Builds the command line interface argument parser."""
     parser = argparse.ArgumentParser(
-        description="Phase 5B: Full-Campaign Autonomous Runner (AI-Agent-Research)",
+        description="VEIL: Phase 5B Full-Campaign Autonomous Runner (AI Agent Deception Research)",
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     )
     parser.add_argument(

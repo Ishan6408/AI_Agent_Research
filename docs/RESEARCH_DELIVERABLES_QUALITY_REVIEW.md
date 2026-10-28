@@ -1,6 +1,6 @@
 # Research Deliverables Quality Review (Phase 5A.11A)
 
-**Project:** AI-Agent-Research: "Do AI Agents Cheat Under Pressure? Emergent Deception in Multi-Agent Organizations"  
+**Project:** VEIL — AI Agent Deception Research: "Do AI Agents Cheat Under Pressure? Emergent Deception in Multi-Agent Organizations"  
 **Repository Branch:** `Ishhh`  
 **Phase:** 5A.11A — Research Deliverables Quality Review  
 **Date:** October 2026  

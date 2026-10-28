@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "receiptId": "3249b507-1742-4817-9745-0d7743b1d898",
+  "status": "current",
+  "command": "deliver",
+  "type": "explainer",
+  "input": "C:\\Users\\igpat\\Downloads\\AI_Agent_Research\\docs\\figures\\role_profile_comparison\\candidate.archify.md",
+  "output": "C:\\Users\\igpat\\Downloads\\AI_Agent_Research\\docs\\figures\\role_profile_comparison\\figure_4_6_role_profile_comparison.html",
+  "specification": {
+    "sha256": "8d7f0d0cfb04735dda236fc8743fd51121e925994eca1fd0aad7a0c0bb76f6d1",
+    "bytes": 5152
+  },
+  "artifact": {
+    "sha256": "e7653ff1ab9a2c0a2d9f8f62f6cfbb0d49dee33988e082c121c0bf33149472f6",
+    "bytes": 187923
+  },
+  "explainer": {
+    "preparedSha256": "2e743aef3d2aac54d80881346354b0b1411db6904b51b3a95229014ddceed32d",
+    "dependencies": []
+  }
+}

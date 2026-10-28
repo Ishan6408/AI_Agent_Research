@@ -1,6 +1,7 @@
 # Phase 5B Campaign Specification: Full Autonomous Strategy Selection Benchmark
 
-**Research Project:** *“Do AI Agents Cheat Under Pressure? — Emergent Deception in Multi-Agent Organizations”*  
+**Project:** VEIL — AI Agent Deception Research  
+**Research Study:** *“Do AI Agents Cheat Under Pressure? — Emergent Deception in Multi-Agent Organizations”*  
 **Phase:** 5B (Full Factorial Campaign Infrastructure & Pre-Registration Specification)  
 **Target Environment:** Local Ollama (`qwen2.5:7b`)  
 **Base Commit Baseline:** `55f85e9`  

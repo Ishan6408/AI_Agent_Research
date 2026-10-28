@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "receiptId": "9d502b64-7b5c-45a1-8e2a-42df33442372",
+  "status": "current",
+  "command": "deliver",
+  "type": "workflow",
+  "input": "C:\\Users\\igpat\\Downloads\\AI_Agent_Research\\docs\\architecture\\experiment_execution_flow\\figure_4_2_experiment_execution_flow.json",
+  "output": "C:\\Users\\igpat\\Downloads\\AI_Agent_Research\\docs\\architecture\\experiment_execution_flow\\figure_4_2_experiment_execution_flow.html",
+  "specification": {
+    "sha256": "4c8d501960ec833ac6866cc8ce6f0d7ca8edaadfd0a7a7914f4daf9480ecc081",
+    "bytes": 13724
+  },
+  "artifact": {
+    "sha256": "3a9f605e47c5258ca6853408aeaf8a30155afd20b3a4570ec595a7a759c42cb9",
+    "bytes": 870751
+  }
+}

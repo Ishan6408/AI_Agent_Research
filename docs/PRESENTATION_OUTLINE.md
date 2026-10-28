@@ -1,6 +1,6 @@
 # Presentation Outline: Do AI Agents Cheat Under Pressure?
 
-**Project:** AI-Agent-Research: "Do AI Agents Cheat Under Pressure? Emergent Deception in Multi-Agent Organizations"  
+**Project:** VEIL — AI Agent Deception Research: "Do AI Agents Cheat Under Pressure? Emergent Deception in Multi-Agent Organizations"  
 **Format:** 12-Slide Academic / Technical Viva Presentation  
 **Branch:** `Ishhh`  
 **Date:** October 2026  

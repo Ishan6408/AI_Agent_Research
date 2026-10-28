@@ -1,0 +1,51 @@
+{
+  "schemaVersion": 1,
+  "ok": true,
+  "command": "finalize",
+  "status": "pass",
+  "type": "architecture",
+  "quality": "showcase",
+  "specification": {
+    "path": "C:\\Users\\igpat\\Downloads\\AI_Agent_Research\\docs\\figures\\figure_3_1_development_experiment_cycle.json",
+    "sha256": "ba1a1b57c601b86d9e6a292c48ac88a25fb4467a48113d4a5d2738db491940a4",
+    "bytes": 7812
+  },
+  "artifact": {
+    "path": "C:\\Users\\igpat\\Downloads\\AI_Agent_Research\\docs\\figures\\figure_3_1_development_experiment_cycle.html",
+    "sha256": "b248d4273a267d6964267caf0c9696fc51f0d04fcc36a713614c5ac6f120a566",
+    "bytes": 851235
+  },
+  "gates": {
+    "validate": "pass",
+    "deliver": "pass",
+    "check": "pass",
+    "browser-check": "pass"
+  },
+  "diagnostics": [],
+  "diagnosticSummary": {
+    "total": 0,
+    "shown": 0,
+    "truncated": false
+  },
+  "evidence": {
+    "receipt": "C:\\Users\\igpat\\Downloads\\AI_Agent_Research\\.archify\\review-2\\figure_3_1_development_experiment_cycle.finalize.json",
+    "summaryReceipt": "C:\\Users\\igpat\\Downloads\\AI_Agent_Research\\.archify\\review-2\\figure_3_1_development_experiment_cycle.finalize-summary.json",
+    "browserCheckReceipt": "C:\\Users\\igpat\\Downloads\\AI_Agent_Research\\.archify\\review-2\\figure_3_1_development_experiment_cycle.browser-check.json"
+  },
+  "update": {
+    "status": "current",
+    "installedVersion": "3.2.0",
+    "availableVersion": "3.2.0",
+    "releaseNotes": null,
+    "checkedAt": "2026-10-26T15:21:58.220Z",
+    "source": "cache",
+    "noticeRequired": false,
+    "noticeText": null
+  },
+  "visualReview": "not-requested",
+  "durationMs": 3574,
+  "browserCheck": {
+    "requested": true,
+    "ran": true
+  }
+}

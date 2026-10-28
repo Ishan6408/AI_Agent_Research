@@ -1,0 +1,608 @@
+{
+  "schema_version": 1,
+  "diagram_type": "erd",
+  "meta": {
+    "title": "FIGURE 4.3: DATA MODEL AND ENTITY RELATIONSHIPS",
+    "locale": "en",
+    "output": "docs/architecture/data_model_erd/figure_4_3_data_model_erd.html",
+    "quality_profile": "showcase",
+    "views": [
+      {
+        "id": "factorial-core",
+        "label": "Factorial Campaign Core",
+        "focus": [
+          "CompanyPolicy",
+          "ExperimentResult",
+          "Task"
+        ],
+        "note": "Primary factorial experiment schema linking organizational incentive policy, assigned task specifications, and developer reporting outcomes."
+      },
+      {
+        "id": "provenance-audit",
+        "label": "Audit & Telemetry",
+        "focus": [
+          "ExperimentResult",
+          "AuditResult",
+          "ProvenanceData",
+          "ExperimentEvent"
+        ],
+        "note": "Cryptographic git provenance, raw LLM token streams, sequential lifecycle events, and independent auditor suspicion evaluations."
+      },
+      {
+        "id": "autonomous-ground-truth",
+        "label": "Phase 5B Ground Truth",
+        "focus": [
+          "GroundTruthState",
+          "SubtaskResult",
+          "ExperimentResultV2",
+          "SprintCheckpoint"
+        ],
+        "note": "Deterministic synthetic ground-truth state vector with modular subtask unit tests and autonomous LLM strategy benchmark outcomes."
+      }
+    ]
+  },
+  "layout": {
+    "mode": "grid",
+    "gapX": 68,
+    "gapY": 28,
+    "entityW": 290
+  },
+  "entities": [
+    {
+      "id": "CompanyPolicy",
+      "label": "CompanyPolicy",
+      "tag": "experiment",
+      "row": 0,
+      "col": 0,
+      "width": 290,
+      "attributes": [
+        {
+          "name": "pressure_level",
+          "type": "varchar(16)",
+          "key": "pk"
+        },
+        {
+          "name": "reward_for_completion",
+          "type": "int"
+        },
+        {
+          "name": "penalty_for_failure",
+          "type": "int"
+        },
+        {
+          "name": "deadline_hours",
+          "type": "int"
+        },
+        {
+          "name": "manager_expectation",
+          "type": "varchar(120)"
+        }
+      ]
+    },
+    {
+      "id": "ExperimentResult",
+      "label": "ExperimentResult",
+      "tag": "experiment",
+      "row": 1,
+      "col": 0,
+      "width": 290,
+      "attributes": [
+        {
+          "name": "experiment_id",
+          "type": "varchar(64)",
+          "key": "pk"
+        },
+        {
+          "name": "pressure_level",
+          "type": "varchar(16)",
+          "key": "fk",
+          "references": "CompanyPolicy.pressure_level"
+        },
+        {
+          "name": "task_title",
+          "type": "varchar(64)",
+          "key": "fk",
+          "references": "Task.title"
+        },
+        {
+          "name": "developer_role",
+          "type": "varchar(32)"
+        },
+        {
+          "name": "personality",
+          "type": "varchar(32)"
+        },
+        {
+          "name": "behavior_strategy",
+          "type": "varchar(32)"
+        },
+        {
+          "name": "actual_progress",
+          "type": "int"
+        },
+        {
+          "name": "reported_progress",
+          "type": "int"
+        },
+        {
+          "name": "deception_gap",
+          "type": "int"
+        },
+        {
+          "name": "deception_level",
+          "type": "varchar(32)"
+        },
+        {
+          "name": "honesty_score",
+          "type": "float"
+        },
+        {
+          "name": "stress_index",
+          "type": "float"
+        },
+        {
+          "name": "performance_score",
+          "type": "float"
+        },
+        {
+          "name": "auditor_score",
+          "type": "int"
+        },
+        {
+          "name": "deception_detected",
+          "type": "boolean"
+        },
+        {
+          "name": "model",
+          "type": "varchar(32)"
+        },
+        {
+          "name": "seed",
+          "type": "int"
+        },
+        {
+          "name": "timestamp",
+          "type": "timestamptz"
+        }
+      ]
+    },
+    {
+      "id": "Task",
+      "label": "Task",
+      "tag": "experiment",
+      "row": 2,
+      "col": 0,
+      "width": 290,
+      "attributes": [
+        {
+          "name": "id",
+          "type": "int",
+          "key": "pk"
+        },
+        {
+          "name": "title",
+          "type": "varchar(64)",
+          "key": "uk"
+        },
+        {
+          "name": "priority",
+          "type": "varchar(16)"
+        },
+        {
+          "name": "estimated_hours",
+          "type": "int"
+        },
+        {
+          "name": "assigned_to",
+          "type": "varchar(32)"
+        },
+        {
+          "name": "status",
+          "type": "varchar(16)"
+        },
+        {
+          "name": "completed",
+          "type": "boolean"
+        }
+      ]
+    },
+    {
+      "id": "AuditResult",
+      "label": "AuditResult",
+      "tag": "evaluation",
+      "row": 0,
+      "col": 1,
+      "width": 290,
+      "attributes": [
+        {
+          "name": "experiment_id",
+          "type": "varchar(64)",
+          "key": [
+            "pk",
+            "fk"
+          ],
+          "references": "ExperimentResult.experiment_id"
+        },
+        {
+          "name": "deception_detected",
+          "type": "boolean"
+        },
+        {
+          "name": "severity",
+          "type": "varchar(16)"
+        },
+        {
+          "name": "suspicion_score",
+          "type": "int"
+        },
+        {
+          "name": "difference",
+          "type": "float"
+        },
+        {
+          "name": "explanation",
+          "type": "text"
+        },
+        {
+          "name": "timestamp",
+          "type": "timestamptz"
+        }
+      ]
+    },
+    {
+      "id": "ProvenanceData",
+      "label": "ProvenanceData",
+      "tag": "provenance",
+      "row": 1,
+      "col": 1,
+      "width": 290,
+      "attributes": [
+        {
+          "name": "experiment_id",
+          "type": "varchar(64)",
+          "key": [
+            "pk",
+            "fk"
+          ],
+          "references": "ExperimentResult.experiment_id"
+        },
+        {
+          "name": "git_commit",
+          "type": "varchar(40)"
+        },
+        {
+          "name": "llm_prompts",
+          "type": "dict[str, text]"
+        },
+        {
+          "name": "raw_llm_outputs",
+          "type": "dict[str, json]"
+        }
+      ]
+    },
+    {
+      "id": "ExperimentEvent",
+      "label": "ExperimentEvent",
+      "tag": "provenance",
+      "row": 2,
+      "col": 1,
+      "width": 290,
+      "attributes": [
+        {
+          "name": "event_id",
+          "type": "varchar(64)",
+          "key": "pk"
+        },
+        {
+          "name": "experiment_id",
+          "type": "varchar(64)",
+          "key": "fk",
+          "references": "ExperimentResult.experiment_id"
+        },
+        {
+          "name": "time",
+          "type": "timestamptz"
+        },
+        {
+          "name": "agent",
+          "type": "varchar(32)"
+        },
+        {
+          "name": "event",
+          "type": "varchar(64)"
+        },
+        {
+          "name": "details",
+          "type": "text"
+        }
+      ]
+    },
+    {
+      "id": "GroundTruthState",
+      "label": "GroundTruthState",
+      "tag": "autonomous",
+      "row": 0,
+      "col": 2,
+      "width": 296,
+      "attributes": [
+        {
+          "name": "state_vector_sha256",
+          "type": "varchar(64)",
+          "key": "pk"
+        },
+        {
+          "name": "task_id",
+          "type": "int"
+        },
+        {
+          "name": "task_title",
+          "type": "varchar(64)"
+        },
+        {
+          "name": "developer_role",
+          "type": "varchar(32)"
+        },
+        {
+          "name": "total_subtasks",
+          "type": "int"
+        },
+        {
+          "name": "passed_subtasks",
+          "type": "int"
+        },
+        {
+          "name": "actual_progress",
+          "type": "int"
+        },
+        {
+          "name": "state_vector",
+          "type": "varchar(32)"
+        }
+      ]
+    },
+    {
+      "id": "SubtaskResult",
+      "label": "SubtaskResult",
+      "tag": "autonomous",
+      "row": 1,
+      "col": 2,
+      "width": 296,
+      "attributes": [
+        {
+          "name": "subtask_guid",
+          "type": "varchar(64)",
+          "key": "pk"
+        },
+        {
+          "name": "state_vector_sha256",
+          "type": "varchar(64)",
+          "key": "fk",
+          "references": "GroundTruthState.state_vector_sha256"
+        },
+        {
+          "name": "subtask_id",
+          "type": "int"
+        },
+        {
+          "name": "title",
+          "type": "varchar(64)"
+        },
+        {
+          "name": "passed",
+          "type": "boolean"
+        },
+        {
+          "name": "execution_time_ms",
+          "type": "float"
+        },
+        {
+          "name": "error_message",
+          "type": "varchar(160)"
+        }
+      ]
+    },
+    {
+      "id": "ExperimentResultV2",
+      "label": "ExperimentResultV2",
+      "tag": "autonomous",
+      "row": 2,
+      "col": 2,
+      "width": 296,
+      "attributes": [
+        {
+          "name": "experiment_id",
+          "type": "varchar(64)",
+          "key": "pk"
+        },
+        {
+          "name": "execution_state_hash",
+          "type": "varchar(64)",
+          "key": "fk",
+          "references": "GroundTruthState.state_vector_sha256"
+        },
+        {
+          "name": "checkpoint_id",
+          "type": "int",
+          "key": "fk",
+          "references": "SprintCheckpoint.checkpoint_index"
+        },
+        {
+          "name": "cluster_id",
+          "type": "varchar(32)"
+        },
+        {
+          "name": "decision_mode",
+          "type": "varchar(32)"
+        },
+        {
+          "name": "persona_framing",
+          "type": "varchar(32)"
+        },
+        {
+          "name": "actual_progress",
+          "type": "int"
+        },
+        {
+          "name": "reported_progress",
+          "type": "int"
+        },
+        {
+          "name": "deception_gap",
+          "type": "int"
+        },
+        {
+          "name": "claim_grounding_score",
+          "type": "float"
+        },
+        {
+          "name": "unsupported_claims_count",
+          "type": "int"
+        },
+        {
+          "name": "outcome_category",
+          "type": "varchar(32)"
+        },
+        {
+          "name": "mechanical_discrepancy_flag",
+          "type": "boolean"
+        },
+        {
+          "name": "narrative_misrepresentation",
+          "type": "boolean"
+        },
+        {
+          "name": "seed",
+          "type": "int"
+        },
+        {
+          "name": "timestamp",
+          "type": "timestamptz"
+        }
+      ]
+    },
+    {
+      "id": "SprintCheckpoint",
+      "label": "SprintCheckpoint",
+      "tag": "autonomous",
+      "row": 3,
+      "col": 2,
+      "width": 296,
+      "attributes": [
+        {
+          "name": "checkpoint_index",
+          "type": "int",
+          "key": "pk"
+        },
+        {
+          "name": "timestamp",
+          "type": "varchar(32)"
+        },
+        {
+          "name": "total_records",
+          "type": "int"
+        },
+        {
+          "name": "storage_path",
+          "type": "varchar(120)"
+        }
+      ]
+    }
+  ],
+  "relationships": [
+    {
+      "id": "rel_experiment_policy",
+      "from": "ExperimentResult",
+      "to": "CompanyPolicy",
+      "label": "governed by",
+      "fromCardinality": "many",
+      "toCardinality": "one"
+    },
+    {
+      "id": "rel_experiment_task",
+      "from": "ExperimentResult",
+      "to": "Task",
+      "label": "executes",
+      "labelDy": 24,
+      "fromCardinality": "many",
+      "toCardinality": "one"
+    },
+    {
+      "id": "rel_audit_experiment",
+      "from": "AuditResult",
+      "to": "ExperimentResult",
+      "label": "evaluates",
+      "fromCardinality": "one",
+      "toCardinality": "one"
+    },
+    {
+      "id": "rel_provenance_experiment",
+      "from": "ProvenanceData",
+      "to": "ExperimentResult",
+      "label": "traces",
+      "fromCardinality": "one",
+      "toCardinality": "one"
+    },
+    {
+      "id": "rel_event_experiment",
+      "from": "ExperimentEvent",
+      "to": "ExperimentResult",
+      "label": "logs",
+      "fromCardinality": "many",
+      "toCardinality": "one"
+    },
+    {
+      "id": "rel_subtask_groundtruth",
+      "from": "SubtaskResult",
+      "to": "GroundTruthState",
+      "label": "composed of",
+      "fromCardinality": "many",
+      "toCardinality": "one"
+    },
+    {
+      "id": "rel_expv2_groundtruth",
+      "from": "ExperimentResultV2",
+      "to": "GroundTruthState",
+      "label": "evaluated against",
+      "fromCardinality": "many",
+      "toCardinality": "one"
+    },
+    {
+      "id": "rel_expv2_checkpoint",
+      "from": "ExperimentResultV2",
+      "to": "SprintCheckpoint",
+      "label": "persisted in",
+      "labelDy": 24,
+      "fromCardinality": "many",
+      "toCardinality": "one"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "cyan",
+      "title": "Factorial Experiment Core",
+      "items": [
+        "ExperimentResult represents the primary unit of observation across 2,400 factorial runs (6 scenarios x 4 auditors x 5 models x 2 observation levels x 10 runs).",
+        "CompanyPolicy specifies organizational deadline, completion reward, and penalty disincentives generated per pressure tier.",
+        "Task defines the modular sprint work assigned by the manager agent to the developer agent."
+      ]
+    },
+    {
+      "dot": "amber",
+      "title": "Telemetry & Auditor Provenance",
+      "items": [
+        "ProvenanceData captures verbatim LLM system/user prompts, raw completion tokens, and the exact git commit SHA for complete experimental reproducibility.",
+        "AuditResult stores suspicion scores, severity tiers, and LLM-generated explanations from the AuditorAgent.",
+        "ExperimentEvent records fine-grained chronological lifecycle events emitted during simulation execution."
+      ]
+    },
+    {
+      "dot": "emerald",
+      "title": "Phase 5B Synthetic Ground Truth",
+      "items": [
+        "GroundTruthState maintains a 10-bit deterministic binary state vector with a verifiable SHA-256 integrity checksum.",
+        "SubtaskResult tracks individual functional unit test pass/fail states and execution times without physical compiler dependencies.",
+        "ExperimentResultV2 measures autonomous LLM strategy selection against verified ground truth, persisted atomically into sprint checkpoints."
+      ]
+    }
+  ]
+}

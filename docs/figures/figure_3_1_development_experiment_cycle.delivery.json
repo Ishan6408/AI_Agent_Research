@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "receiptId": "c115458c-526b-4cce-9c4c-71e2165eb211",
+  "status": "current",
+  "command": "deliver",
+  "type": "architecture",
+  "input": "C:\\Users\\igpat\\Downloads\\AI_Agent_Research\\docs\\figures\\figure_3_1_development_experiment_cycle.json",
+  "output": "C:\\Users\\igpat\\Downloads\\AI_Agent_Research\\docs\\figures\\figure_3_1_development_experiment_cycle.html",
+  "specification": {
+    "sha256": "ba1a1b57c601b86d9e6a292c48ac88a25fb4467a48113d4a5d2738db491940a4",
+    "bytes": 7812
+  },
+  "artifact": {
+    "sha256": "b248d4273a267d6964267caf0c9696fc51f0d04fcc36a713614c5ac6f120a566",
+    "bytes": 851235
+  }
+}

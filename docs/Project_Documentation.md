@@ -1,8 +1,11 @@
-# Under Pressure: Project Documentation
+# VEIL
+### AI Agent Deception Research
+
+# VEIL: Project Documentation
 
 ## 1. Project Overview
 
-**Under Pressure** is a research-oriented multi-agent simulation platform designed to study deceptive behaviour in AI software developers under workplace pressure.
+**VEIL** is a research-oriented multi-agent simulation platform designed to study deceptive behaviour in AI software developers under workplace pressure.
 
 The project models a simulated software development organization containing:
 
@@ -1336,7 +1339,7 @@ Research Interpretation
 
 # 52. Conclusion
 
-**Under Pressure** provides a controlled environment for investigating how AI software developers behave under different organizational conditions.
+**VEIL** provides a controlled environment for investigating how AI software developers behave under different organizational conditions.
 
 The system combines a multi-agent simulation with experimental data collection, behavioural analysis, an independent auditor, a FastAPI analytics backend, and a React research dashboard.
 

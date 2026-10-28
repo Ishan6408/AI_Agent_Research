@@ -1,6 +1,6 @@
 # Experiment Protocol and Reproducibility Specification
 
-**Project:** AI-Agent-Research  
+**Project:** VEIL — AI Agent Deception Research  
 **Topic:** *"Do AI Agents Cheat Under Pressure? Emergent Deception in Multi-Agent Organizations"*  
 **Repository Branch:** `Ishhh`  
 **Phase:** 5A.9 Specification and Verification  

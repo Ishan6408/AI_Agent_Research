@@ -1,0 +1,748 @@
+{
+  "schema_version": 1,
+  "diagram_type": "explainer",
+  "meta": {
+    "title": "STRESS AND PERFORMANCE ANALYSIS",
+    "id": "stress-and-performance-analysis",
+    "locale": "en",
+    "quality_profile": "showcase",
+    "style": "clean"
+  },
+  "answer": {
+    "summary": "Task performance degrades non-linearly under escalating schedule pressure. Performance drops modestly from **56.62 points under LOW pressure** to **54.78 under MEDIUM**, before collapsing to **45.39 under HIGH** and **39.96 under EXTREME pressure**.",
+    "reasons": [
+      "Under LOW pressure (24h deadline), performance averages 56.62 points (SE = 0.38, n = 600), establishing the empirical baseline.",
+      "Under MEDIUM pressure (12h deadline), performance exhibits mild compression to 54.78 points (-1.83 vs LOW, p < 0.001) as agents absorb schedule tightening.",
+      "Under HIGH pressure (6h deadline), performance collapses by 11.23 points to 45.39 points (t = -17.61, p < 0.001), marking an inflection threshold.",
+      "Under EXTREME pressure (2h deadline), performance declines to 39.96 points (-16.65 vs LOW, t = -26.87, p < 0.001), reflecting compound honesty and quality losses."
+    ],
+    "scope": "Factorial campaign · 2,400 observations · 600 clusters · N=600 per tier"
+  },
+  "panels": [
+    {
+      "id": "performance-chart",
+      "title": "What is the mean composite performance trajectory across stress conditions?",
+      "span": 7,
+      "blocks": [
+        {
+          "type": "chart",
+          "title": "Composite Performance Score by Pressure Tier (Points 0-100, N = 2,400)",
+          "text": "xychart-beta\n  x-axis [\"LOW (24h)\", \"MEDIUM (12h)\", \"HIGH (6h)\", \"EXTREME (2h)\"]\n  y-axis \"Performance Score (0-100)\" 0 --> 70\n  bar \"Mean Performance Score\" [56.62, 54.78, 45.39, 39.96]\n  line \"Mean Trajectory\" [56.62, 54.78, 45.39, 39.96]",
+          "id": "chart-3fcd481b96f9"
+        }
+      ]
+    },
+    {
+      "id": "descriptive-table",
+      "title": "How do descriptive statistics compare across pressure conditions?",
+      "blocks": [
+        {
+          "type": "comparison",
+          "labelColumn": "Pressure Condition",
+          "columns": [
+            "Deadline",
+            "Stress Index",
+            "Observations (n)",
+            "Clusters (M)",
+            "Mean (pts)",
+            "Std Dev",
+            "Cluster SE",
+            "95% Conf. Interval",
+            "Median",
+            "IQR",
+            "Range"
+          ],
+          "rows": [
+            {
+              "label": "LOW",
+              "cells": [
+                {
+                  "text": "24h"
+                },
+                {
+                  "text": "25.0"
+                },
+                {
+                  "text": "600"
+                },
+                {
+                  "text": "150"
+                },
+                {
+                  "text": "56.62"
+                },
+                {
+                  "text": "9.30"
+                },
+                {
+                  "text": "0.38"
+                },
+                {
+                  "text": "[55.87, 57.36]"
+                },
+                {
+                  "text": "57.00"
+                },
+                {
+                  "text": "13.86"
+                },
+                {
+                  "text": "31.75 - 74.95"
+                }
+              ],
+              "id": "row-e91e5986c641"
+            },
+            {
+              "label": "MEDIUM",
+              "cells": [
+                {
+                  "text": "12h"
+                },
+                {
+                  "text": "50.0"
+                },
+                {
+                  "text": "600"
+                },
+                {
+                  "text": "150"
+                },
+                {
+                  "text": "54.78"
+                },
+                {
+                  "text": "10.00"
+                },
+                {
+                  "text": "0.39"
+                },
+                {
+                  "text": "[54.02, 55.55]"
+                },
+                {
+                  "text": "55.78"
+                },
+                {
+                  "text": "14.01"
+                },
+                {
+                  "text": "26.25 - 74.05"
+                }
+              ],
+              "id": "row-74f906695f6e"
+            },
+            {
+              "label": "HIGH",
+              "cells": [
+                {
+                  "text": "6h"
+                },
+                {
+                  "text": "75.0"
+                },
+                {
+                  "text": "600"
+                },
+                {
+                  "text": "150"
+                },
+                {
+                  "text": "45.39"
+                },
+                {
+                  "text": "12.50"
+                },
+                {
+                  "text": "0.51"
+                },
+                {
+                  "text": "[44.39, 46.39]"
+                },
+                {
+                  "text": "44.50"
+                },
+                {
+                  "text": "19.56"
+                },
+                {
+                  "text": "21.75 - 71.35"
+                }
+              ],
+              "id": "row-96b7fbf1da43"
+            },
+            {
+              "label": "EXTREME",
+              "cells": [
+                {
+                  "text": "2h"
+                },
+                {
+                  "text": "100.0"
+                },
+                {
+                  "text": "600"
+                },
+                {
+                  "text": "150"
+                },
+                {
+                  "text": "39.96"
+                },
+                {
+                  "text": "11.52"
+                },
+                {
+                  "text": "0.49"
+                },
+                {
+                  "text": "[39.00, 40.92]"
+                },
+                {
+                  "text": "37.65"
+                },
+                {
+                  "text": "19.09"
+                },
+                {
+                  "text": "18.75 - 68.20"
+                }
+              ],
+              "id": "row-092826285874"
+            }
+          ],
+          "id": "comparison-614d3d69b1eb"
+        }
+      ]
+    },
+    {
+      "id": "pairwise-contrasts",
+      "title": "What do pairwise contrasts reveal about pressure transitions?",
+      "blocks": [
+        {
+          "type": "comparison",
+          "labelColumn": "Contrast Pair",
+          "columns": [
+            "Stress Transition",
+            "Mean Difference",
+            "Cluster Std Error",
+            "t-statistic",
+            "Holm-Adjusted p",
+            "Effect Size (Cohen's d)",
+            "Scientific Finding"
+          ],
+          "rows": [
+            {
+              "label": "MEDIUM vs LOW",
+              "cells": [
+                {
+                  "text": "Schedule compression"
+                },
+                {
+                  "text": "-1.83 pts",
+                  "assessment": "caution",
+                  "verdict": "Mild"
+                },
+                {
+                  "text": "0.55 pts"
+                },
+                {
+                  "text": "-3.36"
+                },
+                {
+                  "text": "< 0.001"
+                },
+                {
+                  "text": "-0.19 (Small)"
+                },
+                {
+                  "text": "Minor initial performance degradation"
+                }
+              ],
+              "id": "row-8ce658d7f724"
+            },
+            {
+              "label": "HIGH vs LOW",
+              "cells": [
+                {
+                  "text": "Severe pressure onset"
+                },
+                {
+                  "text": "-11.23 pts",
+                  "assessment": "bad",
+                  "verdict": "Severe"
+                },
+                {
+                  "text": "0.64 pts"
+                },
+                {
+                  "text": "-17.61"
+                },
+                {
+                  "text": "< 0.001"
+                },
+                {
+                  "text": "-1.02 (Large)"
+                },
+                {
+                  "text": "Steep inflection and performance collapse"
+                }
+              ],
+              "id": "row-60bb8962c320"
+            },
+            {
+              "label": "EXTREME vs LOW",
+              "cells": [
+                {
+                  "text": "Acute crisis constraint"
+                },
+                {
+                  "text": "-16.65 pts",
+                  "assessment": "bad",
+                  "verdict": "Severe"
+                },
+                {
+                  "text": "0.62 pts"
+                },
+                {
+                  "text": "-26.87"
+                },
+                {
+                  "text": "< 0.001"
+                },
+                {
+                  "text": "-1.59 (Very Large)"
+                },
+                {
+                  "text": "Maximum cumulative performance loss"
+                }
+              ],
+              "id": "row-7d1e4436626e"
+            },
+            {
+              "label": "HIGH vs MEDIUM",
+              "cells": [
+                {
+                  "text": "Secondary escalation"
+                },
+                {
+                  "text": "-9.39 pts",
+                  "assessment": "bad",
+                  "verdict": "Severe"
+                },
+                {
+                  "text": "0.64 pts"
+                },
+                {
+                  "text": "-14.61"
+                },
+                {
+                  "text": "< 0.001"
+                },
+                {
+                  "text": "-0.83 (Large)"
+                },
+                {
+                  "text": "Primary non-linear tipping point"
+                }
+              ],
+              "id": "row-e30ee4961d93"
+            },
+            {
+              "label": "EXTREME vs MEDIUM",
+              "cells": [
+                {
+                  "text": "Crisis escalation"
+                },
+                {
+                  "text": "-14.82 pts",
+                  "assessment": "bad",
+                  "verdict": "Severe"
+                },
+                {
+                  "text": "0.63 pts"
+                },
+                {
+                  "text": "-23.70"
+                },
+                {
+                  "text": "< 0.001"
+                },
+                {
+                  "text": "-1.37 (Very Large)"
+                },
+                {
+                  "text": "Compounding performance deficit"
+                }
+              ],
+              "id": "row-18ec1f0fdf72"
+            },
+            {
+              "label": "EXTREME vs HIGH",
+              "cells": [
+                {
+                  "text": "Crisis ceiling escalation"
+                },
+                {
+                  "text": "-5.43 pts",
+                  "assessment": "bad",
+                  "verdict": "Substantial"
+                },
+                {
+                  "text": "0.71 pts"
+                },
+                {
+                  "text": "-7.67"
+                },
+                {
+                  "text": "< 0.001"
+                },
+                {
+                  "text": "-0.45 (Medium)"
+                },
+                {
+                  "text": "Continued degradation past tipping point"
+                }
+              ],
+              "id": "row-ebcc810e3675"
+            }
+          ],
+          "id": "comparison-1da5a4db5586"
+        }
+      ]
+    },
+    {
+      "id": "constituent-metrics",
+      "title": "How do constituent performance metrics respond across conditions?",
+      "blocks": [
+        {
+          "type": "comparison",
+          "labelColumn": "Performance Component",
+          "columns": [
+            "Metric Type",
+            "LOW (24h)",
+            "MEDIUM (12h)",
+            "HIGH (6h)",
+            "EXTREME (2h)",
+            "Net Change (EXT vs LOW)",
+            "Response Profile"
+          ],
+          "rows": [
+            {
+              "label": "Actual Progress",
+              "cells": [
+                {
+                  "text": "Work Output (%)"
+                },
+                {
+                  "text": "35.94%"
+                },
+                {
+                  "text": "35.79%"
+                },
+                {
+                  "text": "31.90%"
+                },
+                {
+                  "text": "27.53%"
+                },
+                {
+                  "text": "-8.41% points"
+                },
+                {
+                  "text": "Resilient through 12h, drops under 6h and 2h"
+                }
+              ],
+              "id": "row-fcc3062fce00"
+            },
+            {
+              "label": "Code Quality",
+              "cells": [
+                {
+                  "text": "Craftsmanship (pts)"
+                },
+                {
+                  "text": "74.91"
+                },
+                {
+                  "text": "74.80"
+                },
+                {
+                  "text": "67.41"
+                },
+                {
+                  "text": "60.77"
+                },
+                {
+                  "text": "-14.14 points"
+                },
+                {
+                  "text": "Stable through 12h, degrades under 6h and 2h"
+                }
+              ],
+              "id": "row-66af6fa6d53d"
+            },
+            {
+              "label": "Honesty Score",
+              "cells": [
+                {
+                  "text": "Behavioral Integrity (pts)"
+                },
+                {
+                  "text": "71.89"
+                },
+                {
+                  "text": "64.96"
+                },
+                {
+                  "text": "43.25"
+                },
+                {
+                  "text": "37.36"
+                },
+                {
+                  "text": "-34.52 points",
+                  "assessment": "bad",
+                  "verdict": "Collapse"
+                },
+                {
+                  "text": "Early decline under 12h, collapses under 6h"
+                }
+              ],
+              "id": "row-8fb4f5111dc4"
+            },
+            {
+              "label": "Bugs Introduced",
+              "cells": [
+                {
+                  "text": "Defect Count"
+                },
+                {
+                  "text": "2.32"
+                },
+                {
+                  "text": "2.30"
+                },
+                {
+                  "text": "3.62"
+                },
+                {
+                  "text": "5.35"
+                },
+                {
+                  "text": "+3.03 defects",
+                  "assessment": "bad",
+                  "verdict": "Elevated"
+                },
+                {
+                  "text": "Stable through 12h, more than doubles by 2h"
+                }
+              ],
+              "id": "row-be9645649da6"
+            },
+            {
+              "label": "Deception Gap",
+              "cells": [
+                {
+                  "text": "Reporting Discrepancy (%)"
+                },
+                {
+                  "text": "+2.78%"
+                },
+                {
+                  "text": "+4.96%"
+                },
+                {
+                  "text": "+11.59%"
+                },
+                {
+                  "text": "+11.50%"
+                },
+                {
+                  "text": "+8.72% points",
+                  "assessment": "bad",
+                  "verdict": "Elevated"
+                },
+                {
+                  "text": "Triples by 6h deadline, plateaus at ceiling"
+                }
+              ],
+              "id": "row-bee236568130"
+            }
+          ],
+          "id": "comparison-cb11ac7815a2"
+        }
+      ]
+    },
+    {
+      "id": "personality-moderation",
+      "title": "How does agent personality moderate the stress-performance relationship?",
+      "blocks": [
+        {
+          "type": "comparison",
+          "labelColumn": "Personality Profile",
+          "columns": [
+            "Behavioral Archetype",
+            "LOW (pts)",
+            "MEDIUM (pts)",
+            "HIGH (pts)",
+            "EXTREME (pts)",
+            "Net Change (EXT vs LOW)",
+            "Resilience Assessment"
+          ],
+          "rows": [
+            {
+              "label": "Honest",
+              "cells": [
+                {
+                  "text": "Transparent reporting"
+                },
+                {
+                  "text": "62.68"
+                },
+                {
+                  "text": "62.81"
+                },
+                {
+                  "text": "57.20"
+                },
+                {
+                  "text": "49.82"
+                },
+                {
+                  "text": "-12.86 pts"
+                },
+                {
+                  "text": "{good:Resilient} High baseline, avoids deception penalty"
+                }
+              ],
+              "id": "row-dde5d462782e"
+            },
+            {
+              "label": "Risk Averse",
+              "cells": [
+                {
+                  "text": "Conservative sandbagging"
+                },
+                {
+                  "text": "58.43"
+                },
+                {
+                  "text": "58.91"
+                },
+                {
+                  "text": "56.49"
+                },
+                {
+                  "text": "50.03"
+                },
+                {
+                  "text": "-8.40 pts"
+                },
+                {
+                  "text": "{good:Most Resilient} Smallest total performance decay"
+                }
+              ],
+              "id": "row-6546ee858bf6"
+            },
+            {
+              "label": "Optimistic",
+              "cells": [
+                {
+                  "text": "Mild positive bias"
+                },
+                {
+                  "text": "56.86"
+                },
+                {
+                  "text": "54.67"
+                },
+                {
+                  "text": "42.22"
+                },
+                {
+                  "text": "37.46"
+                },
+                {
+                  "text": "-19.40 pts"
+                },
+                {
+                  "text": "{caution:Vulnerable} Substantial honesty penalty"
+                }
+              ],
+              "id": "row-a3040f7c9a7e"
+            },
+            {
+              "label": "Opportunistic",
+              "cells": [
+                {
+                  "text": "Strategic exaggeration"
+                },
+                {
+                  "text": "54.34"
+                },
+                {
+                  "text": "50.86"
+                },
+                {
+                  "text": "36.66"
+                },
+                {
+                  "text": "32.12"
+                },
+                {
+                  "text": "-22.22 pts"
+                },
+                {
+                  "text": "{bad:High Vulnerability} Largest overall performance drop"
+                }
+              ],
+              "id": "row-f761e50f0d6c"
+            },
+            {
+              "label": "Ambitious",
+              "cells": [
+                {
+                  "text": "Aggressive inflation"
+                },
+                {
+                  "text": "50.77"
+                },
+                {
+                  "text": "46.66"
+                },
+                {
+                  "text": "34.38"
+                },
+                {
+                  "text": "30.38"
+                },
+                {
+                  "text": "-20.39 pts"
+                },
+                {
+                  "text": "{bad:Severe Vulnerability} Lowest terminal performance score"
+                }
+              ],
+              "id": "row-ce8aab81b08c"
+            }
+          ],
+          "id": "comparison-844fd4c498f4"
+        }
+      ]
+    },
+    {
+      "id": "methodology",
+      "title": "How were variables operationalized and validated?",
+      "blocks": [
+        {
+          "type": "callout",
+          "id": "metric-callout",
+          "level": "note",
+          "title": "Operational Definitions and Methodological Integrity",
+          "text": "Composite performance is defined in `models/experiment.py` and `simulation/simulator.py` as: `performance_score = actual_progress * 0.45 + code_quality * 0.30 + honesty_score * 0.25`.\nThe `stress_index` is a deterministic linear encoding of configured organizational pressure (`LOW` = 25, `MEDIUM` = 50, `HIGH` = 75, `EXTREME` = 100), not a biometric or psychological measurement.\nAll calculations use 2,400 balanced observations across 600 execution clusters in `results/factorial_campaign` (seeds 42 to 641). Pilot files with unseeded executions were excluded by design. Standard errors and confidence intervals reflect cluster-robust standard errors grouped by execution seed."
+        }
+      ]
+    }
+  ],
+  "sources": []
+}

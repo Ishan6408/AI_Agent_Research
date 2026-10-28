@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "receiptId": "dd4efaa6-1a98-4e01-9781-b083dc279b3f",
+  "status": "current",
+  "command": "deliver",
+  "type": "explainer",
+  "input": "C:\\Users\\igpat\\Downloads\\AI_Agent_Research\\docs\\figures\\stress_performance_analysis\\candidate.archify.md",
+  "output": "C:\\Users\\igpat\\Downloads\\AI_Agent_Research\\docs\\figures\\stress_performance_analysis\\stress_performance_analysis.html",
+  "specification": {
+    "sha256": "81f0532990ce7357e3af838aaa6733a3d21677aec55f5eacb812fcd2c9934e6a",
+    "bytes": 6373
+  },
+  "artifact": {
+    "sha256": "17cb2b9cf9a35714efbf197d59fe93ebd8b0b1dcf0933c19944500de60fcf53d",
+    "bytes": 207858
+  },
+  "explainer": {
+    "preparedSha256": "ff9e682115e65497b9ef9a9383e9d42151d365fc2411c17b013799664f843104",
+    "dependencies": []
+  }
+}

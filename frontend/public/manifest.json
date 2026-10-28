@@ -1,0 +1,16 @@
+{
+  "short_name": "VEIL",
+  "name": "VEIL — AI Agent Deception Research",
+  "description": "Investigating deceptive behavior in autonomous AI agents.",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "type": "image/svg+xml",
+      "sizes": "any"
+    }
+  ],
+  "start_url": "/",
+  "background_color": "#0A0C10",
+  "theme_color": "#0A0C10",
+  "display": "standalone"
+}
