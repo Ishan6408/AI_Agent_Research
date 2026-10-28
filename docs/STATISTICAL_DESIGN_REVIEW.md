@@ -1,6 +1,6 @@
 # Statistical Design Review: 4-Factor Factorial Experiment
 
-**Project:** AI-Agent-Research  
+**Project:** VEIL — AI Agent Deception Research  
 **Phase:** 5A.10A — Statistical Design Verification  
 **Repository Branch:** `Ishhh`  
 **Dataset Analyzed:** `results/factorial_campaign/` ($N = 2,400$ observations, $N_{\text{exec}} = 600$ executions)  

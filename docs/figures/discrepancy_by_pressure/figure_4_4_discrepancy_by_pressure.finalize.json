@@ -1,0 +1,202 @@
+{
+  "schemaVersion": 1,
+  "ok": true,
+  "command": "finalize",
+  "status": "pass",
+  "type": "explainer",
+  "quality": "showcase",
+  "startedAt": "2026-10-27T18:03:21.477Z",
+  "specification": {
+    "path": "C:\\Users\\igpat\\Downloads\\AI_Agent_Research\\docs\\figures\\discrepancy_by_pressure\\candidate.archify.md",
+    "sha256": "fceba9b2460da5075b88e1b4708199411be99811fbfaedea98eed7511cfa8860",
+    "bytes": 4110
+  },
+  "artifact": {
+    "path": "C:\\Users\\igpat\\Downloads\\AI_Agent_Research\\docs\\figures\\discrepancy_by_pressure\\figure_4_4_discrepancy_by_pressure.html",
+    "sha256": "fc13bdb2c3dd81ef0abac438e88abde06c1763ff6d698f81f27f07f67f511848",
+    "bytes": 175881
+  },
+  "stages": {
+    "browser-check": {
+      "status": "not-run",
+      "execution": "not-requested"
+    },
+    "validate": {
+      "status": "pass",
+      "exitCode": 0,
+      "durationMs": null,
+      "execution": "embedded-in-deliver",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "C:\\Users\\igpat\\.agents\\skills\\archify\\bin\\archify.mjs",
+        "deliver",
+        "explainer",
+        "C:\\Users\\igpat\\Downloads\\AI_Agent_Research\\docs\\figures\\discrepancy_by_pressure\\candidate.archify.md",
+        "C:\\Users\\igpat\\Downloads\\AI_Agent_Research\\docs\\figures\\discrepancy_by_pressure\\figure_4_4_discrepancy_by_pressure.html",
+        "--quality",
+        "showcase",
+        "--repo-root",
+        "C:\\Users\\igpat\\Downloads\\AI_Agent_Research",
+        "--json"
+      ],
+      "receipt": {
+        "schemaVersion": 1,
+        "ok": true,
+        "command": "validate",
+        "specification": {
+          "sha256": "fceba9b2460da5075b88e1b4708199411be99811fbfaedea98eed7511cfa8860",
+          "bytes": 4110
+        },
+        "validation": {
+          "checksPassed": 4,
+          "checkCount": 4,
+          "compositionProfile": "showcase",
+          "compositionStatus": "pass",
+          "errors": 0,
+          "warnings": 0
+        }
+      }
+    },
+    "deliver": {
+      "status": "pass",
+      "exitCode": 0,
+      "durationMs": 651,
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "C:\\Users\\igpat\\.agents\\skills\\archify\\bin\\archify.mjs",
+        "deliver",
+        "explainer",
+        "C:\\Users\\igpat\\Downloads\\AI_Agent_Research\\docs\\figures\\discrepancy_by_pressure\\candidate.archify.md",
+        "C:\\Users\\igpat\\Downloads\\AI_Agent_Research\\docs\\figures\\discrepancy_by_pressure\\figure_4_4_discrepancy_by_pressure.html",
+        "--quality",
+        "showcase",
+        "--repo-root",
+        "C:\\Users\\igpat\\Downloads\\AI_Agent_Research",
+        "--json"
+      ],
+      "receipt": {
+        "schemaVersion": 1,
+        "receiptId": "06ccc038-862e-4e5a-bcc3-42f77eb529f3",
+        "ok": true,
+        "command": "deliver",
+        "type": "explainer",
+        "input": "C:\\Users\\igpat\\Downloads\\AI_Agent_Research\\docs\\figures\\discrepancy_by_pressure\\candidate.archify.md",
+        "output": "C:\\Users\\igpat\\Downloads\\AI_Agent_Research\\docs\\figures\\discrepancy_by_pressure\\figure_4_4_discrepancy_by_pressure.html",
+        "explainer": {
+          "preparedSha256": "cca329df5544906c9113eb58ff1588de4b70a15d05a12b984b4e43f98e2baf88",
+          "dependencies": []
+        },
+        "specification": {
+          "sha256": "fceba9b2460da5075b88e1b4708199411be99811fbfaedea98eed7511cfa8860",
+          "bytes": 4110
+        },
+        "artifact": {
+          "sha256": "fc13bdb2c3dd81ef0abac438e88abde06c1763ff6d698f81f27f07f67f511848",
+          "bytes": 175881
+        },
+        "validation": {
+          "checksPassed": 4,
+          "checkCount": 4,
+          "compositionProfile": "showcase",
+          "compositionStatus": "pass",
+          "errors": 0,
+          "warnings": 0
+        },
+        "update": {
+          "status": "unavailable",
+          "installedVersion": null,
+          "availableVersion": null,
+          "releaseNotes": null,
+          "checkedAt": null,
+          "source": null,
+          "noticeRequired": false,
+          "noticeText": null,
+          "reason": "disabled"
+        }
+      }
+    },
+    "check": {
+      "status": "pass",
+      "exitCode": 0,
+      "durationMs": 243,
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "C:\\Users\\igpat\\.agents\\skills\\archify\\bin\\archify.mjs",
+        "check",
+        "C:\\Users\\igpat\\Downloads\\AI_Agent_Research\\docs\\figures\\discrepancy_by_pressure\\figure_4_4_discrepancy_by_pressure.html",
+        "--require-provenance"
+      ],
+      "receipt": {
+        "ok": true,
+        "file": "C:\\Users\\igpat\\Downloads\\AI_Agent_Research\\docs\\figures\\discrepancy_by_pressure\\figure_4_4_discrepancy_by_pressure.html",
+        "family": "explainer",
+        "artifact": {
+          "sha256": "fc13bdb2c3dd81ef0abac438e88abde06c1763ff6d698f81f27f07f67f511848",
+          "bytes": 175881
+        },
+        "checks": [
+          {
+            "name": "explainer_structure",
+            "ok": true,
+            "details": [
+              "27 unique DOM IDs"
+            ]
+          },
+          {
+            "name": "explainer_payload_identity",
+            "ok": true,
+            "details": []
+          },
+          {
+            "name": "explainer_dependencies",
+            "ok": true,
+            "details": [
+              "0 frozen dependencies"
+            ]
+          },
+          {
+            "name": "explainer_native_diagrams",
+            "ok": true,
+            "details": []
+          }
+        ],
+        "composition": {
+          "schemaVersion": 1,
+          "profile": "showcase",
+          "status": "pass",
+          "summary": {
+            "errors": 0,
+            "warnings": 0
+          },
+          "issues": [],
+          "nativeDiagrams": []
+        },
+        "diagnostics": [],
+        "provenance": "current",
+        "deliveryReceiptId": "06ccc038-862e-4e5a-bcc3-42f77eb529f3"
+      }
+    }
+  },
+  "browserCheck": {
+    "requested": false,
+    "ran": false
+  },
+  "diagnostics": [],
+  "evidence": {
+    "receipt": "C:\\Users\\igpat\\Downloads\\AI_Agent_Research\\docs\\figures\\discrepancy_by_pressure\\figure_4_4_discrepancy_by_pressure.finalize.json",
+    "summaryReceipt": "C:\\Users\\igpat\\Downloads\\AI_Agent_Research\\docs\\figures\\discrepancy_by_pressure\\figure_4_4_discrepancy_by_pressure.finalize-summary.json"
+  },
+  "visualReview": "not-requested",
+  "finishedAt": "2026-10-27T18:03:22.882Z",
+  "durationMs": 1404,
+  "update": {
+    "status": "current",
+    "installedVersion": "3.2.0",
+    "availableVersion": "3.2.0",
+    "releaseNotes": null,
+    "checkedAt": "2026-10-27T17:20:07.483Z",
+    "source": "cache",
+    "noticeRequired": false,
+    "noticeText": null
+  }
+}

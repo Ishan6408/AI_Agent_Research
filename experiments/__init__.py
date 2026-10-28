@@ -1,3 +1,3 @@
 """
-Experiments package for AI-Agent-Research simulation testbeds.
+Experiments package for VEIL: AI Agent Deception Research simulation testbeds.
 """

@@ -1,0 +1,51 @@
+{
+  "schemaVersion": 1,
+  "ok": true,
+  "command": "finalize",
+  "status": "pass",
+  "type": "workflow",
+  "quality": "showcase",
+  "specification": {
+    "path": "C:\\Users\\igpat\\Downloads\\AI_Agent_Research\\docs\\architecture\\experiment_execution_flow\\figure_4_2_experiment_execution_flow.json",
+    "sha256": "4c8d501960ec833ac6866cc8ce6f0d7ca8edaadfd0a7a7914f4daf9480ecc081",
+    "bytes": 13724
+  },
+  "artifact": {
+    "path": "C:\\Users\\igpat\\Downloads\\AI_Agent_Research\\docs\\architecture\\experiment_execution_flow\\figure_4_2_experiment_execution_flow.html",
+    "sha256": "3a9f605e47c5258ca6853408aeaf8a30155afd20b3a4570ec595a7a759c42cb9",
+    "bytes": 870751
+  },
+  "gates": {
+    "validate": "pass",
+    "deliver": "pass",
+    "check": "pass",
+    "browser-check": "pass"
+  },
+  "diagnostics": [],
+  "diagnosticSummary": {
+    "total": 0,
+    "shown": 0,
+    "truncated": false
+  },
+  "evidence": {
+    "receipt": "C:\\Users\\igpat\\Downloads\\AI_Agent_Research\\docs\\architecture\\experiment_execution_flow\\figure_4_2_experiment_execution_flow.finalize.json",
+    "summaryReceipt": "C:\\Users\\igpat\\Downloads\\AI_Agent_Research\\docs\\architecture\\experiment_execution_flow\\figure_4_2_experiment_execution_flow.finalize-summary.json",
+    "browserCheckReceipt": "C:\\Users\\igpat\\Downloads\\AI_Agent_Research\\docs\\architecture\\experiment_execution_flow\\figure_4_2_experiment_execution_flow.browser-check.json"
+  },
+  "update": {
+    "status": "current",
+    "installedVersion": "3.2.0",
+    "availableVersion": "3.2.0",
+    "releaseNotes": null,
+    "checkedAt": "2026-10-27T17:20:07.483Z",
+    "source": "cache",
+    "noticeRequired": false,
+    "noticeText": null
+  },
+  "visualReview": "not-requested",
+  "durationMs": 3980,
+  "browserCheck": {
+    "requested": true,
+    "ran": true
+  }
+}

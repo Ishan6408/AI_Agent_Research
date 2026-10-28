@@ -1,6 +1,6 @@
 # Phase 4A — API Contract Mapping
 
-> **Project:** Under Pressure — AI Agent Deception Research  
+> **Project:** VEIL — AI Agent Deception Research  
 > **Phase:** 4A — API Contract Verification & Repair  
 > **Date:** 2026-10-03  
 > **Commit base:** `3a57567`  

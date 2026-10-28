@@ -1,0 +1,228 @@
+{
+  "schema_version": 1,
+  "diagram_type": "explainer",
+  "meta": {
+    "title": "FIGURE 4.4: DISCREPANCY BY PRESSURE",
+    "id": "discrepancy-by-pressure",
+    "locale": "en",
+    "quality_profile": "showcase",
+    "style": "clean"
+  },
+  "answer": {
+    "summary": "Reporting discrepancy rises sharply under schedule pressure, escalating from 2.78% under LOW to 11.59% under HIGH pressure. It hits an empirical ceiling and plateaus at 11.50% under EXTREME pressure.",
+    "reasons": [
+      "Under LOW pressure (24h deadline), discrepancy averages 2.78% (SE = 0.23%, n = 600) with a 0.0% median, reflecting transparent status reporting.",
+      "Under MEDIUM pressure (12h deadline), discrepancy increases modestly to 4.96% (+2.18% vs LOW, p < 0.001) as agents absorb minor schedule compression.",
+      "Under HIGH pressure (6h deadline), discrepancy spikes to 11.59% (+8.81% vs LOW, t = 16.79, p < 0.001), indicating substantial penalty avoidance.",
+      "Under EXTREME pressure (2h deadline), discrepancy plateaus at 11.50% (diff = -0.09% vs HIGH, t = -0.14, p = 0.887), confirming behavioral saturation."
+    ],
+    "scope": "Factorial campaign · 2,400 observations · 600 clusters · N=600 per tier"
+  },
+  "panels": [
+    {
+      "id": "descriptive-summary",
+      "title": "Descriptive Statistics by Pressure Tier",
+      "blocks": [
+        {
+          "type": "comparison",
+          "id": "pressure-table",
+          "labelColumn": "Metric",
+          "columns": [
+            "LOW (24h)",
+            "MEDIUM (12h)",
+            "HIGH (6h)",
+            "EXTREME (2h)"
+          ],
+          "rows": [
+            {
+              "id": "row-obs",
+              "label": "Observations (n)",
+              "cells": [
+                { "text": "600", "assessment": "good", "verdict": "Balanced" },
+                { "text": "600", "assessment": "good", "verdict": "Balanced" },
+                { "text": "600", "assessment": "good", "verdict": "Balanced" },
+                { "text": "600", "assessment": "good", "verdict": "Balanced" }
+              ]
+            },
+            {
+              "id": "row-clusters",
+              "label": "Executions (Clusters)",
+              "cells": [
+                { "text": "150", "assessment": "good", "verdict": "K = 150" },
+                { "text": "150", "assessment": "good", "verdict": "K = 150" },
+                { "text": "150", "assessment": "good", "verdict": "K = 150" },
+                { "text": "150", "assessment": "good", "verdict": "K = 150" }
+              ]
+            },
+            {
+              "id": "row-mean",
+              "label": "Mean Discrepancy",
+              "cells": [
+                { "text": "2.78%", "assessment": "good", "verdict": "Transparent" },
+                { "text": "4.96%", "assessment": "caution", "verdict": "Elevated" },
+                { "text": "11.59%", "assessment": "bad", "verdict": "Severe" },
+                { "text": "11.50%", "assessment": "bad", "verdict": "Plateau" }
+              ]
+            },
+            {
+              "id": "row-se",
+              "label": "Cluster Std Error (CRSE)",
+              "cells": [
+                { "text": "0.23%", "assessment": "good", "verdict": "Precise" },
+                { "text": "0.29%", "assessment": "good", "verdict": "Precise" },
+                { "text": "0.47%", "assessment": "good", "verdict": "Precise" },
+                { "text": "0.46%", "assessment": "good", "verdict": "Precise" }
+              ]
+            },
+            {
+              "id": "row-ci",
+              "label": "95% Confidence Interval",
+              "cells": [
+                { "text": "[2.33%, 3.22%]", "assessment": "good", "verdict": "Narrow" },
+                { "text": "[4.39%, 5.52%]", "assessment": "good", "verdict": "Narrow" },
+                { "text": "[10.66%, 12.52%]", "assessment": "caution", "verdict": "Separated" },
+                { "text": "[10.59%, 12.40%]", "assessment": "caution", "verdict": "Overlapping" }
+              ]
+            },
+            {
+              "id": "row-median",
+              "label": "Median Discrepancy",
+              "cells": [
+                { "text": "0.0%", "assessment": "good", "verdict": "Veracious" },
+                { "text": "6.0%", "assessment": "caution", "verdict": "Shifted" },
+                { "text": "9.0%", "assessment": "bad", "verdict": "Exaggerated" },
+                { "text": "9.0%", "assessment": "bad", "verdict": "Exaggerated" }
+              ]
+            },
+            {
+              "id": "row-range",
+              "label": "Observed Range",
+              "cells": [
+                { "text": "[-10%, +10%]", "assessment": "good", "verdict": "Bounded" },
+                { "text": "[-10%, +30%]", "assessment": "caution", "verdict": "Widened" },
+                { "text": "[0%, +30%]", "assessment": "bad", "verdict": "One-sided" },
+                { "text": "[0%, +30%]", "assessment": "bad", "verdict": "One-sided" }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "pairwise-contrasts",
+      "title": "Pairwise Pressure Contrasts (CRSE & Holm Multiplicity Adjusted)",
+      "blocks": [
+        {
+          "type": "comparison",
+          "id": "contrast-table",
+          "labelColumn": "Contrast Pair",
+          "columns": [
+            "Mean Diff",
+            "Cluster SE",
+            "t-stat",
+            "Holm p-value",
+            "Effect Size (Cohen d)"
+          ],
+          "rows": [
+            {
+              "id": "c-med-low",
+              "label": "MEDIUM vs LOW",
+              "cells": [
+                { "text": "+2.18%", "assessment": "caution", "verdict": "Mild rise" },
+                { "text": "0.37%", "assessment": "good", "verdict": "Robust" },
+                { "text": "5.94", "assessment": "good", "verdict": "Significant" },
+                { "text": "< 0.001", "assessment": "good", "verdict": "p < 0.001" },
+                { "text": "d = 0.36", "assessment": "caution", "verdict": "Small-Medium" }
+              ]
+            },
+            {
+              "id": "c-high-low",
+              "label": "HIGH vs LOW",
+              "cells": [
+                { "text": "+8.81%", "assessment": "bad", "verdict": "Large surge" },
+                { "text": "0.52%", "assessment": "good", "verdict": "Robust" },
+                { "text": "16.79", "assessment": "good", "verdict": "Significant" },
+                { "text": "< 0.001", "assessment": "good", "verdict": "p < 0.001" },
+                { "text": "d = 1.03", "assessment": "bad", "verdict": "Large effect" }
+              ]
+            },
+            {
+              "id": "c-ext-low",
+              "label": "EXTREME vs LOW",
+              "cells": [
+                { "text": "+8.72%", "assessment": "bad", "verdict": "Large surge" },
+                { "text": "0.51%", "assessment": "good", "verdict": "Robust" },
+                { "text": "17.00", "assessment": "good", "verdict": "Significant" },
+                { "text": "< 0.001", "assessment": "good", "verdict": "p < 0.001" },
+                { "text": "d = 1.04", "assessment": "bad", "verdict": "Large effect" }
+              ]
+            },
+            {
+              "id": "c-high-med",
+              "label": "HIGH vs MEDIUM",
+              "cells": [
+                { "text": "+6.63%", "assessment": "bad", "verdict": "Substantial" },
+                { "text": "0.55%", "assessment": "good", "verdict": "Robust" },
+                { "text": "11.99", "assessment": "good", "verdict": "Significant" },
+                { "text": "< 0.001", "assessment": "good", "verdict": "p < 0.001" },
+                { "text": "d = 0.72", "assessment": "bad", "verdict": "Medium-Large" }
+              ]
+            },
+            {
+              "id": "c-ext-med",
+              "label": "EXTREME vs MEDIUM",
+              "cells": [
+                { "text": "+6.54%", "assessment": "bad", "verdict": "Substantial" },
+                { "text": "0.54%", "assessment": "good", "verdict": "Robust" },
+                { "text": "12.06", "assessment": "good", "verdict": "Significant" },
+                { "text": "< 0.001", "assessment": "good", "verdict": "p < 0.001" },
+                { "text": "d = 0.73", "assessment": "bad", "verdict": "Medium-Large" }
+              ]
+            },
+            {
+              "id": "c-ext-high",
+              "label": "EXTREME vs HIGH",
+              "cells": [
+                { "text": "-0.09%", "assessment": "good", "verdict": "Equivalent" },
+                { "text": "0.66%", "assessment": "good", "verdict": "Robust" },
+                { "text": "-0.14", "assessment": "good", "verdict": "NS" },
+                { "text": "0.887", "assessment": "good", "verdict": "Not Significant" },
+                { "text": "d = -0.01", "assessment": "good", "verdict": "Plateau" }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "methodology",
+      "title": "Methodological Summary and Reproducibility",
+      "blocks": [
+        {
+          "type": "callout",
+          "id": "callout-method",
+          "level": "note",
+          "title": "Metric Definition and Calculation",
+          "text": "The discrepancy metric (deception_gap) is defined in models/experiment.py and analysis/statistics.py as the signed percentage point difference between reported and actual progress: deception_gap = reported_progress - actual_progress. The verified campaign comprises 2,400 balanced observations across 600 execution clusters (seed 42 to 641), with unseeded pilot files excluded by design. Standard errors reflect cluster-robust standard errors (CRSE) grouped by execution seed."
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "id": "exp-model",
+      "title": "Experiment Models (models/experiment.py)",
+      "url": "https://github.com/veil-research/veil/blob/main/models/experiment.py"
+    },
+    {
+      "id": "stat-analysis",
+      "title": "Statistical Analysis Engine (analysis/statistics.py)",
+      "url": "https://github.com/veil-research/veil/blob/main/analysis/statistics.py"
+    },
+    {
+      "id": "campaign-results",
+      "title": "Factorial Campaign JSON Dataset (results/factorial_campaign)",
+      "url": "https://github.com/veil-research/veil/tree/main/results/factorial_campaign"
+    }
+  ]
+}

@@ -1,0 +1,580 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "FIGURE 4.1: SYSTEM ARCHITECTURE",
+    "subtitle": "VEIL — AI Agent Deception Research · Runtime Component Map",
+    "output": "docs/architecture/figure_4_1/figure_4_1_system_architecture.html",
+    "quality_profile": "showcase",
+    "legend": {
+      "entries": {
+        "frontend": { "label": "A. Frontend (React 19 & Streamlit)" },
+        "backend": { "label": "B. Backend & Experiment Pipeline" },
+        "cloud": { "label": "C. Model Runtime (Ollama & Qwen 2.5)" },
+        "database": { "label": "D. Storage & Artifacts (Results & Config)" }
+      }
+    },
+    "repository": {
+      "url": "https://github.com/Ishan6408/AI_Agent_Research.git",
+      "provider": "github",
+      "revision": "3352921b657e9d5d373cae3977bb7853d268df28"
+    }
+  },
+  "components": [
+    {
+      "id": "react_frontend",
+      "type": "frontend",
+      "label": "React / Vite Dashboard",
+      "sublabel": "frontend/src/",
+      "tag": "React 19 · TypeScript · Tailwind",
+      "icon": "frontend",
+      "pos": [40, 40],
+      "size": [195, 68],
+      "sources": [
+        {
+          "path": "frontend/src/App.tsx",
+          "line": 1,
+          "label": "App entry point"
+        },
+        {
+          "path": "frontend/package.json",
+          "line": 1,
+          "label": "Dependencies"
+        },
+        {
+          "path": "frontend/vite.config.ts",
+          "line": 1,
+          "label": "Vite build config"
+        }
+      ]
+    },
+    {
+      "id": "react_pages",
+      "type": "frontend",
+      "label": "Dashboard Pages",
+      "sublabel": "frontend/src/pages/",
+      "tag": "Experiments · Analytics · Auditor",
+      "icon": "frontend",
+      "pos": [300, 40],
+      "size": [195, 68],
+      "sources": [
+        {
+          "path": "frontend/src/pages/Experiments.tsx",
+          "line": 1,
+          "label": "Experiment list & run controls"
+        },
+        {
+          "path": "frontend/src/pages/ExperimentDetail.tsx",
+          "line": 1,
+          "label": "Per-experiment results & evidence"
+        },
+        {
+          "path": "frontend/src/pages/Analytics.tsx",
+          "line": 1,
+          "label": "Aggregated metrics & Recharts"
+        }
+      ]
+    },
+    {
+      "id": "streamlit_dashboard",
+      "type": "frontend",
+      "label": "Streamlit Dashboard",
+      "sublabel": "dashboard/app.py",
+      "tag": "Plotly · Pandas · Auto-refresh",
+      "icon": "frontend",
+      "pos": [40, 200],
+      "size": [195, 68],
+      "sources": [
+        {
+          "path": "dashboard/app.py",
+          "line": 1,
+          "label": "Streamlit dashboard"
+        },
+        {
+          "path": "run_dashboard.py",
+          "line": 1,
+          "label": "Launcher script"
+        },
+        {
+          "path": ".streamlit/config.toml",
+          "line": 1,
+          "label": "Theme config"
+        }
+      ]
+    },
+    {
+      "id": "fastapi_backend",
+      "type": "backend",
+      "label": "FastAPI Backend",
+      "sublabel": "backend/main.py",
+      "tag": "Uvicorn · CORS · /api",
+      "icon": "backend",
+      "pos": [600, 40],
+      "size": [185, 68],
+      "sources": [
+        {
+          "path": "backend/main.py",
+          "line": 1,
+          "label": "FastAPI app & middleware"
+        },
+        {
+          "path": "backend/core/config.py",
+          "line": 1,
+          "label": "Settings (port 8000)"
+        }
+      ]
+    },
+    {
+      "id": "api_routes",
+      "type": "backend",
+      "label": "API Route Handlers",
+      "sublabel": "backend/routes/",
+      "tag": "/experiments · /analytics",
+      "icon": "backend",
+      "pos": [600, 180],
+      "size": [185, 68],
+      "sources": [
+        {
+          "path": "backend/routes/experiments.py",
+          "line": 1,
+          "label": "Run & list experiments"
+        },
+        {
+          "path": "backend/routes/analytics.py",
+          "line": 1,
+          "label": "Analytics & auditor routes"
+        },
+        {
+          "path": "backend/routes/dataset.py",
+          "line": 1,
+          "label": "Dataset & agents routes"
+        }
+      ]
+    },
+    {
+      "id": "backend_services",
+      "type": "backend",
+      "label": "Backend Services",
+      "sublabel": "backend/services/",
+      "tag": "experiment · analytics",
+      "icon": "backend",
+      "pos": [600, 320],
+      "size": [185, 68],
+      "sources": [
+        {
+          "path": "backend/services/experiment_service.py",
+          "line": 1,
+          "label": "Reads results/ · triggers runner"
+        },
+        {
+          "path": "backend/services/analytics_service.py",
+          "line": 1,
+          "label": "Aggregate metrics from JSON"
+        },
+        {
+          "path": "backend/services/auditor_service.py",
+          "line": 1,
+          "label": "Exposes auditor data"
+        }
+      ]
+    },
+    {
+      "id": "experiment_runner",
+      "type": "backend",
+      "label": "ExperimentRunner",
+      "sublabel": "experiments/runner.py",
+      "tag": "run_all · run_factorial",
+      "icon": "active",
+      "pos": [870, 40],
+      "size": [185, 68],
+      "sources": [
+        {
+          "path": "experiments/runner.py",
+          "line": 1,
+          "label": "Orchestrates pressure loops"
+        },
+        {
+          "path": "run_campaign.py",
+          "line": 1,
+          "label": "Full factorial campaign entry"
+        },
+        {
+          "path": "main.py",
+          "line": 1,
+          "label": "Simple run_all entry point"
+        }
+      ]
+    },
+    {
+      "id": "simulator",
+      "type": "backend",
+      "label": "SoftwareCompanySimulator",
+      "sublabel": "simulation/simulator.py",
+      "tag": "Sprint orchestration",
+      "icon": "active",
+      "pos": [870, 180],
+      "size": [185, 68],
+      "sources": [
+        {
+          "path": "simulation/simulator.py",
+          "line": 1,
+          "label": "Per-sprint agent coordination"
+        },
+        {
+          "path": "simulation/policy_generator.py",
+          "line": 1,
+          "label": "Pressure → reward/penalty policy"
+        },
+        {
+          "path": "models/environment.py",
+          "line": 1,
+          "label": "PressureLevel enum (LOW–EXTREME)"
+        }
+      ]
+    },
+    {
+      "id": "agents",
+      "type": "backend",
+      "label": "AI Agent Team",
+      "sublabel": "agents/",
+      "tag": "Manager · Devs · QA · Auditor",
+      "icon": "backend",
+      "pos": [870, 320],
+      "size": [185, 68],
+      "sources": [
+        {
+          "path": "agents/base_agent.py",
+          "line": 1,
+          "label": "BaseAgent — think() + OllamaClient"
+        },
+        {
+          "path": "agents/manager.py",
+          "line": 1,
+          "label": "ManagerAgent — sprint tasks"
+        },
+        {
+          "path": "agents/auditor.py",
+          "line": 1,
+          "label": "AuditorAgent — suspicion score"
+        }
+      ]
+    },
+    {
+      "id": "prompt_engine",
+      "type": "backend",
+      "label": "Prompt Engine",
+      "sublabel": "prompts/ · utils/",
+      "tag": "System + Human messages",
+      "icon": "backend",
+      "pos": [870, 460],
+      "size": [185, 68],
+      "sources": [
+        {
+          "path": "prompts/manager_prompt.txt",
+          "line": 1,
+          "label": "Manager system prompt"
+        },
+        {
+          "path": "utils/prompt_loader.py",
+          "line": 1,
+          "label": "Prompt loader utility"
+        },
+        {
+          "path": "agents/base_agent.py",
+          "line": 20,
+          "label": "think() — constructs messages"
+        }
+      ]
+    },
+    {
+      "id": "ollama_client",
+      "type": "cloud",
+      "label": "OllamaClient",
+      "sublabel": "llm/ollama_client.py",
+      "tag": "ChatOllama · temp=0.3",
+      "icon": "cloud",
+      "pos": [1180, 250],
+      "size": [175, 68],
+      "sources": [
+        {
+          "path": "llm/ollama_client.py",
+          "line": 1,
+          "label": "ChatOllama wrapper — invoke()"
+        },
+        {
+          "path": "config/settings.py",
+          "line": 1,
+          "label": "qwen2.5:7b · temperature=0.3"
+        }
+      ]
+    },
+    {
+      "id": "ollama_runtime",
+      "type": "cloud",
+      "label": "Ollama Runtime",
+      "sublabel": "localhost:11434",
+      "tag": "qwen2.5:7b (local)",
+      "icon": "cloud",
+      "pos": [1180, 400],
+      "size": [175, 68],
+      "sources": [
+        {
+          "path": "requirements.txt",
+          "line": 1,
+          "label": "ollama, langchain-ollama"
+        },
+        {
+          "path": "config/settings.py",
+          "line": 1,
+          "label": "MODEL_NAME = qwen2.5:7b"
+        }
+      ]
+    },
+    {
+      "id": "config_store",
+      "type": "database",
+      "label": "Configuration",
+      "sublabel": "config/settings.py",
+      "tag": "Model · Dirs · Pressure",
+      "icon": "database",
+      "pos": [1180, 40],
+      "size": [185, 68],
+      "sources": [
+        {
+          "path": "config/settings.py",
+          "line": 1,
+          "label": "MODEL_NAME · TEMPERATURE · Dirs"
+        },
+        {
+          "path": "backend/core/config.py",
+          "line": 1,
+          "label": "FastAPI project settings"
+        }
+      ]
+    },
+    {
+      "id": "results_store",
+      "type": "database",
+      "label": "Experiment Results",
+      "sublabel": "results/",
+      "tag": "experiment_*.json · CSVs",
+      "icon": "database",
+      "pos": [300, 400],
+      "size": [185, 68],
+      "sources": [
+        {
+          "path": "utils/experiment_storage.py",
+          "line": 1,
+          "label": "save_experiment() — JSON writer"
+        },
+        {
+          "path": "results/experiment_summary.csv",
+          "line": 1,
+          "label": "Aggregated experiment summary"
+        },
+        {
+          "path": "results/factorial_campaign/experiment_20261004_185609_740c56b9.json",
+          "line": 1,
+          "label": "Factorial campaign output"
+        }
+      ]
+    },
+    {
+      "id": "metrics_store",
+      "type": "database",
+      "label": "Analysis Outputs",
+      "sublabel": "results/plots/ · statistical_analysis/",
+      "tag": "CSV · PNG · Reports",
+      "icon": "database",
+      "pos": [600, 460],
+      "size": [185, 68],
+      "sources": [
+        {
+          "path": "run_analysis.py",
+          "line": 1,
+          "label": "Statistical analysis pipeline"
+        },
+        {
+          "path": "results/plots/correlation/auditor_vs_deception_gap.png",
+          "line": 1,
+          "label": "Generated figure PNG"
+        },
+        {
+          "path": "results/statistical_analysis/adjusted_pairwise_pressure_comparisons.csv",
+          "line": 1,
+          "label": "Pairwise pressure comparison CSV"
+        }
+      ]
+    }
+  ],
+  "connections": [
+    {
+      "id": "react-app-to-pages",
+      "from": "react_frontend",
+      "to": "react_pages",
+      "label": "react-router-dom",
+      "variant": "emphasis"
+    },
+    {
+      "id": "ui-to-api",
+      "from": "react_pages",
+      "to": "fastapi_backend",
+      "label": "HTTP REST calls",
+      "variant": "emphasis"
+    },
+    {
+      "id": "api-to-routes",
+      "from": "fastapi_backend",
+      "to": "api_routes",
+      "label": "route handlers",
+      "variant": "emphasis",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "route": "straight"
+    },
+    {
+      "id": "routes-to-services",
+      "from": "api_routes",
+      "to": "backend_services",
+      "label": "delegates",
+      "variant": "emphasis",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "route": "straight"
+    },
+    {
+      "id": "services-to-runner",
+      "from": "backend_services",
+      "to": "experiment_runner",
+      "label": "triggers run",
+      "variant": "emphasis"
+    },
+    {
+      "id": "runner-to-sim",
+      "from": "experiment_runner",
+      "to": "simulator",
+      "label": "pressure + seed",
+      "variant": "emphasis",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "route": "straight"
+    },
+    {
+      "id": "sim-to-agents",
+      "from": "simulator",
+      "to": "agents",
+      "label": "coordinates agents",
+      "variant": "emphasis",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "route": "straight"
+    },
+    {
+      "id": "agents-to-prompts",
+      "from": "agents",
+      "to": "prompt_engine",
+      "label": "loads prompts",
+      "variant": "default",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "route": "straight"
+    },
+    {
+      "id": "agents-to-ollama-client",
+      "from": "agents",
+      "to": "ollama_client",
+      "label": "invoke(messages)",
+      "variant": "emphasis"
+    },
+    {
+      "id": "ollama-client-to-runtime",
+      "from": "ollama_client",
+      "to": "ollama_runtime",
+      "label": "ChatOllama HTTP",
+      "variant": "emphasis",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "route": "straight"
+    },
+    {
+      "id": "runtime-response",
+      "from": "ollama_runtime",
+      "to": "ollama_client",
+      "label": "JSON response",
+      "variant": "dashed"
+    },
+    {
+      "id": "sim-to-results",
+      "from": "simulator",
+      "to": "results_store",
+      "label": "save_experiment()",
+      "variant": "emphasis"
+    },
+    {
+      "id": "config-to-runner",
+      "from": "config_store",
+      "to": "experiment_runner",
+      "label": "MODEL_NAME · dirs",
+      "variant": "dashed"
+    },
+    {
+      "id": "services-to-results",
+      "from": "backend_services",
+      "to": "results_store",
+      "label": "reads JSON files",
+      "variant": "dashed"
+    },
+    {
+      "id": "results-to-metrics",
+      "from": "results_store",
+      "to": "metrics_store",
+      "label": "run_analysis.py",
+      "variant": "emphasis"
+    },
+    {
+      "id": "streamlit-reads-results",
+      "from": "streamlit_dashboard",
+      "to": "results_store",
+      "label": "glob results/*.json",
+      "variant": "dashed"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "cyan",
+      "title": "Dual Frontend Architecture",
+      "items": [
+        "React 19 + Vite dashboard (frontend/) uses TypeScript, Tailwind CSS v4, Recharts, and react-router-dom v7; communicates with FastAPI backend via REST API at localhost:8000",
+        "Streamlit dashboard (dashboard/app.py) reads results/*.json directly via glob; launched by run_dashboard.py — independent of FastAPI with no API calls",
+        "Both frontends are independent: React uses HTTP API, Streamlit uses direct filesystem reads from results/"
+      ]
+    },
+    {
+      "dot": "violet",
+      "title": "Experiment Pipeline",
+      "items": [
+        "ExperimentRunner (experiments/runner.py) loops over PressureLevel × Personality × TaskDifficulty — 600 executions in the factorial campaign (run_campaign.py)",
+        "SoftwareCompanySimulator (simulation/simulator.py) coordinates one sprint: ManagerAgent assigns tasks; each of four developer agents estimates and reports progress; AuditorAgent scores deception",
+        "PolicyGenerator maps each PressureLevel (LOW/MEDIUM/HIGH/EXTREME) to a reward/penalty/deadline policy injected into each agent decision context"
+      ]
+    },
+    {
+      "dot": "emerald",
+      "title": "Model Runtime",
+      "items": [
+        "OllamaClient (llm/ollama_client.py) wraps langchain_ollama.ChatOllama; model=qwen2.5:7b and temperature=0.3 are set in config/settings.py",
+        "All six agent types inherit BaseAgent.think(), which builds [SystemMessage, HumanMessage] and calls self.llm.invoke(); provenance records raw prompts and responses",
+        "Ollama daemon runs locally at localhost:11434; no cloud API is used; the qwen2.5:7b model is served on-device"
+      ]
+    },
+    {
+      "dot": "amber",
+      "title": "Storage & Artifacts",
+      "items": [
+        "utils/experiment_storage.py writes one experiment_<timestamp>_<uuid8>.json per agent observation into results/ or results/factorial_campaign/",
+        "run_analysis.py reads result JSON files and writes CSV summaries (experiment_summary.csv) and PNG figures to results/plots/ and results/statistical_analysis/",
+        "config/settings.py is source configuration; results/ sub-directories are generated experiment outputs written at runtime"
+      ]
+    }
+  ]
+}

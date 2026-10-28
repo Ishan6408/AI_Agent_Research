@@ -1,6 +1,6 @@
 # Viva & Technical Interview Preparation Guide
 
-**Project:** AI-Agent-Research: "Do AI Agents Cheat Under Pressure? Emergent Deception in Multi-Agent Organizations"  
+**Project:** VEIL — AI Agent Deception Research: "Do AI Agents Cheat Under Pressure? Emergent Deception in Multi-Agent Organizations"  
 **Branch:** `Ishhh`  
 **Target Audience:** B.Tech IT Major Project Viva / Academic Defense / Technical Interview  
 **Date:** October 2026  

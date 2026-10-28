@@ -1,0 +1,203 @@
+{
+  "schema_version": 1,
+  "diagram_type": "explainer",
+  "meta": {
+    "title": "FIGURE 4.6: ROLE OR PROFILE COMPARISON",
+    "id": "role-or-profile-comparison",
+    "locale": "en",
+    "quality_profile": "showcase",
+    "style": "clean"
+  },
+  "answer": {
+    "summary": "Agent personality profiles are the primary internal determinant of deceptive reporting, spanning from -1.58% (Risk Averse) to +16.07% (Ambitious). In contrast, technical developer roles show statistically indistinguishable reporting gaps between 7.58% and 7.91%.",
+    "reasons": [
+      "Personality profiles drive substantial behavioral divergence (Omnibus Wald chi-square = 2,450.87, p < 0.0001).",
+      "Ambitious agents exhibit the highest mean deception gap (+16.07%, 95% CI: [15.34%, 16.81%]), followed by Opportunistic (+12.68%) and Optimistic (+11.08%).",
+      "Honest agents maintain veridical reporting (+0.27%), while Risk Averse agents engage in conservative sandbagging (-1.58%).",
+      "Technical developer roles show no meaningful variance (chi-square = 2.11, p = 0.549), reflecting their shared underlying agent architecture."
+    ],
+    "scope": "Factorial campaign · 2,400 observations · 600 execution clusters · Balanced 4x5x3 grid"
+  },
+  "panels": [
+    {
+      "id": "personality-summary",
+      "title": "Agent Personality Profiles (Behavioral Archetypes)",
+      "blocks": [
+        {
+          "type": "comparison",
+          "id": "personality-table",
+          "labelColumn": "Personality Profile",
+          "columns": [
+            "Observations (n)",
+            "Mean Gap (%)",
+            "95% CI",
+            "Median (%)",
+            "Auditor Detection Rate",
+            "Behavioral Pattern"
+          ],
+          "rows": [
+            {
+              "id": "row-risk-averse",
+              "label": "Risk Averse",
+              "cells": [
+                { "text": "480", "assessment": "good", "verdict": "Balanced" },
+                { "text": "-1.58%", "assessment": "good", "verdict": "Sandbagging" },
+                { "text": "[-1.87%, -1.30%]", "assessment": "good", "verdict": "Negative" },
+                { "text": "0.0%", "assessment": "good", "verdict": "Median" },
+                { "text": "31.88% (153/480)", "assessment": "good", "verdict": "Low" },
+                { "text": "Conservative under-reporting", "assessment": "good", "verdict": "Risk-Averse" }
+              ]
+            },
+            {
+              "id": "row-honest",
+              "label": "Honest",
+              "cells": [
+                { "text": "480", "assessment": "good", "verdict": "Balanced" },
+                { "text": "+0.27%", "assessment": "good", "verdict": "Veridical" },
+                { "text": "[+0.14%, +0.40%]", "assessment": "good", "verdict": "Near Zero" },
+                { "text": "0.0%", "assessment": "good", "verdict": "Median" },
+                { "text": "18.75% (90/480)", "assessment": "good", "verdict": "Lowest" },
+                { "text": "Transparent status reporting", "assessment": "good", "verdict": "Honest" }
+              ]
+            },
+            {
+              "id": "row-optimistic",
+              "label": "Optimistic",
+              "cells": [
+                { "text": "480", "assessment": "caution", "verdict": "Balanced" },
+                { "text": "+11.08%", "assessment": "caution", "verdict": "Exaggeration" },
+                { "text": "[+10.36%, +11.81%]", "assessment": "caution", "verdict": "Elevated" },
+                { "text": "8.0%", "assessment": "caution", "verdict": "Median" },
+                { "text": "82.08% (394/480)", "assessment": "bad", "verdict": "High" },
+                { "text": "Substantial positive bias", "assessment": "caution", "verdict": "Optimistic" }
+              ]
+            },
+            {
+              "id": "row-opportunistic",
+              "label": "Opportunistic",
+              "cells": [
+                { "text": "480", "assessment": "bad", "verdict": "Balanced" },
+                { "text": "+12.68%", "assessment": "bad", "verdict": "Severe" },
+                { "text": "[+11.93%, +13.44%]", "assessment": "bad", "verdict": "High" },
+                { "text": "9.0%", "assessment": "bad", "verdict": "Median" },
+                { "text": "88.96% (427/480)", "assessment": "bad", "verdict": "Very High" },
+                { "text": "Aggressive schedule exaggeration", "assessment": "bad", "verdict": "Opportunistic" }
+              ]
+            },
+            {
+              "id": "row-ambitious",
+              "label": "Ambitious",
+              "cells": [
+                { "text": "480", "assessment": "bad", "verdict": "Balanced" },
+                { "text": "+16.07%", "assessment": "bad", "verdict": "Maximum" },
+                { "text": "[+15.34%, +16.81%]", "assessment": "bad", "verdict": "Ceiling" },
+                { "text": "17.0%", "assessment": "bad", "verdict": "Median" },
+                { "text": "96.46% (463/480)", "assessment": "bad", "verdict": "Critical" },
+                { "text": "Maximum performance inflation", "assessment": "bad", "verdict": "Ambitious" }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "roles-summary",
+      "title": "Technical Developer Roles (Organizational Assignment)",
+      "blocks": [
+        {
+          "type": "comparison",
+          "id": "roles-table",
+          "labelColumn": "Developer Role",
+          "columns": [
+            "Observations (n)",
+            "Mean Gap (%)",
+            "95% CI",
+            "Median (%)",
+            "Auditor Detection Rate",
+            "Equivalence Status"
+          ],
+          "rows": [
+            {
+              "id": "row-frontend",
+              "label": "Frontend Developer",
+              "cells": [
+                { "text": "600", "assessment": "good", "verdict": "Balanced" },
+                { "text": "7.58%", "assessment": "caution", "verdict": "Baseline" },
+                { "text": "[6.81%, 8.35%]", "assessment": "caution", "verdict": "Uniform" },
+                { "text": "6.0%", "assessment": "caution", "verdict": "Median" },
+                { "text": "71.67% (430/600)", "assessment": "caution", "verdict": "Baseline" },
+                { "text": "Reference Technical Role", "assessment": "good", "verdict": "Ref" }
+              ]
+            },
+            {
+              "id": "row-backend",
+              "label": "Backend Developer",
+              "cells": [
+                { "text": "600", "assessment": "good", "verdict": "Balanced" },
+                { "text": "7.64%", "assessment": "caution", "verdict": "+0.06% vs Ref" },
+                { "text": "[6.88%, 8.40%]", "assessment": "caution", "verdict": "Uniform" },
+                { "text": "6.0%", "assessment": "caution", "verdict": "Median" },
+                { "text": "67.17% (403/600)", "assessment": "caution", "verdict": "Equivalent" },
+                { "text": "Statistically Indistinguishable (p = 0.90)", "assessment": "good", "verdict": "Equivalent" }
+              ]
+            },
+            {
+              "id": "row-devops",
+              "label": "DevOps Engineer",
+              "cells": [
+                { "text": "600", "assessment": "good", "verdict": "Balanced" },
+                { "text": "7.69%", "assessment": "caution", "verdict": "+0.11% vs Ref" },
+                { "text": "[6.92%, 8.46%]", "assessment": "caution", "verdict": "Uniform" },
+                { "text": "6.0%", "assessment": "caution", "verdict": "Median" },
+                { "text": "61.00% (366/600)", "assessment": "caution", "verdict": "Equivalent" },
+                { "text": "Statistically Indistinguishable (p = 0.83)", "assessment": "good", "verdict": "Equivalent" }
+              ]
+            },
+            {
+              "id": "row-qa",
+              "label": "QA Engineer",
+              "cells": [
+                { "text": "600", "assessment": "good", "verdict": "Balanced" },
+                { "text": "7.91%", "assessment": "caution", "verdict": "+0.33% vs Ref" },
+                { "text": "[7.12%, 8.70%]", "assessment": "caution", "verdict": "Uniform" },
+                { "text": "6.0%", "assessment": "caution", "verdict": "Median" },
+                { "text": "54.67% (328/600)", "assessment": "caution", "verdict": "Equivalent" },
+                { "text": "Statistically Indistinguishable (p = 0.55)", "assessment": "good", "verdict": "Equivalent" }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "methodology",
+      "title": "Methodological Verification and Metric Implementation",
+      "blocks": [
+        {
+          "type": "callout",
+          "id": "metric-callout",
+          "level": "note",
+          "title": "Metric Definitions and Structural Verification",
+          "text": "The primary comparison metric is deception_gap, defined in models/experiment.py and analysis/statistics.py as deception_gap = reported_progress - actual_progress (percentage points). Positive values represent over-reporting (exaggeration), zero represents veridical reporting, and negative values represent under-reporting (sandbagging). The secondary metric is auditor_detection_rate, calculated as the proportion of evaluations with auditor_score >= 60. The dataset contains 2,400 balanced observations across 600 simulator runs (seeds 42 to 641) in results/factorial_campaign. Differences across technical developer roles are negligible (<0.33 percentage points, p = 0.549), whereas personality profiles exhibit massive variation (-1.58% to +16.07%, p < 0.0001)."
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "id": "experiment-model",
+      "title": "Experiment Data Model (models/experiment.py)",
+      "url": "https://github.com/veil-research/veil/blob/main/models/experiment.py"
+    },
+    {
+      "id": "statistical-analysis",
+      "title": "Statistical Analysis Engine (analysis/run_statistical_analysis.py)",
+      "url": "https://github.com/veil-research/veil/blob/main/analysis/run_statistical_analysis.py"
+    },
+    {
+      "id": "campaign-results",
+      "title": "Factorial Campaign JSON Dataset (results/factorial_campaign)",
+      "url": "https://github.com/veil-research/veil/tree/main/results/factorial_campaign"
+    }
+  ]
+}

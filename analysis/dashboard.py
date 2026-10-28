@@ -9,7 +9,7 @@ import plotly.graph_objects as go
 # ==========================================================
 
 st.set_page_config(
-    page_title="AI Deception Research Dashboard",
+    page_title="VEIL — AI Agent Deception Research",
     page_icon="🤖",
     layout="wide",
     initial_sidebar_state="expanded"
@@ -50,13 +50,12 @@ st.markdown(
 # TITLE
 # ==========================================================
 
-st.title("🤖 AI Agent Deception Research Dashboard")
+st.title("VEIL")
 
 st.caption(
     """
-    Research Project:
-    Multi-Agent Software Company Simulator for
-    Studying Deceptive Behaviour under Workplace Pressure
+    AI Agent Deception Research &mdash; Investigating deceptive behavior in autonomous AI agents.
+    Multi-Agent Software Company Simulator for Studying Deceptive Behaviour under Workplace Pressure.
     """
 )
 
@@ -1674,14 +1673,13 @@ st.markdown(
     """
     ---
 
-    ### 🤖 AI Agent Research Project
+    ### 🤖 VEIL — AI Agent Deception Research
+    
+    *Investigating deceptive behavior in autonomous AI agents.*
 
-    **Title**
+    **Research Focus**
 
-    *Studying Deceptive Behaviour in AI Software Developers
-    under Workplace Pressure*
-
-    **Developed for Vocational Training Research Project**
+    *Emergent deception, reward hacking, auditor detection, and behavioral changes under pressure in multi-agent organizations.*
 
     **Features Included**
 

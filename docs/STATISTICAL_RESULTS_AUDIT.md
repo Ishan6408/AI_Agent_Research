@@ -1,6 +1,6 @@
 # Statistical Results Audit and Interpretation Verification
 
-**Project:** AI-Agent-Research: *"Do AI Agents Cheat Under Pressure? Emergent Deception in Multi-Agent Organizations"*  
+**Project:** VEIL — AI Agent Deception Research: *"Do AI Agents Cheat Under Pressure? Emergent Deception in Multi-Agent Organizations"*  
 **Phase:** 5A.10C — Statistical Results Audit and Interpretation Verification  
 **Repository Branch:** `Ishhh`  
 **Dataset Audited:** `results/factorial_campaign/` ($N = 2,400$ developer observations across $N_{\text{exec}} = 600$ simulator executions)  

@@ -1,3 +1,6 @@
+# VEIL
+### AI Agent Deception Research
+
 # Do AI Agents Cheat Under Pressure? — Emergent Deception in Multi-Agent Organizations
 
 ## Abstract

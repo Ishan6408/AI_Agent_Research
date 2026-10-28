@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "receiptId": "7b08a32d-68ae-47c3-a211-e22691de676e",
+  "status": "current",
+  "command": "deliver",
+  "type": "architecture",
+  "input": "C:\\Users\\igpat\\Downloads\\AI_Agent_Research\\docs\\architecture\\figure_4_1\\figure_4_1_system_architecture.json",
+  "output": "C:\\Users\\igpat\\Downloads\\AI_Agent_Research\\docs\\architecture\\figure_4_1\\figure_4_1_system_architecture.html",
+  "specification": {
+    "sha256": "0d2e527ad3cc00c8b4e876e061c24aaa1f3a67c2d0398711be8f033c872b28cb",
+    "bytes": 16259
+  },
+  "artifact": {
+    "sha256": "150402c111869e605cd21a0056614c0447ba4da6e5e3087deba077da6a973149",
+    "bytes": 873938
+  }
+}

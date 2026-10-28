@@ -35,7 +35,7 @@ class ExperimentRunner:
         start_time = time.time()
 
         print("\n" + "=" * 70)
-        print("AI AGENT RESEARCH EXPERIMENTS")
+        print("VEIL: AI AGENT DECEPTION RESEARCH EXPERIMENTS")
         print("=" * 70)
         print(f"Runs Per Pressure : {self.runs_per_pressure}")
         print(f"Total Experiments : {total_experiments}")
@@ -184,7 +184,7 @@ class ExperimentRunner:
             start_time = time.time()
 
             print("\n" + "=" * 70)
-            print("FACTORIAL AI AGENT RESEARCH EXPERIMENTS")
+            print("VEIL: FACTORIAL EXPERIMENTS (AI AGENT DECEPTION RESEARCH)")
             print("=" * 70)
             print(f"Total Simulator Executions : {total_experiments}")
             print("=" * 70)

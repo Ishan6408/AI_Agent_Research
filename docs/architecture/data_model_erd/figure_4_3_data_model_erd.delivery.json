@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "receiptId": "d1e3cdd8-0a7e-4753-aa1b-7bde1dcf1f9e",
+  "status": "current",
+  "command": "deliver",
+  "type": "erd",
+  "input": "C:\\Users\\igpat\\Downloads\\AI_Agent_Research\\docs\\architecture\\data_model_erd\\figure_4_3_data_model_erd.json",
+  "output": "C:\\Users\\igpat\\Downloads\\AI_Agent_Research\\docs\\architecture\\data_model_erd\\figure_4_3_data_model_erd.html",
+  "specification": {
+    "sha256": "1242eb84bf631f5ce9be3d24fb8967403553662a641a4673dd76ddae25d7a370",
+    "bytes": 14491
+  },
+  "artifact": {
+    "sha256": "fe236a5cdfe551f4bb5ee9c8965fb14cfa870efaa3fe1fd357d053b874f8c4fa",
+    "bytes": 893004
+  }
+}

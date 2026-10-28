@@ -1,0 +1,50 @@
+{
+  "schemaVersion": 1,
+  "ok": true,
+  "command": "finalize",
+  "status": "pass",
+  "type": "explainer",
+  "quality": "showcase",
+  "specification": {
+    "path": "C:\\Users\\igpat\\Downloads\\AI_Agent_Research\\docs\\figures\\auditor_detection_by_pressure\\candidate.archify.md",
+    "sha256": "45cf594689a4d4867e011f46e8c6055a38205a2d02f488059a8e4568ac36f032",
+    "bytes": 3997
+  },
+  "artifact": {
+    "path": "C:\\Users\\igpat\\Downloads\\AI_Agent_Research\\docs\\figures\\auditor_detection_by_pressure\\auditor_detection_by_pressure.html",
+    "sha256": "e68a47c7385b12fe6fc7eeb5b903d5b5e8a123ea4c7171cf3f7b974f0a578faf",
+    "bytes": 172579
+  },
+  "gates": {
+    "validate": "pass",
+    "deliver": "pass",
+    "check": "pass",
+    "browser-check": "not-run"
+  },
+  "diagnostics": [],
+  "diagnosticSummary": {
+    "total": 0,
+    "shown": 0,
+    "truncated": false
+  },
+  "evidence": {
+    "receipt": "C:\\Users\\igpat\\Downloads\\AI_Agent_Research\\docs\\figures\\auditor_detection_by_pressure\\auditor_detection_by_pressure.finalize.json",
+    "summaryReceipt": "C:\\Users\\igpat\\Downloads\\AI_Agent_Research\\docs\\figures\\auditor_detection_by_pressure\\auditor_detection_by_pressure.finalize-summary.json"
+  },
+  "update": {
+    "status": "current",
+    "installedVersion": "3.2.0",
+    "availableVersion": "3.2.0",
+    "releaseNotes": null,
+    "checkedAt": "2026-10-27T17:20:07.483Z",
+    "source": "cache",
+    "noticeRequired": false,
+    "noticeText": null
+  },
+  "visualReview": "not-requested",
+  "durationMs": 1324,
+  "browserCheck": {
+    "requested": false,
+    "ran": false
+  }
+}

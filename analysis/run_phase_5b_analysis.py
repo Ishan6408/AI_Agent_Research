@@ -934,7 +934,8 @@ def generate_markdown_report(
     lines = [
         "# Phase 5B Autonomous Strategy Selection Campaign: Statistical Analysis Report",
         "",
-        "**Research Project:** *“Do AI Agents Cheat Under Pressure? — Emergent Deception in Multi-Agent Organizations”*  ",
+        "**Project:** VEIL — AI Agent Deception Research  ",
+        "**Research Study:** *“Do AI Agents Cheat Under Pressure? — Emergent Deception in Multi-Agent Organizations”*  ",
         "**Benchmark Paradigm:** Autonomous LLM Strategy Selection (Phase 5B)  ",
         "",
         "---",
@@ -1165,7 +1166,7 @@ def run_phase_5b_analysis(
 
 def main() -> None:
     parser = argparse.ArgumentParser(
-        description="Phase 5B Statistical Analysis Pipeline (AI-Agent-Research)",
+        description="VEIL: Phase 5B Statistical Analysis Pipeline (AI Agent Deception Research)",
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     )
     parser.add_argument(

@@ -7,6 +7,7 @@ from backend.routes import experiments, agents, analytics, dataset, auditor
 
 app = FastAPI(
     title=settings.PROJECT_NAME,
+    description="Investigating deceptive behavior in autonomous AI agents.",
     version=settings.VERSION,
     openapi_url=f"{settings.API_V1_STR}/openapi.json"
 )

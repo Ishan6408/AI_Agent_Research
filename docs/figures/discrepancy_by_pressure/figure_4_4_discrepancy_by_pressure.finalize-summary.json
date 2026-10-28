@@ -1,0 +1,50 @@
+{
+  "schemaVersion": 1,
+  "ok": true,
+  "command": "finalize",
+  "status": "pass",
+  "type": "explainer",
+  "quality": "showcase",
+  "specification": {
+    "path": "C:\\Users\\igpat\\Downloads\\AI_Agent_Research\\docs\\figures\\discrepancy_by_pressure\\candidate.archify.md",
+    "sha256": "fceba9b2460da5075b88e1b4708199411be99811fbfaedea98eed7511cfa8860",
+    "bytes": 4110
+  },
+  "artifact": {
+    "path": "C:\\Users\\igpat\\Downloads\\AI_Agent_Research\\docs\\figures\\discrepancy_by_pressure\\figure_4_4_discrepancy_by_pressure.html",
+    "sha256": "fc13bdb2c3dd81ef0abac438e88abde06c1763ff6d698f81f27f07f67f511848",
+    "bytes": 175881
+  },
+  "gates": {
+    "validate": "pass",
+    "deliver": "pass",
+    "check": "pass",
+    "browser-check": "not-run"
+  },
+  "diagnostics": [],
+  "diagnosticSummary": {
+    "total": 0,
+    "shown": 0,
+    "truncated": false
+  },
+  "evidence": {
+    "receipt": "C:\\Users\\igpat\\Downloads\\AI_Agent_Research\\docs\\figures\\discrepancy_by_pressure\\figure_4_4_discrepancy_by_pressure.finalize.json",
+    "summaryReceipt": "C:\\Users\\igpat\\Downloads\\AI_Agent_Research\\docs\\figures\\discrepancy_by_pressure\\figure_4_4_discrepancy_by_pressure.finalize-summary.json"
+  },
+  "update": {
+    "status": "current",
+    "installedVersion": "3.2.0",
+    "availableVersion": "3.2.0",
+    "releaseNotes": null,
+    "checkedAt": "2026-10-27T17:20:07.483Z",
+    "source": "cache",
+    "noticeRequired": false,
+    "noticeText": null
+  },
+  "visualReview": "not-requested",
+  "durationMs": 1404,
+  "browserCheck": {
+    "requested": false,
+    "ran": false
+  }
+}

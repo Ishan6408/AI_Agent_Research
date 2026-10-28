@@ -1,6 +1,6 @@
 # Statistical Final Reconciliation Report (Phase 5A.10E)
 
-**Project:** AI-Agent-Research: "Do AI Agents Cheat Under Pressure? Emergent Deception in Multi-Agent Organizations"  
+**Project:** VEIL — AI Agent Deception Research: "Do AI Agents Cheat Under Pressure? Emergent Deception in Multi-Agent Organizations"  
 **Branch:** `Ishhh`  
 **Phase:** 5A.10E — Resolve Statistical Verification Inconsistencies  
 **Date:** October 2026  

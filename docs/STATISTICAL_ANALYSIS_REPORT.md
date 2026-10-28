@@ -1,6 +1,6 @@
 # Statistical Analysis Report: Factorial Campaign
 
-**Project:** AI-Agent-Research: *"Do AI Agents Cheat Under Pressure? Emergent Deception in Multi-Agent Organizations"*  
+**Project:** VEIL — AI Agent Deception Research: *"Do AI Agents Cheat Under Pressure? Emergent Deception in Multi-Agent Organizations"*  
 **Phase:** 5A.10B & 5A.10C — Statistical Analysis and Audit Verification  
 **Repository Branch:** `Ishhh`  
 **Dataset Analyzed:** `results/factorial_campaign/` ($N = 2,400$ developer observations, $N_{\text{exec}} = 600$ simulator executions)  

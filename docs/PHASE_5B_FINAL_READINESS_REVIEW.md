@@ -1,6 +1,6 @@
 # Phase 5B.1C: Final Pre-Implementation Readiness Review
 
-**Project:** AI-Agent-Research — *"Do AI Agents Cheat Under Pressure? Emergent Deception in Multi-Agent Organizations"*  
+**Project:** VEIL — AI Agent Deception Research — *"Do AI Agents Cheat Under Pressure? Emergent Deception in Multi-Agent Organizations"*  
 **Repository Branch:** `Ishhh`  
 **Review Phase:** Phase 5B.1C Final Pre-Implementation Verification  
 **Date:** October 2026  

@@ -1,0 +1,524 @@
+{
+  "schema_version": 2,
+  "diagram_type": "workflow",
+  "meta": {
+    "title": "EXPERIMENT EXECUTION FLOW",
+    "subtitle": "VEIL — AI Agent Deception Research · End-to-End Pipeline",
+    "output": "docs/architecture/experiment_execution_flow/figure_4_2_experiment_execution_flow.html",
+    "visual_preset": "signal-flow",
+    "quality_profile": "showcase",
+    "repository": {
+      "url": "https://github.com/Ishan6408/AI_Agent_Research.git",
+      "provider": "github",
+      "revision": "3352921b657e9d5d373cae3977bb7853d268df28"
+    }
+  },
+  "lanes": [
+    { "id": "main", "label": "Main Execution Flow" },
+    { "id": "logging", "label": "Independent Logging & Evidence" },
+    { "id": "analysis", "label": "Statistical Analysis & UI" },
+    { "id": "exception", "label": "Quality Gates & Exception Handling", "variant": "exception" }
+  ],
+  "phases": [
+    { "id": "prep", "label": "Preparation", "fromCol": 0, "toCol": 1, "variant": "emphasis" },
+    { "id": "exec", "label": "Execution", "fromCol": 2, "toCol": 3, "variant": "default" },
+    { "id": "val_anal", "label": "Validation & Analysis", "fromCol": 4, "toCol": 4, "variant": "security" },
+    { "id": "review", "label": "Review & Dashboards", "fromCol": 5, "toCol": 5, "variant": "emphasis" }
+  ],
+  "mainPath": [
+    "config_load",
+    "preflight_gate",
+    "exp_init",
+    "exec_simulation",
+    "output_storage",
+    "validation_gate",
+    "stat_analysis",
+    "react_dashboard"
+  ],
+  "nodes": [
+    {
+      "id": "config_load",
+      "lane": "main",
+      "col": 0,
+      "type": "backend",
+      "label": "1. Configuration",
+      "sublabel": "Load settings & params",
+      "tag": "config/settings.py",
+      "icon": "backend",
+      "width": 126,
+      "sources": [
+        {
+          "path": "config/settings.py",
+          "line": 1,
+          "label": "Model & runtime settings"
+        },
+        {
+          "path": "backend/core/config.py",
+          "line": 1,
+          "label": "FastAPI project settings"
+        }
+      ]
+    },
+    {
+      "id": "config_remediation",
+      "lane": "exception",
+      "col": 0,
+      "type": "backend",
+      "label": "Setup Remediation",
+      "sublabel": "Fix config or paths",
+      "tag": "audit_script.py",
+      "icon": "active",
+      "width": 126,
+      "sources": [
+        {
+          "path": "audit_script.py",
+          "line": 1,
+          "label": "Audit diagnosis tool"
+        }
+      ]
+    },
+    {
+      "id": "preflight_gate",
+      "lane": "main",
+      "col": 1,
+      "type": "security",
+      "label": "2. Preflight Gate",
+      "sublabel": "Ollama & dirs ready?",
+      "tag": "test_pilot_runner.py",
+      "icon": "decision",
+      "width": 126,
+      "sources": [
+        {
+          "path": "test_pilot_runner.py",
+          "line": 1,
+          "label": "Pilot test runner"
+        },
+        {
+          "path": "run_campaign.py",
+          "line": 1,
+          "label": "Preflight check logic"
+        }
+      ]
+    },
+    {
+      "id": "preflight_fail",
+      "lane": "exception",
+      "col": 1,
+      "type": "security",
+      "label": "Preflight Failure",
+      "sublabel": "Ollama daemon offline",
+      "tag": "Connection error",
+      "icon": "failure",
+      "width": 126,
+      "sources": [
+        {
+          "path": "test_pilot_runner.py",
+          "line": 1,
+          "label": "Daemon connection check"
+        }
+      ]
+    },
+    {
+      "id": "exp_init",
+      "lane": "main",
+      "col": 2,
+      "type": "backend",
+      "label": "3. Initialization",
+      "sublabel": "Matrix & seed setup",
+      "tag": "600 executions",
+      "icon": "active",
+      "width": 126,
+      "sources": [
+        {
+          "path": "experiments/runner.py",
+          "line": 115,
+          "label": "generate_factorial_executions"
+        },
+        {
+          "path": "models/experiment.py",
+          "line": 24,
+          "label": "ProvenanceData model"
+        }
+      ]
+    },
+    {
+      "id": "provenance_init",
+      "lane": "logging",
+      "col": 2,
+      "type": "database",
+      "label": "Git Provenance",
+      "sublabel": "Commit HEAD capture",
+      "tag": "git rev-parse",
+      "icon": "database",
+      "width": 126,
+      "sources": [
+        {
+          "path": "simulation/simulator.py",
+          "line": 27,
+          "label": "get_git_commit() rev-parse"
+        }
+      ]
+    },
+    {
+      "id": "exec_simulation",
+      "lane": "main",
+      "col": 3,
+      "type": "cloud",
+      "label": "4. Execution",
+      "sublabel": "Sprint & LLM reasoning",
+      "tag": "qwen2.5:7b",
+      "icon": "cloud",
+      "width": 126,
+      "sources": [
+        {
+          "path": "simulation/simulator.py",
+          "line": 54,
+          "label": "SoftwareCompanySimulator.run"
+        },
+        {
+          "path": "agents/base_agent.py",
+          "line": 20,
+          "label": "BaseAgent.think() invoke"
+        },
+        {
+          "path": "llm/ollama_client.py",
+          "line": 27,
+          "label": "ChatOllama.invoke()"
+        }
+      ]
+    },
+    {
+      "id": "provenance_logging",
+      "lane": "logging",
+      "col": 3,
+      "type": "database",
+      "label": "5. Independent Logs",
+      "sublabel": "Prompts & raw outputs",
+      "tag": "Synchronous sync",
+      "icon": "database",
+      "width": 126,
+      "sources": [
+        {
+          "path": "agents/base_agent.py",
+          "line": 25,
+          "label": "Prompt & response logging"
+        },
+        {
+          "path": "utils/logger.py",
+          "line": 1,
+          "label": "Logger utility"
+        }
+      ]
+    },
+    {
+      "id": "exec_error",
+      "lane": "exception",
+      "col": 3,
+      "type": "security",
+      "label": "Execution Error",
+      "sublabel": "Log LLM exception",
+      "tag": "campaign_report.txt",
+      "icon": "failure",
+      "width": 126,
+      "sources": [
+        {
+          "path": "run_campaign.py",
+          "line": 33,
+          "label": "llm_errors exception handler"
+        }
+      ]
+    },
+    {
+      "id": "output_storage",
+      "lane": "logging",
+      "col": 4,
+      "type": "database",
+      "label": "6. Output Capture",
+      "sublabel": "Persist trial JSON",
+      "tag": "results/*.json",
+      "icon": "database",
+      "width": 126,
+      "sources": [
+        {
+          "path": "utils/experiment_storage.py",
+          "line": 6,
+          "label": "save_experiment() to JSON"
+        },
+        {
+          "path": "results/factorial_campaign/experiment_20261004_185609_740c56b9.json",
+          "line": 1,
+          "label": "Trial JSON record sample"
+        }
+      ]
+    },
+    {
+      "id": "validation_gate",
+      "lane": "main",
+      "col": 4,
+      "type": "security",
+      "label": "7. Validation Gate",
+      "sublabel": "Data schema & checks",
+      "tag": "240 cells check",
+      "icon": "decision",
+      "width": 126,
+      "sources": [
+        {
+          "path": "test_integrity.py",
+          "line": 1,
+          "label": "Integrity test suite"
+        },
+        {
+          "path": "run_campaign.py",
+          "line": 72,
+          "label": "Observation count validation"
+        }
+      ]
+    },
+    {
+      "id": "validation_fail",
+      "lane": "exception",
+      "col": 5,
+      "type": "security",
+      "label": "Validation Review",
+      "sublabel": "Audit report & rerun",
+      "tag": "audit_report_phase4",
+      "icon": "failure",
+      "width": 126,
+      "sources": [
+        {
+          "path": "audit_report_phase4.md",
+          "line": 1,
+          "label": "Audit failure documentation"
+        }
+      ]
+    },
+    {
+      "id": "stat_analysis",
+      "lane": "main",
+      "col": 5,
+      "type": "backend",
+      "label": "8. Data Analysis",
+      "sublabel": "Metrics & summaries",
+      "tag": "run_analysis.py",
+      "icon": "backend",
+      "width": 126,
+      "sources": [
+        {
+          "path": "run_analysis.py",
+          "line": 1,
+          "label": "Statistical pipeline"
+        },
+        {
+          "path": "results/correlation_matrix.csv",
+          "line": 1,
+          "label": "Correlation matrix output"
+        }
+      ]
+    },
+    {
+      "id": "react_dashboard",
+      "lane": "analysis",
+      "col": 5,
+      "type": "frontend",
+      "label": "9a. React UI",
+      "sublabel": "FastAPI REST API",
+      "tag": "localhost:8000",
+      "icon": "frontend",
+      "width": 126,
+      "sources": [
+        {
+          "path": "frontend/src/App.tsx",
+          "line": 1,
+          "label": "React frontend app"
+        },
+        {
+          "path": "backend/routes/experiments.py",
+          "line": 1,
+          "label": "Experiments REST API"
+        }
+      ]
+    },
+    {
+      "id": "streamlit_dashboard",
+      "lane": "logging",
+      "col": 5,
+      "type": "frontend",
+      "label": "9b. Streamlit UI",
+      "sublabel": "Direct filesystem read",
+      "tag": "run_dashboard.py",
+      "icon": "frontend",
+      "width": 126,
+      "sources": [
+        {
+          "path": "dashboard/app.py",
+          "line": 1,
+          "label": "Streamlit dashboard app"
+        },
+        {
+          "path": "run_dashboard.py",
+          "line": 1,
+          "label": "Dashboard launcher script"
+        }
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "id": "e_cfg_pre",
+      "from": "config_load",
+      "to": "preflight_gate",
+      "label": "apply params",
+      "variant": "emphasis",
+      "role": "main"
+    },
+    {
+      "id": "e_pre_yes",
+      "from": "preflight_gate",
+      "to": "exp_init",
+      "label": "Yes: Ready",
+      "variant": "emphasis",
+      "role": "main"
+    },
+    {
+      "id": "e_pre_no",
+      "from": "preflight_gate",
+      "to": "preflight_fail",
+      "label": "No: Offline",
+      "variant": "security",
+      "role": "error"
+    },
+    {
+      "id": "e_pre_fix",
+      "from": "preflight_fail",
+      "to": "config_remediation",
+      "label": "remedy",
+      "variant": "dashed",
+      "role": "branch"
+    },
+    {
+      "id": "e_init_prov",
+      "from": "exp_init",
+      "to": "provenance_init",
+      "label": "snapshot SHA",
+      "variant": "dashed",
+      "role": "async"
+    },
+    {
+      "id": "e_init_exec",
+      "from": "exp_init",
+      "to": "exec_simulation",
+      "label": "seeds & matrix",
+      "variant": "emphasis",
+      "role": "main"
+    },
+    {
+      "id": "e_prov_sync",
+      "from": "provenance_init",
+      "to": "provenance_logging",
+      "label": "attach metadata",
+      "variant": "dashed",
+      "role": "async"
+    },
+    {
+      "id": "e_exec_log",
+      "from": "exec_simulation",
+      "to": "provenance_logging",
+      "label": "record prompts",
+      "variant": "dashed",
+      "role": "async"
+    },
+    {
+      "id": "e_exec_err",
+      "from": "exec_simulation",
+      "to": "exec_error",
+      "label": "No: LLM failure",
+      "variant": "security",
+      "role": "error"
+    },
+    {
+      "id": "e_exec_out",
+      "from": "exec_simulation",
+      "to": "output_storage",
+      "label": "Yes: Complete",
+      "variant": "emphasis",
+      "role": "main"
+    },
+    {
+      "id": "e_out_val",
+      "from": "output_storage",
+      "to": "validation_gate",
+      "label": "audit records",
+      "variant": "emphasis",
+      "role": "main"
+    },
+    {
+      "id": "e_val_no",
+      "from": "validation_gate",
+      "to": "validation_fail",
+      "label": "No: Discrepant",
+      "variant": "security",
+      "role": "error"
+    },
+    {
+      "id": "e_val_yes",
+      "from": "validation_gate",
+      "to": "stat_analysis",
+      "label": "Yes: Verified",
+      "variant": "emphasis",
+      "role": "main"
+    },
+    {
+      "id": "e_anal_react",
+      "from": "stat_analysis",
+      "to": "react_dashboard",
+      "label": "serve API",
+      "variant": "emphasis",
+      "role": "main"
+    },
+    {
+      "id": "e_anal_stream",
+      "from": "stat_analysis",
+      "to": "streamlit_dashboard",
+      "label": "metrics",
+      "variant": "dashed",
+      "role": "branch"
+    },
+    {
+      "id": "e_out_stream",
+      "from": "output_storage",
+      "to": "streamlit_dashboard",
+      "label": "glob reads",
+      "variant": "dashed",
+      "role": "branch"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "cyan",
+      "title": "Preparation & Preflight (Stages 1–3)",
+      "items": [
+        "Loads model configuration (qwen2.5:7b, temperature 0.3) from config/settings.py and environment pressure tiers",
+        "Executes preflight check (test_pilot_runner.py) to confirm Ollama daemon availability and directory write permissions",
+        "Generates deterministic factorial condition matrix (600 runs, 2400 agent trials) across 4 developer roles with seed isolation"
+      ]
+    },
+    {
+      "dot": "emerald",
+      "title": "Execution & Logging (Stages 4–6)",
+      "items": [
+        "SoftwareCompanySimulator runs sprint loop: Manager assigns tasks, developers simulate work, and AuditorAgent scores suspicion",
+        "Provenance tracking synchronously captures git commit HEAD, exact LLM prompts, and raw unparsed responses alongside execution",
+        "ExperimentResult records are serialized and persisted into results/factorial_campaign/ with full reproducibility metadata"
+      ]
+    },
+    {
+      "dot": "amber",
+      "title": "Validation & Synthesis (Stages 7–9)",
+      "items": [
+        "Integrity gate validates schema conformance, non-null metrics, and verifies historical results CSV was not overwritten",
+        "run_analysis.py calculates descriptive statistics, correlation matrices, logistic regression detection, and generates PNG charts",
+        "Dual presentation: FastAPI backend serves the React 19 dashboard over REST, while Streamlit provides direct filesystem exploration"
+      ]
+    }
+  ]
+}

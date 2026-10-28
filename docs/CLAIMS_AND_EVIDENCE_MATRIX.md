@@ -1,6 +1,6 @@
 # Claims and Evidence Traceability Matrix
 
-**Project:** AI-Agent-Research: "Do AI Agents Cheat Under Pressure? Emergent Deception in Multi-Agent Organizations"  
+**Project:** VEIL — AI Agent Deception Research: "Do AI Agents Cheat Under Pressure? Emergent Deception in Multi-Agent Organizations"  
 **Branch:** `Ishhh`  
 **Phase:** 5A.11 — Research Findings Synthesis  
 **Date:** October 2026  

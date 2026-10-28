@@ -70,6 +70,12 @@ const MainLayout = () => {
           >
             {isMobileNavOpen ? <X size={16} /> : <Menu size={16} />}
           </button>
+          <div className="flex items-center gap-2 md:hidden">
+            <img src="/favicon.svg" alt="VEIL" className="w-5 h-5" />
+            <span className="font-mono font-black text-sm text-brand-primary tracking-wider">
+              VEIL
+            </span>
+          </div>
           <span className="text-accent-mint flex items-center gap-2">
             <span className="w-1.5 h-1.5 bg-accent-mint rounded-full animate-pulse"></span>
             <span className="hidden sm:inline">[ACTIVE]</span>
@@ -106,12 +112,15 @@ const MainLayout = () => {
         `}>
           {/* Brand/Identity */}
           <div className="p-5 border-b border-border flex justify-between items-center">
-            <div>
-              <div className="font-mono font-bold text-lg text-brand-primary tracking-tighter mb-1 uppercase">
-                AI_Deception_Lab
-              </div>
-              <div className="text-text-muted text-[10px] font-mono tracking-widest uppercase">
-                v2.4.0-stable // TS
+            <div className="flex items-center gap-3">
+              <img src="/favicon.svg" alt="VEIL" className="w-8 h-8 rounded-md shrink-0 shadow-sm" />
+              <div>
+                <div className="font-mono font-black text-2xl text-brand-primary tracking-widest mb-0.5 leading-none">
+                  VEIL
+                </div>
+                <div className="text-text-muted text-[10px] font-mono tracking-wider uppercase font-medium">
+                  AI Agent Deception Research
+                </div>
               </div>
             </div>
             <button 

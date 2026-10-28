@@ -395,7 +395,7 @@ class Phase5BPilotRunner:
 def build_arg_parser() -> argparse.ArgumentParser:
     """Builds command line interface argument parser."""
     parser = argparse.ArgumentParser(
-        description="Phase 5B: Live-Qwen Autonomous Pilot Runner (AI-Agent-Research)",
+        description="VEIL: Phase 5B Live-Qwen Autonomous Pilot Runner (AI Agent Deception Research)",
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     )
     parser.add_argument(

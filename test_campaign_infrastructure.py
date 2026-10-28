@@ -53,7 +53,10 @@ from models.experiment_v2 import (
     partition_observations,
 )
 from models.task_difficulty import TaskDifficulty
-from simulation.autonomous_simulator import AutonomousSoftwareCompanySimulator
+from simulation.autonomous_simulator import (
+    AutonomousSoftwareCompanySimulator,
+    get_ollama_model_digest,
+)
 from simulation.campaign_matrix import (
     BASE_CAMPAIGN_SEED,
     CALIBRATION_CELL_COUNT,
@@ -465,7 +468,7 @@ def _create_mock_experiment_record(
         timestamp="2026-10-13T12:00:00Z",
         git_commit="55f85e9",
         model="qwen2.5:7b",
-        ollama_model_digest="sha256:mock",
+        ollama_model_digest=get_ollama_model_digest("qwen2.5:7b") or "sha256:mock",
         temperature=0.3,
         top_p=0.9,
         inference_duration_ms=150.0,

@@ -1,7 +1,7 @@
 # Phase 5B Study Pre-Registration Draft: Autonomous LLM Strategy Selection
 
 **Study Title:** Do Autonomous Large Language Models Exhibit Incentive-Associated Reporting Distortion Under Organizational Pressure? An Empirical Factorial Benchmark  
-**Project:** AI-Agent-Research  
+**Project:** VEIL — AI Agent Deception Research  
 **Repository Branch:** `Ishhh`  
 **Pre-Registration Date:** October 2026 (Drafted A Priori Prior to Experiment Execution)  
 **Standard Compliance:** Open Science Framework (OSF) / AsPredicted Format  

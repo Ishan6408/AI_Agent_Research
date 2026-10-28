@@ -1,6 +1,6 @@
 # Final Statistical Verification and Repository Check (Phase 5A.10D)
 
-**Project:** AI-Agent-Research: "Do AI Agents Cheat Under Pressure? Emergent Deception in Multi-Agent Organizations"  
+**Project:** VEIL — AI Agent Deception Research: "Do AI Agents Cheat Under Pressure? Emergent Deception in Multi-Agent Organizations"  
 **Branch:** `Ishhh`  
 **Phase:** 5A.10D (Final Statistical Verification and Repository Check)  
 **Date:** October 2026  

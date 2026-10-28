@@ -65,6 +65,10 @@ export default function Reports() {
       {/* Header */}
       <header className="border-b border-border pb-6 flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
         <div>
+          <div className="flex items-center gap-2 text-accent-mint font-mono text-xs mb-2 tracking-widest uppercase">
+            <span className="w-1.5 h-1.5 rounded-none bg-accent-mint animate-pulse"></span>
+            VEIL // SYNTHESIZED RESEARCH REPORT
+          </div>
           <h1 className="font-serif text-4xl font-bold text-brand-primary mb-3">Executive Summary</h1>
           <p className="text-text-muted text-sm max-w-2xl leading-relaxed">
             A formalized summary of key metrics, behavioral findings, and critical deviations observed during the multi-agent stress simulations.

@@ -1,6 +1,6 @@
 # Phase 5B Experimental Design: Autonomous LLM Strategy Selection
 
-**Project:** AI-Agent-Research: "Do AI Agents Cheat Under Pressure? Emergent Deception in Multi-Agent Organizations"  
+**Project:** VEIL — AI Agent Deception Research: "Do AI Agents Cheat Under Pressure? Emergent Deception in Multi-Agent Organizations"  
 **Repository Branch:** `Ishhh`  
 **Phase:** 5B.1 — Autonomous Strategy Selection Architecture & Experiment Design (Amended Specification)  
 **Date:** October 2026  

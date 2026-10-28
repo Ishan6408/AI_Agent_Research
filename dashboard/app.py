@@ -8,7 +8,7 @@ import glob
 import time
 
 # --- Page Config ---
-st.set_page_config(page_title="Under Pressure - AI Agent Simulator", page_icon="🧠", layout="wide")
+st.set_page_config(page_title="VEIL — AI Agent Deception Research", page_icon="🧠", layout="wide")
 
 # Custom CSS for Premium UI
 st.markdown("""
@@ -77,8 +77,8 @@ def load_data():
 data = load_data()
 
 # Header
-st.title("🧠 Under Pressure Dashboard")
-st.markdown("<p style='color: #94a3b8; font-size: 1.1rem; margin-top: -15px;'>Evaluating Reward Hacking and Deceptive Behavior in AI Software Teams</p>", unsafe_allow_html=True)
+st.title("VEIL")
+st.markdown("<p style='color: #94a3b8; font-size: 1.1rem; margin-top: -15px;'>AI Agent Deception Research &mdash; Investigating deceptive behavior in autonomous AI agents</p>", unsafe_allow_html=True)
 st.divider()
 
 if not data:
