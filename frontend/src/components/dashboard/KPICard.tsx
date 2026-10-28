@@ -23,12 +23,12 @@ export function KPICard({ title, value, icon: Icon, trend }: KPICardProps) {
       </div>
       
       <div>
-        <p className="text-5xl font-mono tracking-tighter text-foreground">
+        <p className="text-5xl font-mono tracking-tighter text-foreground tabular-nums">
           {value}
         </p>
         {trend && (
           <div className="mt-4 flex items-center gap-2">
-            <span className={`text-xs font-mono uppercase tracking-wider ${
+            <span className={`text-xs font-mono uppercase tracking-wider tabular-nums ${
               trend.positive ? 'text-emerald-400' : 'text-destructive'
             }`}>
               {trend.positive ? '↗' : '↘'} {trend.value}
