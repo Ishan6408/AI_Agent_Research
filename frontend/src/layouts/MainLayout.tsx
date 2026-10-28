@@ -48,13 +48,19 @@ const MainLayout = () => {
       <header className="h-10 border-b border-border bg-surface flex items-center justify-between px-4 text-xs font-mono shrink-0 relative z-50">
         <div className="flex items-center gap-4">
           <button 
-            className="md:hidden p-1 text-text-muted hover:text-brand-primary focus:outline-none focus:ring-1 focus:ring-accent-mint cursor-pointer"
+            className="md:hidden p-1 text-text-muted hover:text-brand-primary focus:outline-none focus:ring-1 focus:ring-accent-mint"
             onClick={() => setIsMobileNavOpen(!isMobileNavOpen)}
             aria-label={isMobileNavOpen ? "Close navigation menu" : "Open navigation menu"}
             aria-expanded={isMobileNavOpen}
           >
             {isMobileNavOpen ? <X size={16} /> : <Menu size={16} />}
           </button>
+          <div className="flex items-center gap-2 md:hidden">
+            <img src="/favicon.svg" alt="VEIL" className="w-5 h-5" />
+            <span className="font-mono font-black text-sm text-brand-primary tracking-wider">
+              VEIL
+            </span>
+          </div>
           <span className="text-accent-mint flex items-center gap-2">
             <span className="w-1.5 h-1.5 bg-accent-mint rounded-full animate-pulse"></span>
             <span className="hidden sm:inline">[ACTIVE]</span>
@@ -83,82 +89,84 @@ const MainLayout = () => {
           />
         )}
 
-        {/* Sidebar */}
-        <aside 
-          aria-label="Sidebar navigation"
-          className={`
-            w-64 border-r border-border bg-surface flex flex-col justify-between shrink-0
-            fixed md:static inset-y-0 left-0 z-40 transition-transform duration-200 ease-in-out
-            ${isMobileNavOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
-            mt-10 md:mt-0 h-[calc(100vh-2.5rem)] md:h-auto
-          `}
-        >
-          <div className="p-4 space-y-6 overflow-y-auto">
-            {/* Branding / Identity */}
-            <div className="flex items-center gap-3 px-2">
-              <div className="w-8 h-8 rounded bg-surface-alt border border-border flex items-center justify-center font-mono font-bold text-accent-mint text-sm shadow-inner">
-                V
-              </div>
-              <div className="flex flex-col">
-                <span className="font-mono text-sm font-bold tracking-wider text-brand-primary">PROJECT_VEIL</span>
-                <span className="text-[10px] text-text-muted font-mono tracking-widest uppercase">TELEMETRY SYSTEM</span>
+        {/* Fixed 260px Sidebar */}
+        <aside className={`
+          w-[260px] flex-shrink-0 border-r border-border bg-surface-alt flex-col
+          absolute md:relative z-40 h-full transition-transform duration-200 ease-in-out
+          ${isMobileNavOpen ? 'translate-x-0 flex' : '-translate-x-full md:translate-x-0 hidden md:flex'}
+        `}>
+          {/* Brand/Identity */}
+          <div className="p-5 border-b border-border flex justify-between items-center">
+            <div className="flex items-center gap-3">
+              <img src="/favicon.svg" alt="VEIL" className="w-8 h-8 rounded-md shrink-0 shadow-sm" />
+              <div>
+                <div className="font-mono font-black text-2xl text-brand-primary tracking-widest mb-0.5 leading-none">
+                  VEIL
+                </div>
+                <div className="text-text-muted text-[10px] font-mono tracking-wider uppercase font-medium">
+                  AI Agent Deception Research
+                </div>
               </div>
             </div>
-
-            {/* Navigation Groups */}
-            <nav className="space-y-6">
-              {navGroups.map((group) => (
-                <div key={group.title} className="space-y-1">
-                  <div className="px-2 text-[10px] font-mono tracking-widest text-text-muted uppercase mb-2">
-                    {group.title}
-                  </div>
-                  <div className="space-y-0.5">
-                    {group.items.map((item) => {
-                      const Icon = item.icon;
-                      const isActive = location.pathname.startsWith(item.path);
-                      
-                      return (
-                        <NavLink
-                          key={item.path}
-                          to={item.path}
-                          onClick={() => setIsMobileNavOpen(false)}
-                          className={({ isActive: linkActive }) => `
-                            flex items-center gap-3 px-3 py-2 text-xs font-mono tracking-wide rounded-md transition-all
-                            ${linkActive || isActive 
-                              ? 'bg-surface-alt text-brand-primary border border-border shadow-xs' 
-                              : 'text-text-muted hover:text-brand-primary hover:bg-surface-alt/50 border border-transparent'}
-                          `}
-                        >
-                          <Icon size={14} className={isActive ? 'text-accent-mint' : 'text-text-muted'} />
-                          <span>{item.name}</span>
-                        </NavLink>
-                      );
-                    })}
-                  </div>
-                </div>
-              ))}
-            </nav>
+            <button 
+              className="md:hidden p-1 text-text-muted hover:text-brand-primary"
+              onClick={() => setIsMobileNavOpen(false)}
+              aria-label="Close menu"
+            >
+              <X size={16} />
+            </button>
           </div>
 
-          {/* System Footer Metadata */}
-          <div className="p-4 border-t border-border bg-surface-alt/30 text-[10px] font-mono text-text-muted space-y-2">
+          {/* Navigation */}
+          <div className="flex-1 overflow-y-auto py-4 px-3 space-y-6">
+            {navGroups.map((group) => (
+              <div key={group.title}>
+                <h3 className="px-2 mb-2 text-[10px] font-mono font-bold uppercase tracking-widest text-text-muted">
+                  {group.title}
+                </h3>
+                <nav className="space-y-[2px]">
+                  {group.items.map((link) => {
+                    const isActive = location.pathname === link.path;
+                    const Icon = link.icon;
+                    return (
+                      <NavLink
+                        key={link.path}
+                        to={link.path}
+                        onClick={() => setIsMobileNavOpen(false)}
+                        className={() =>
+                          `flex items-center gap-3 px-2 py-1.5 text-sm font-mono transition-colors border border-transparent focus:outline-none focus:ring-1 focus:ring-accent-mint ${
+                            isActive
+                              ? 'bg-accent-mint/10 text-accent-mint border-accent-mint/20'
+                              : 'text-brand-secondary hover:bg-white/5 hover:text-brand-primary hover:border-border'
+                          }`
+                        }
+                      >
+                        <Icon size={14} className={isActive ? 'text-accent-mint' : 'text-text-muted'} />
+                        <span>{link.name}</span>
+                      </NavLink>
+                    );
+                  })}
+                </nav>
+              </div>
+            ))}
+          </div>
+
+          {/* Footer Info */}
+          <div className="p-4 border-t border-border bg-surface-alt text-[10px] font-mono text-text-muted space-y-1">
             <div className="flex justify-between">
-              <span>LATENCY:</span>
-              <span className="text-accent-mint tabular-nums">0.04ms</span>
-            </div>
-            <div className="flex justify-between">
-              <span>SECURITY_GATE:</span>
-              <span className="text-brand-primary">VERIFIED</span>
+              <span>DATA_LINK</span>
+              <span className="text-accent-mint">CONNECTED</span>
             </div>
           </div>
         </aside>
 
         {/* Main Content Area */}
-        <main className="flex-1 overflow-y-auto bg-background p-4 sm:p-6 lg:p-8">
-          <Outlet />
+        <main className="flex-1 flex flex-col h-full overflow-hidden bg-background relative z-0">
+          <div className="flex-1 overflow-y-auto overflow-x-hidden p-4 md:p-6 lg:p-8">
+            <Outlet />
+          </div>
         </main>
       </div>
-
     </div>
   );
 };
