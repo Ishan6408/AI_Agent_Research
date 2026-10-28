@@ -19,7 +19,7 @@ export default function Behavior() {
       }
       setSyncStatus('success');
       setTimeout(() => setSyncStatus('idle'), 2000);
-    } catch (err) {
+    } catch {
       setSyncStatus('error');
       setTimeout(() => setSyncStatus('idle'), 3000);
     }

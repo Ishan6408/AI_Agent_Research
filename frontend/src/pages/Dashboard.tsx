@@ -1,19 +1,66 @@
-import { useEffect, useState } from 'react';
 import { api } from '../services/api';
 import type { AnalyticsOverview, OverviewScatterPoint, GroupAnalysisRow } from '../types/api';
-import { Terminal, Activity, ShieldCheck, Crosshair } from 'lucide-react';
+import { Terminal, Activity, ShieldCheck, Crosshair, AlertTriangle } from 'lucide-react';
 import { ScatterChart, Scatter, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
+import { useApiData } from '../hooks/useApiData';
+import { KPISkeleton, ChartSkeleton, BackgroundRefreshBadge, RevalidateErrorBanner, Skeleton } from '../components/common/Skeleton';
 
 export default function Dashboard() {
-  const [overview, setOverview] = useState<AnalyticsOverview | null>(null);
-  const [scatter, setScatter] = useState<OverviewScatterPoint[]>([]);
-  const [pressure, setPressure] = useState<GroupAnalysisRow[]>([]);
+  const {
+    data: overview,
+    isLoading: isOverviewLoading,
+    isValidating: isOverviewValidating,
+    error: overviewError,
+    revalidateError: overviewRevalError,
+    lastUpdated: overviewUpdated,
+    refetch: refetchOverview,
+  } = useApiData<AnalyticsOverview>('analytics/overview', api.getAnalyticsOverview);
 
-  useEffect(() => {
-    api.getAnalyticsOverview().then(setOverview).catch(console.error);
-    api.getOverviewScatter().then(setScatter).catch(console.error);
-    api.getPressure().then(setPressure).catch(console.error);
-  }, []);
+  const {
+    data: scatter,
+    isLoading: isScatterLoading,
+    isValidating: isScatterValidating,
+    error: scatterError,
+    revalidateError: scatterRevalError,
+    refetch: refetchScatter,
+  } = useApiData<OverviewScatterPoint[]>('analytics/overview/scatter', api.getOverviewScatter);
+
+  const {
+    data: pressure,
+    isLoading: isPressureLoading,
+    isValidating: isPressureValidating,
+    error: pressureError,
+    revalidateError: pressureRevalError,
+    refetch: refetchPressure,
+  } = useApiData<GroupAnalysisRow[]>('analytics/pressure', api.getPressure);
+
+  const isValidating = isOverviewValidating || isScatterValidating || isPressureValidating;
+  const revalidateError = overviewRevalError || scatterRevalError || pressureRevalError;
+  const initialBlockingError = (!overview && overviewError) || (!scatter && scatterError) || (!pressure && pressureError);
+
+  const handleRefreshAll = () => {
+    refetchOverview();
+    refetchScatter();
+    refetchPressure();
+  };
+
+  if (initialBlockingError) {
+    return (
+      <div className="flex flex-col min-h-full text-text-main gap-6 max-w-[1400px] mx-auto w-full">
+        <div className="p-12 text-center border border-border bg-surface rounded-xl max-w-2xl mx-auto my-12">
+          <AlertTriangle size={32} className="text-accent-red mx-auto mb-4" />
+          <h2 className="text-brand-primary font-bold text-lg mb-2">Failed to Connect to VEIL Telemetry Node</h2>
+          <p className="text-accent-red mb-6 text-sm">{initialBlockingError.message}</p>
+          <button
+            onClick={handleRefreshAll}
+            className="px-4 py-2 bg-surface-alt hover:bg-secondary border border-border text-brand-primary rounded-md text-xs font-mono uppercase tracking-wider transition-colors"
+          >
+            Retry Telemetry Link
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col min-h-full text-text-main gap-6 max-w-[1400px] mx-auto w-full">
@@ -31,87 +78,114 @@ export default function Dashboard() {
             VEIL: AI Agent Deception Research &mdash; Investigating deceptive behavior in autonomous AI agents
           </p>
         </div>
-        
-        {/* Research metadata block */}
-        <div className="flex gap-4 font-mono text-[10px] text-text-muted">
-          <div className="flex flex-col border-l border-border pl-3">
-            <span className="uppercase tracking-widest mb-1">Target</span>
-            <span className="text-brand-primary">LLM.BEHAVIOR.DIVERGENCE</span>
-          </div>
-          <div className="flex flex-col border-l border-border pl-3">
-            <span className="uppercase tracking-widest mb-1">Status</span>
-            <span className="text-accent-mint">[LIVE]</span>
+
+        {/* Research metadata block & SWR sync status */}
+        <div className="flex items-center gap-4">
+          <BackgroundRefreshBadge
+            isValidating={isValidating}
+            lastUpdated={overviewUpdated}
+            onRefresh={handleRefreshAll}
+          />
+          <div className="flex gap-4 font-mono text-[10px] text-text-muted">
+            <div className="flex flex-col border-l border-border pl-3">
+              <span className="uppercase tracking-widest mb-1">Target</span>
+              <span className="text-brand-primary">LLM.BEHAVIOR.DIVERGENCE</span>
+            </div>
+            <div className="flex flex-col border-l border-border pl-3">
+              <span className="uppercase tracking-widest mb-1">Status</span>
+              <span className="text-accent-mint">[LIVE]</span>
+            </div>
           </div>
         </div>
       </header>
 
+      {/* Non-blocking background revalidation error banner */}
+      <RevalidateErrorBanner error={revalidateError} onRetry={handleRefreshAll} />
+
+      {/* KPI Ribbon Row */}
       <div className="flex flex-col lg:flex-row gap-6 mb-4">
         <div className="flex-1 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          
-          {/* Ribbon Panel 1 */}
-          <div className="bg-surface-alt p-6 flex flex-col justify-between border-2 border-accent-blue/30 rounded-xl shadow-sm hover:border-accent-blue transition-colors relative overflow-hidden">
-            <div className="absolute top-0 right-0 w-16 h-16 bg-accent-blue/10 rounded-bl-full"></div>
-            <div className="flex items-center gap-2 font-mono text-xs font-bold text-text-muted uppercase tracking-widest mb-4">
-              <Terminal size={14} className="text-accent-blue" />
-              Obs. Count
-            </div>
-            <div className="font-mono text-4xl font-light text-brand-primary">
-              {overview ? overview.total_experiments.toLocaleString() : '-'}
-            </div>
-            <div className="font-mono text-[10px] text-text-muted mt-4 border-t border-border/50 pt-3 flex justify-between uppercase">
-              <span>Records:</span>
-              <span className="text-accent-blue font-bold">{overview ? '100% INDEXED' : '...'}</span>
-            </div>
-          </div>
-          
-          {/* Ribbon Panel 2 - Highlighted */}
-          <div className="bg-surface-alt p-6 flex flex-col justify-between border-2 border-accent-amber/30 rounded-xl shadow-sm hover:border-accent-amber transition-colors relative overflow-hidden">
-            <div className="absolute top-0 right-0 w-16 h-16 bg-accent-amber/10 rounded-bl-full"></div>
-            <div className="flex items-center gap-2 font-mono text-xs font-bold text-text-muted uppercase tracking-widest mb-4">
-              <Activity size={14} className="text-accent-amber" />
-              Mean Divergence
-            </div>
-            <div className="font-mono text-4xl font-bold text-accent-amber">
-              {overview?.avg_deception_gap != null ? overview.avg_deception_gap.toFixed(1) : '-'}<span className="text-lg text-accent-amber/60 font-light ml-1">%</span>
-            </div>
-            <div className="font-mono text-[10px] text-text-muted mt-4 border-t border-border/50 pt-3 flex justify-between uppercase">
-              <span>Status:</span>
-              <span className="text-accent-amber font-bold">{overview?.system_status ? `[${overview.system_status}]` : '...'}</span>
-            </div>
-          </div>
+          {isOverviewLoading && !overview ? (
+            <>
+              <KPISkeleton accent="border-accent-blue/30" />
+              <KPISkeleton accent="border-accent-amber/30" />
+              <KPISkeleton accent="border-accent-purple/30" />
+              <KPISkeleton accent="border-accent-mint/30" />
+            </>
+          ) : (
+            <>
+              {/* Ribbon Panel 1 */}
+              <div className="bg-surface-alt p-6 flex flex-col justify-between border-2 border-accent-blue/30 rounded-xl shadow-sm hover:border-accent-blue transition-colors relative overflow-hidden">
+                <div className="absolute top-0 right-0 w-16 h-16 bg-accent-blue/10 rounded-bl-full"></div>
+                <div className="flex items-center gap-2 font-mono text-xs font-bold text-text-muted uppercase tracking-widest mb-4">
+                  <Terminal size={14} className="text-accent-blue" />
+                  Obs. Count
+                </div>
+                <div className="font-mono text-4xl font-light text-brand-primary tabular-nums">
+                  {overview ? overview.total_experiments.toLocaleString() : '-'}
+                </div>
+                <div className="font-mono text-[10px] text-text-muted mt-4 border-t border-border/50 pt-3 flex justify-between uppercase">
+                  <span>Records:</span>
+                  <span className="text-accent-blue font-bold">{overview ? '100% INDEXED' : '...'}</span>
+                </div>
+              </div>
 
-          {/* Ribbon Panel 3 */}
-          <div className="bg-surface-alt p-6 flex flex-col justify-between border-2 border-accent-purple/30 rounded-xl shadow-sm hover:border-accent-purple transition-colors relative overflow-hidden">
-            <div className="absolute top-0 right-0 w-16 h-16 bg-accent-purple/10 rounded-bl-full"></div>
-            <div className="flex items-center gap-2 font-mono text-xs font-bold text-text-muted uppercase tracking-widest mb-4">
-              <Crosshair size={14} className="text-accent-purple" />
-              Auditor Precision
-            </div>
-            <div className="font-mono text-4xl font-light text-brand-primary">
-              {overview?.detection_rate_pct != null ? overview.detection_rate_pct.toFixed(1) : '-'}<span className="text-lg text-text-muted font-light ml-1">%</span>
-            </div>
-            <div className="font-mono text-[10px] text-text-muted mt-4 border-t border-border/50 pt-3 flex justify-between uppercase">
-              <span>Avg Score:</span>
-              <span className="text-accent-purple font-bold">{overview?.avg_auditor_score != null ? overview.avg_auditor_score.toFixed(1) : '-'}</span>
-            </div>
-          </div>
+              {/* Ribbon Panel 2 - Highlighted */}
+              <div className="bg-surface-alt p-6 flex flex-col justify-between border-2 border-accent-amber/30 rounded-xl shadow-sm hover:border-accent-amber transition-colors relative overflow-hidden">
+                <div className="absolute top-0 right-0 w-16 h-16 bg-accent-amber/10 rounded-bl-full"></div>
+                <div className="flex items-center gap-2 font-mono text-xs font-bold text-text-muted uppercase tracking-widest mb-4">
+                  <Activity size={14} className="text-accent-amber" />
+                  Mean Divergence
+                </div>
+                <div className="font-mono text-4xl font-bold text-accent-amber tabular-nums">
+                  {overview?.avg_deception_gap != null ? overview.avg_deception_gap.toFixed(1) : '-'}
+                  <span className="text-lg text-accent-amber/60 font-light ml-1">%</span>
+                </div>
+                <div className="font-mono text-[10px] text-text-muted mt-4 border-t border-border/50 pt-3 flex justify-between uppercase">
+                  <span>Status:</span>
+                  <span className="text-accent-amber font-bold">{overview?.system_status ? `[${overview.system_status}]` : '...'}</span>
+                </div>
+              </div>
 
-          {/* Ribbon Panel 4 */}
-          <div className="bg-surface-alt p-6 flex flex-col justify-between border-2 border-accent-mint/30 rounded-xl shadow-sm hover:border-accent-mint transition-colors relative overflow-hidden">
-            <div className="absolute top-0 right-0 w-16 h-16 bg-accent-mint/10 rounded-bl-full"></div>
-            <div className="flex items-center gap-2 font-mono text-xs font-bold text-text-muted uppercase tracking-widest mb-4">
-              <ShieldCheck size={14} className="text-accent-mint" />
-              Fleet Honesty Index
-            </div>
-            <div className="font-mono text-4xl font-light text-brand-primary">
-              {overview?.avg_honesty_score != null ? overview.avg_honesty_score.toFixed(1) : '-'}<span className="text-lg text-text-muted font-light ml-1">/100</span>
-            </div>
-            <div className="font-mono text-[10px] text-text-muted mt-4 border-t border-border/50 pt-3 flex justify-between uppercase">
-              <span>Mean Quality:</span>
-              <span className="text-accent-mint font-bold">{overview?.avg_code_quality != null ? overview.avg_code_quality.toFixed(1) : '...'}</span>
-            </div>
-          </div>
+              {/* Ribbon Panel 3 */}
+              <div className="bg-surface-alt p-6 flex flex-col justify-between border-2 border-accent-purple/30 rounded-xl shadow-sm hover:border-accent-purple transition-colors relative overflow-hidden">
+                <div className="absolute top-0 right-0 w-16 h-16 bg-accent-purple/10 rounded-bl-full"></div>
+                <div className="flex items-center gap-2 font-mono text-xs font-bold text-text-muted uppercase tracking-widest mb-4">
+                  <Crosshair size={14} className="text-accent-purple" />
+                  Auditor Precision
+                </div>
+                <div className="font-mono text-4xl font-light text-brand-primary tabular-nums">
+                  {overview?.detection_rate_pct != null ? overview.detection_rate_pct.toFixed(1) : '-'}
+                  <span className="text-lg text-text-muted font-light ml-1">%</span>
+                </div>
+                <div className="font-mono text-[10px] text-text-muted mt-4 border-t border-border/50 pt-3 flex justify-between uppercase">
+                  <span>Avg Score:</span>
+                  <span className="text-accent-purple font-bold tabular-nums">
+                    {overview?.avg_auditor_score != null ? overview.avg_auditor_score.toFixed(1) : '-'}
+                  </span>
+                </div>
+              </div>
 
+              {/* Ribbon Panel 4 */}
+              <div className="bg-surface-alt p-6 flex flex-col justify-between border-2 border-accent-mint/30 rounded-xl shadow-sm hover:border-accent-mint transition-colors relative overflow-hidden">
+                <div className="absolute top-0 right-0 w-16 h-16 bg-accent-mint/10 rounded-bl-full"></div>
+                <div className="flex items-center gap-2 font-mono text-xs font-bold text-text-muted uppercase tracking-widest mb-4">
+                  <ShieldCheck size={14} className="text-accent-mint" />
+                  Fleet Honesty Index
+                </div>
+                <div className="font-mono text-4xl font-light text-brand-primary tabular-nums">
+                  {overview?.avg_honesty_score != null ? overview.avg_honesty_score.toFixed(1) : '-'}
+                  <span className="text-lg text-text-muted font-light ml-1">/100</span>
+                </div>
+                <div className="font-mono text-[10px] text-text-muted mt-4 border-t border-border/50 pt-3 flex justify-between uppercase">
+                  <span>Mean Quality:</span>
+                  <span className="text-accent-mint font-bold tabular-nums">
+                    {overview?.avg_code_quality != null ? overview.avg_code_quality.toFixed(1) : '...'}
+                  </span>
+                </div>
+              </div>
+            </>
+          )}
         </div>
       </div>
 
@@ -122,32 +196,39 @@ export default function Dashboard() {
             <h2 className="font-mono text-sm font-bold text-brand-primary uppercase tracking-widest flex items-center gap-2">
               <Activity size={16} /> Pressure v. Deception Correlation
             </h2>
+            {isScatterValidating && !isScatterLoading && (
+              <span className="text-[10px] font-mono text-accent-blue animate-pulse">UPDATING PLOT</span>
+            )}
           </div>
-          
+
           <div className="flex-1 relative p-6 min-h-[350px]">
-            {scatter.length > 0 ? (
+            {isScatterLoading && !scatter ? (
+              <ChartSkeleton title="Pressure v. Deception Correlation" height="h-[300px]" className="border-none" />
+            ) : scatter && scatter.length > 0 ? (
               <ResponsiveContainer width="100%" height="100%">
                 <ScatterChart margin={{ top: 20, right: 20, bottom: 20, left: 0 }}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#1E232B" vertical={false} />
-                  <XAxis 
-                    type="number" 
-                    dataKey="stress_index" 
-                    name="Stress Index" 
+                  <XAxis
+                    type="number"
+                    dataKey="stress_index"
+                    name="Stress Index"
                     stroke="#334155"
                     tick={{ fill: '#64748b', fontSize: 11, fontFamily: 'monospace' }}
+                    className="tabular-nums font-mono"
                     axisLine={false}
                     tickLine={false}
                   />
-                  <YAxis 
-                    type="number" 
-                    dataKey="deception_gap" 
-                    name="Deception Gap" 
+                  <YAxis
+                    type="number"
+                    dataKey="deception_gap"
+                    name="Deception Gap"
                     stroke="#334155"
                     tick={{ fill: '#64748b', fontSize: 11, fontFamily: 'monospace' }}
+                    className="tabular-nums font-mono"
                     axisLine={false}
                     tickLine={false}
                   />
-                  <Tooltip 
+                  <Tooltip
                     cursor={{ strokeDasharray: '3 3' }}
                     content={({ active, payload }) => {
                       if (active && payload && payload.length) {
@@ -155,8 +236,16 @@ export default function Dashboard() {
                         return (
                           <div className="bg-[#0f172a] border border-[#1e293b] rounded-lg p-3 text-xs font-mono shadow-xl">
                             <p className="text-text-muted mb-1 uppercase">Experiment Point</p>
-                            <p className="text-brand-primary"><span className="text-text-muted">Stress Index:</span> {data.stress_index}</p>
-                            <p className="text-brand-primary"><span className="text-text-muted">Deception Gap:</span> <span className={data.deception_gap > 20 ? 'text-accent-amber' : 'text-accent-mint'}>{data.deception_gap}%</span></p>
+                            <p className="text-brand-primary">
+                              <span className="text-text-muted">Stress Index:</span>{' '}
+                              <span className="tabular-nums font-mono">{data.stress_index}</span>
+                            </p>
+                            <p className="text-brand-primary">
+                              <span className="text-text-muted">Deception Gap:</span>{' '}
+                              <span className={`tabular-nums font-mono ${data.deception_gap > 20 ? 'text-accent-amber' : 'text-accent-mint'}`}>
+                                {data.deception_gap}%
+                              </span>
+                            </p>
                           </div>
                         );
                       }
@@ -180,14 +269,30 @@ export default function Dashboard() {
 
         {/* Right Side: Tiered Probability Analysis */}
         <section className="lg:col-span-4 border border-border bg-surface flex flex-col rounded-xl shadow-sm overflow-hidden">
-          <div className="border-b border-border p-4 bg-surface-alt/50">
+          <div className="border-b border-border p-4 bg-surface-alt/50 flex justify-between items-center">
             <h2 className="font-mono text-sm font-bold text-brand-primary uppercase tracking-widest flex items-center gap-2">
               <Terminal size={16} /> Deception By Pressure
             </h2>
+            {isPressureValidating && !isPressureLoading && (
+              <span className="text-[10px] font-mono text-accent-blue animate-pulse">UPDATING</span>
+            )}
           </div>
-          
+
           <div className="p-5 flex-1 flex flex-col gap-6">
-            {pressure.length > 0 ? pressure.map((tier, idx) => {
+            {isPressureLoading && !pressure ? (
+              <div className="space-y-6">
+                {[1, 2, 3].map((i) => (
+                  <div key={i} className="space-y-2">
+                    <div className="flex justify-between">
+                      <Skeleton className="h-2.5 w-24" />
+                      <Skeleton className="h-2.5 w-12" />
+                    </div>
+                    <Skeleton className="h-1.5 w-full" />
+                  </div>
+                ))}
+              </div>
+            ) : pressure && pressure.length > 0 ? (
+              pressure.map((tier, idx) => {
                 const gap = tier.deception_gap || 0;
                 const isAlert = tier.is_alert;
                 const width = Math.min(Math.max(gap, 0), 100);
@@ -195,16 +300,20 @@ export default function Dashboard() {
                   <div key={String(tier.pressure || idx)}>
                     <div className="flex justify-between font-mono text-[10px] mb-2 uppercase tracking-widest">
                       <span className="text-text-muted">{tier.pressure} PRESSURE</span>
-                      <span className={isAlert ? "text-accent-amber font-bold" : "text-accent-mint font-bold"}>
+                      <span className={`tabular-nums font-mono ${isAlert ? 'text-accent-amber font-bold' : 'text-accent-mint font-bold'}`}>
                         {gap.toFixed(1)}%
                       </span>
                     </div>
                     <div className="h-1 bg-border w-full flex">
-                      <div className={isAlert ? "h-full bg-accent-amber" : "h-full bg-accent-mint"} style={{ width: `${width}%` }}></div>
+                      <div
+                        className={isAlert ? 'h-full bg-accent-amber' : 'h-full bg-accent-mint'}
+                        style={{ width: `${width}%` }}
+                      ></div>
                     </div>
                   </div>
                 );
-            }) : (
+              })
+            ) : (
               <div className="text-text-muted font-mono text-[10px] uppercase">
                 [NO_DATA_AVAILABLE]
               </div>
@@ -212,15 +321,17 @@ export default function Dashboard() {
           </div>
         </section>
       </div>
-      
+
       {/* Technical Footer */}
       <footer className="border-t border-border py-4 mt-2 flex justify-between items-center font-mono text-[10px] text-text-muted tracking-widest">
         <div>
-          RECORDS_ANALYSED: {overview?.total_experiments ?? 0} // TELEMETRY_STREAM_OK
+          RECORDS_ANALYSED:{' '}
+          <span className="tabular-nums font-mono font-bold text-brand-primary">
+            {overview?.total_experiments ?? 0}
+          </span>{' '}
+          // TELEMETRY_STREAM_OK
         </div>
-        <div>
-          [ EOF ]
-        </div>
+        <div>[ EOF ]</div>
       </footer>
     </div>
   );
