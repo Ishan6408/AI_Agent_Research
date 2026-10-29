@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { api } from '../services/api';
+import { OperationIdempotencyKey } from '../services/idempotency';
 import type { Experiment } from '../types/api';
 import { Play, Settings, Beaker, CheckCircle, AlertTriangle, RefreshCw, FileText, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, Search } from 'lucide-react';
 import { useApiData } from '../hooks/useApiData';
@@ -34,6 +35,12 @@ export default function Experiments() {
   const [runError, setRunError] = useState<string | null>(null);
   const [runSuccess, setRunSuccess] = useState<React.ReactNode | null>(null);
 
+  // Idempotency key managers — one per logical operation.
+  // Using useState lazy initializers so they instantiate exactly once on mount.
+  const [singleKey] = useState(() => new OperationIdempotencyKey());
+  const [pressureKey] = useState(() => new OperationIdempotencyKey());
+  const [allKey] = useState(() => new OperationIdempotencyKey());
+
   // Form states
   const [singlePressure, setSinglePressure] = useState('LOW');
   const [pressureLevel, setPressureLevel] = useState('LOW');
@@ -46,8 +53,10 @@ export default function Experiments() {
     setRunningAction('single');
     setRunError(null);
     setRunSuccess(null);
+    const key = singleKey.getOrCreate();
     try {
-      const res = await api.runExperiment({ pressure: singlePressure });
+      const res = await api.runExperiment({ pressure: singlePressure }, key);
+      singleKey.clear(); // success → next click is a new submission
       setRunSuccess(
         <span className="flex items-center gap-2">
           Protocol initialized. ID: <strong>{res.experiment_id}</strong>.{' '}
@@ -59,11 +68,13 @@ export default function Experiments() {
       apiCache.invalidate(['experiments', 'analytics', 'dataset']);
       refetch();
     } catch (err: any) {
+      // Do NOT clear the key on failure so a retry reuses it.
       setRunError(err.message || 'Failed to run single experiment');
     } finally {
       setRunningAction(null);
     }
   };
+
 
   const handleRunPressure = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -71,8 +82,10 @@ export default function Experiments() {
     setRunningAction('pressure');
     setRunError(null);
     setRunSuccess(null);
+    const key = pressureKey.getOrCreate();
     try {
-      const res = await api.runPressureExperiments({ pressure: pressureLevel, runs: pressureRuns });
+      const res = await api.runPressureExperiments({ pressure: pressureLevel, runs: pressureRuns }, key);
+      pressureKey.clear();
       setRunSuccess(`Batch complete. Executed ${res.count} permutations at ${pressureLevel} threshold.`);
       apiCache.invalidate(['experiments', 'analytics', 'dataset']);
       refetch();
@@ -91,8 +104,10 @@ export default function Experiments() {
     setRunningAction('all');
     setRunError(null);
     setRunSuccess(null);
+    const key = allKey.getOrCreate();
     try {
-      const res = await api.runAllExperiments({ runs: allRuns });
+      const res = await api.runAllExperiments({ runs: allRuns }, key);
+      allKey.clear();
       setRunSuccess(`Suite complete. Executed full matrix of ${res.count} experiments.`);
       apiCache.invalidate(['experiments', 'analytics', 'dataset']);
       refetch();
@@ -150,7 +165,10 @@ export default function Experiments() {
                     <label className="block text-[10px] font-bold text-text-muted mb-1 uppercase tracking-widest">Target Environmental Stress</label>
                     <select
                       value={singlePressure}
-                      onChange={(e) => setSinglePressure(e.target.value)}
+                      onChange={(e) => {
+                        setSinglePressure(e.target.value);
+                        singleKey.reset();
+                      }}
                       disabled={runningAction !== null}
                       className="w-full bg-surface border border-border rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-accent-blue/50 outline-none disabled:opacity-50"
                     >
@@ -184,7 +202,10 @@ export default function Experiments() {
                     <label className="block text-[10px] font-bold text-text-muted mb-1 uppercase tracking-widest">Stress Level</label>
                     <select
                       value={pressureLevel}
-                      onChange={(e) => setPressureLevel(e.target.value)}
+                      onChange={(e) => {
+                        setPressureLevel(e.target.value);
+                        pressureKey.reset();
+                      }}
                       disabled={runningAction !== null}
                       className="w-full bg-surface border border-border rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-brand-secondary/50 outline-none disabled:opacity-50"
                     >
@@ -201,7 +222,10 @@ export default function Experiments() {
                       min="1"
                       max="50"
                       value={pressureRuns}
-                      onChange={(e) => setPressureRuns(parseInt(e.target.value, 10))}
+                      onChange={(e) => {
+                        setPressureRuns(parseInt(e.target.value, 10));
+                        pressureKey.reset();
+                      }}
                       disabled={runningAction !== null}
                       className="w-full bg-surface border border-border rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-brand-secondary/50 outline-none disabled:opacity-50 font-mono tabular-nums"
                     />
@@ -233,7 +257,10 @@ export default function Experiments() {
                       min="1"
                       max="100"
                       value={allRuns}
-                      onChange={(e) => setAllRuns(parseInt(e.target.value, 10))}
+                      onChange={(e) => {
+                        setAllRuns(parseInt(e.target.value, 10));
+                        allKey.reset();
+                      }}
                       disabled={runningAction !== null}
                       className="w-full bg-surface border border-border rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-accent-red/50 outline-none disabled:opacity-50 font-mono tabular-nums"
                     />
