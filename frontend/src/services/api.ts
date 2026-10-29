@@ -1,6 +1,6 @@
 import type { Experiment, AnalyticsOverview, OverviewScatterPoint } from '../types/api';
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000/api';
+const API_BASE_URL = (typeof import.meta !== 'undefined' && import.meta.env?.VITE_API_BASE_URL) || 'http://localhost:8000/api';
 
 export const api = {
   getExperiments: async (): Promise<Experiment[]> => {
@@ -17,36 +17,60 @@ export const api = {
     }
     return response.json();
   },
-  runExperiment: async (req: import('../types/api').RunExperimentRequest): Promise<import('../types/api').RunExperimentResponse> => {
+  runExperiment: async (req: import('../types/api').RunExperimentRequest, idempotencyKey: string): Promise<import('../types/api').RunExperimentResponse> => {
     const response = await fetch(`${API_BASE_URL}/experiments/run`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        'Idempotency-Key': idempotencyKey,
+      },
       body: JSON.stringify(req),
     });
+    if (response.status === 409) {
+      const body = await response.json().catch(() => ({}));
+      throw new Error(`Duplicate submission detected: ${body.detail ?? 'conflicting idempotency key'}`);
+    }
     if (!response.ok) {
-      throw new Error(`API error: ${response.status} ${response.statusText}`);
+      const body = await response.json().catch(() => ({}));
+      throw new Error(body.detail || `API error: ${response.status} ${response.statusText}`);
     }
     return response.json();
   },
-  runPressureExperiments: async (req: import('../types/api').RunPressureRequest): Promise<import('../types/api').RunBatchResponse> => {
+  runPressureExperiments: async (req: import('../types/api').RunPressureRequest, idempotencyKey: string): Promise<import('../types/api').RunBatchResponse> => {
     const response = await fetch(`${API_BASE_URL}/experiments/run-pressure`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        'Idempotency-Key': idempotencyKey,
+      },
       body: JSON.stringify(req),
     });
+    if (response.status === 409) {
+      const body = await response.json().catch(() => ({}));
+      throw new Error(`Duplicate submission detected: ${body.detail ?? 'conflicting idempotency key'}`);
+    }
     if (!response.ok) {
-      throw new Error(`API error: ${response.status} ${response.statusText}`);
+      const body = await response.json().catch(() => ({}));
+      throw new Error(body.detail || `API error: ${response.status} ${response.statusText}`);
     }
     return response.json();
   },
-  runAllExperiments: async (req: import('../types/api').RunAllRequest): Promise<import('../types/api').RunBatchResponse> => {
+  runAllExperiments: async (req: import('../types/api').RunAllRequest, idempotencyKey: string): Promise<import('../types/api').RunBatchResponse> => {
     const response = await fetch(`${API_BASE_URL}/experiments/run-all`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        'Idempotency-Key': idempotencyKey,
+      },
       body: JSON.stringify(req),
     });
+    if (response.status === 409) {
+      const body = await response.json().catch(() => ({}));
+      throw new Error(`Duplicate submission detected: ${body.detail ?? 'conflicting idempotency key'}`);
+    }
     if (!response.ok) {
-      throw new Error(`API error: ${response.status} ${response.statusText}`);
+      const body = await response.json().catch(() => ({}));
+      throw new Error(body.detail || `API error: ${response.status} ${response.statusText}`);
     }
     return response.json();
   },

@@ -14,7 +14,7 @@ def mock_results_dir(tmp_path):
 @patch('agents.base_agent.BaseAgent.think', return_value='{"reported_progress": 100, "message": "done"}')
 @patch('agents.auditor.AuditorAgent.audit_experiment', return_value={"suspicion_score": 0, "deception_detected": False, "explanation": "none"})
 def test_api_run_experiment_no_seed(mock_audit, mock_think):
-    response = client.post("/api/experiments/run", json={"pressure": "LOW"})
+    response = client.post("/api/experiments/run", json={"pressure": "LOW"}, headers={"Idempotency-Key": "seed-test-001"})
     assert response.status_code == 200
     data = response.json()
     assert data["success"] is True
@@ -24,7 +24,7 @@ def test_api_run_experiment_no_seed(mock_audit, mock_think):
 @patch('agents.base_agent.BaseAgent.think', return_value='{"reported_progress": 100, "message": "done"}')
 @patch('agents.auditor.AuditorAgent.audit_experiment', return_value={"suspicion_score": 0, "deception_detected": False, "explanation": "none"})
 def test_api_run_experiment_with_seed(mock_audit, mock_think):
-    response = client.post("/api/experiments/run", json={"pressure": "LOW", "base_seed": 42})
+    response = client.post("/api/experiments/run", json={"pressure": "LOW", "base_seed": 42}, headers={"Idempotency-Key": "seed-test-002"})
     assert response.status_code == 200
     data = response.json()
     assert data["success"] is True
@@ -33,7 +33,7 @@ def test_api_run_experiment_with_seed(mock_audit, mock_think):
 @patch('agents.base_agent.BaseAgent.think', return_value='{"reported_progress": 100, "message": "done"}')
 @patch('agents.auditor.AuditorAgent.audit_experiment', return_value={"suspicion_score": 0, "deception_detected": False, "explanation": "none"})
 def test_api_run_pressure_with_seed(mock_audit, mock_think):
-    response = client.post("/api/experiments/run-pressure", json={"pressure": "MEDIUM", "runs": 2, "base_seed": 100})
+    response = client.post("/api/experiments/run-pressure", json={"pressure": "MEDIUM", "runs": 2, "base_seed": 100}, headers={"Idempotency-Key": "seed-test-003"})
     assert response.status_code == 200
     data = response.json()
     assert data["success"] is True
@@ -48,7 +48,7 @@ def test_api_run_pressure_with_seed(mock_audit, mock_think):
 @patch('agents.base_agent.BaseAgent.think', return_value='{"reported_progress": 100, "message": "done"}')
 @patch('agents.auditor.AuditorAgent.audit_experiment', return_value={"suspicion_score": 0, "deception_detected": False, "explanation": "none"})
 def test_api_run_all_with_seed(mock_audit, mock_think):
-    response = client.post("/api/experiments/run-all", json={"runs": 1, "base_seed": 200})
+    response = client.post("/api/experiments/run-all", json={"runs": 1, "base_seed": 200}, headers={"Idempotency-Key": "seed-test-004"})
     assert response.status_code == 200
     data = response.json()
     assert data["success"] is True

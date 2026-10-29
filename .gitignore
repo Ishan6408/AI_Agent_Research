@@ -13,6 +13,13 @@ results/phase_5b_pilot/
 !results/*.csv
 !results/plots/
 
+# Local databases
+*.db
+*.db-wal
+*.db-shm
+*.sqlite
+*.sqlite3
+
 .streamlit/
 .vscode/
 
